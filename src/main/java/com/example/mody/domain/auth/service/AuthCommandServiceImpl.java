@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.mody.domain.auth.entity.RefreshToken;
 import com.example.mody.domain.auth.jwt.JwtProvider;
 import com.example.mody.domain.auth.repository.RefreshTokenRepository;
+import com.example.mody.domain.exception.RefreshTokenException;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.global.common.exception.RestApiException;
@@ -14,22 +15,24 @@ import com.example.mody.global.common.exception.code.status.AuthErrorStatus;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class AuthService {
 
 	private final JwtProvider jwtProvider;
 	private final MemberRepository memberRepository;
 	private final RefreshTokenRepository refreshTokenRepository;
 
-	@Transactional
 	public void reissueToken(String oldRefreshToken, HttpServletResponse response) {
 		// 기존 Refresh Token 검증
 		RefreshToken refreshTokenEntity = refreshTokenRepository.findByToken(oldRefreshToken)
-			.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_REFRESH_TOKEN));
+			.orElseThrow(() -> new RefreshTokenException(AuthErrorStatus.INVALID_REFRESH_TOKEN));
 
+		// Refresh Token에 해당하는 회원 조회
 		Member member = refreshTokenEntity.getMember();
 
 		// 새로운 토큰 발급
@@ -53,7 +56,6 @@ public class AuthService {
 		response.setHeader("Set-Cookie", refreshTokenCookie.toString());
 	}
 
-	@Transactional
 	public void saveRefreshToken(Member member, String refreshToken) {
 		// 기존 리프레시 토큰이 있다면 업데이트, 없다면 새로 생성
 		RefreshToken refreshTokenEntity = refreshTokenRepository.findByMember(member)
@@ -66,7 +68,6 @@ public class AuthService {
 		refreshTokenRepository.save(refreshTokenEntity);
 	}
 
-	@Transactional
 	public void logout(String refreshToken) {
 		RefreshToken refreshTokenEntity = refreshTokenRepository.findByToken(refreshToken)
 			.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_REFRESH_TOKEN));
