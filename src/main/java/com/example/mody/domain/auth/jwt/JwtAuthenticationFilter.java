@@ -25,6 +25,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * JWT 토큰을 검증하고 인증 정보를 SecurityContextHolder에 저장하는 필터
+ */
 @Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -40,8 +43,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain
 	) throws ServletException, IOException {
 		try {
+
+			// 헤더에서 토큰 추출
 			String token = resolveToken(request);
+
+			// 만약 토큰이 있다면
 			if (token != null) {
+				// 토큰 검증 및 추출
 				String providerId = jwtProvider.validateTokenAndGetSubject(token);
 				Member member = memberRepository.findByProviderId(providerId)
 					.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ACCESS_TOKEN));
@@ -49,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				Authentication authentication = new UsernamePasswordAuthenticationToken(
 					member.getId(),
 					null,
-					List.of(new SimpleGrantedAuthority("ROLE_" + member.getRole()))
+					List.of(new SimpleGrantedAuthority(member.getRole().toString()))
 				);
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
@@ -63,6 +71,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 	}
 
+	/**
+	 * 헤더에서 토큰을 추출하는 메서드
+	 * @param request
+	 * @return
+	 */
 	private String resolveToken(HttpServletRequest request) {
 		String bearerToken = request.getHeader("Authorization");
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

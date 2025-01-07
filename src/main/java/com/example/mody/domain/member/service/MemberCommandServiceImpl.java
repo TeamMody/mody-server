@@ -3,8 +3,8 @@ package com.example.mody.domain.member.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.mody.domain.auth.dto.request.MemberRegistrationRequest;
 import com.example.mody.domain.exception.MemberException;
-import com.example.mody.domain.member.dto.MemberRegistrationRequest;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.global.common.exception.code.status.MemberErrorStatus;

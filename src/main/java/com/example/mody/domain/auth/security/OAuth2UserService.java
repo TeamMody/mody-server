@@ -21,6 +21,12 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
 	private final MemberRepository memberRepository;
 
+	/**
+	 * OAuth2UserRequest를 통해 OAuth2User를 데이터베이스에서 로드하고 회원가입 및 로그인 처리
+	 * @param userRequest
+	 * @return
+	 * @throws OAuth2AuthenticationException
+	 */
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -34,7 +40,9 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 			return null;
 		}
 
-		// 회원가입 및 로그인 처리
+		// 회원 정보를 조회.
+		// 만약 회원이 없다면 회원을 저장함.
+		// 그 다음 AuthController의 회원가입 API를 통해 회원가입을 완료해야 함.
 		Member member = memberRepository.findByProviderId(oAuth2Response.getProviderId())
 			.orElseGet(() -> saveMember(oAuth2Response));
 
@@ -47,7 +55,7 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 			.provider(oAuth2Response.getProvider())
 			.nickname(oAuth2Response.getName())
 			.status(Status.ACTIVE)
-			.role(Role.USER)
+			.role(Role.ROLE_USER)
 			.isRegistrationCompleted(false)  // 최초 가입 시 미완료 상태로 설정
 			.build();
 

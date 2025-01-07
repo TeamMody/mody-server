@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.example.mody.domain.auth.dto.response.LoginResponse;
 import com.example.mody.domain.auth.jwt.JwtProvider;
 import com.example.mody.domain.auth.security.CustomOAuth2User;
-import com.example.mody.domain.auth.service.AuthService;
+import com.example.mody.domain.auth.service.AuthCommandServiceImpl;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.enums.Role;
 import com.example.mody.domain.member.enums.Status;
@@ -31,8 +31,16 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private final JwtProvider jwtProvider;
 	private final ObjectMapper objectMapper;
 	private final MemberRepository memberRepository;
-	private final AuthService authService;
+	private final AuthCommandServiceImpl authCommandServiceImpl;
 
+	/**
+	 * OAuth2 로그인 성공 시 처리
+	 * @param request
+	 * @param response
+	 * @param authentication
+	 * @throws IOException
+	 * @throws ServletException
+	 */
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
@@ -42,13 +50,15 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		Member member = memberRepository.findByProviderId(oAuth2User.getOAuth2Response().getProviderId())
 			.orElseGet(() -> saveMember(oAuth2User));
 
+		// 새로 가입한 멤버인지 아닌지 확인
 		boolean isNewMember = member.getCreatedAt().equals(member.getUpdatedAt());
 
+		// Access Token, Refresh Token 발급
 		String accessToken = jwtProvider.createAccessToken(member.getProviderId());
 		String refreshToken = jwtProvider.createRefreshToken(member.getProviderId());
 
 		// Refresh Token 저장
-		authService.saveRefreshToken(member, refreshToken);
+		authCommandServiceImpl.saveRefreshToken(member, refreshToken);
 
 		// Refresh Token을 쿠키에 설정
 		ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
@@ -83,7 +93,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			.provider(oAuth2User.getOAuth2Response().getProvider())
 			.nickname(oAuth2User.getOAuth2Response().getName())
 			.status(Status.ACTIVE)
-			.role(Role.USER)
+			.role(Role.ROLE_USER)
 			.isRegistrationCompleted(false)
 			.build();
 

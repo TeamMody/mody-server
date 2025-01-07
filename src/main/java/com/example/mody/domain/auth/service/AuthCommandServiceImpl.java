@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthCommandServiceImpl implements AuthCommandService {
 
 	private final JwtProvider jwtProvider;
 	private final MemberRepository memberRepository;
