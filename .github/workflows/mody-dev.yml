@@ -81,6 +81,6 @@ jobs:
       - name: Trigger CodeDeploy Deployment
         run: |
           aws deploy create-deployment \
-            --application-name mody-server \
-            --deployment-group-name mody-server-group \
+            --application-name modi-server \
+            --deployment-group-name modi-server-group \
             --revision "{\"revisionType\":\"AppSpecContent\",\"appSpecContent\":{\"content\":\"$(cat appspec.yml)\"}}"
