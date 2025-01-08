@@ -1,5 +1,6 @@
 package com.example.mody.global.common.base;
 
+import com.example.mody.global.common.exception.code.BaseCodeInterface;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,10 @@ public class BaseResponse<T> {
     //성공한 경우 응답 생성
     public static <T> BaseResponse<T> onSuccess(T result) {
         return new BaseResponse<>("COMMON200", "요청에 성공하였습니다.", result);
+    }
+
+    public static <T> BaseResponse<T> of(BaseCodeInterface code, T result) {
+        return new BaseResponse<>(code.getCode().getCode(), code.getCode().getMessage(), result);
     }
 
     // 실패한 경우 응답 생성
