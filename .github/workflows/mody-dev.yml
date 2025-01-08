@@ -81,7 +81,7 @@ jobs:
       - name: Upload to S3
         run: |
           zip -r deploy.zip appspec.yml scripts/
-          aws s3 cp deploy.zip s3://modi-service-bucket/depoly/deploy.zip
+          aws s3 cp deploy.zip s3://modi-service-bucket/deploy/deploy.zip
 
       # 6. CodeDeploy 트리거
       - name: Trigger CodeDeploy Deployment
