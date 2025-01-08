@@ -77,10 +77,16 @@ jobs:
         run: |
           docker push ${{ secrets.AWS_ECR_REPO }}:latest
 
+      # 6-0. S3 업로드
+      - name: Upload to S3
+        run: |
+          zip -r deploy.zip appspec.yml scripts/
+          aws s3 cp deploy.zip s3://modi-service-bucket/depoly/deploy.zip
+
       # 6. CodeDeploy 트리거
       - name: Trigger CodeDeploy Deployment
         run: |
           aws deploy create-deployment \
             --application-name modi-server \
             --deployment-group-name modi-server-group \
-            --revision "{\"revisionType\":\"AppSpecContent\",\"appSpecContent\":{\"content\":\"$(cat appspec.yml)\"}}"
+            --revision "{\"revisionType\":\"S3\",\"s3Location\":{\"bucket\":\"modi-service-bucket\",\"key\":\"deploy/deploy.zip\",\"bundleType\":\"zip\"}}"
