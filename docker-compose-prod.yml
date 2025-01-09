@@ -1,0 +1,8 @@
+services: # 컨테이너 설정
+  backend:
+    container_name: mody-server
+    image: mody-server #ecr에 올린 이미지로 수정 필요
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    ports:
+      - 8080:8080

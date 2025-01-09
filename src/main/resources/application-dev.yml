@@ -6,7 +6,6 @@ spring:
     name: mody-server-dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-
     config:
       import: classpath:application.yml
 
@@ -19,6 +18,7 @@ spring:
         format_sql: true
         jdbc:
           time_zone: Asia/Seoul
+        dialect: org.hibernate.dialect.MySQLDialect
 
 logging:
   level:
