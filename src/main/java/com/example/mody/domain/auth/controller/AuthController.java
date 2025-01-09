@@ -1,15 +1,13 @@
 package com.example.mody.domain.auth.controller;
 
+import com.example.mody.domain.auth.dto.request.MemberJoinRequest;
+import com.example.mody.domain.auth.dto.request.MemberLoginReqeust;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.mody.domain.auth.dto.request.MemberRegistrationRequest;
-import com.example.mody.domain.auth.service.AuthCommandServiceImpl;
+import com.example.mody.domain.auth.service.AuthCommandService;
 import com.example.mody.domain.member.service.MemberCommandService;
 import com.example.mody.global.common.base.BaseResponse;
 
@@ -31,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 public class AuthController {
 
-	private final AuthCommandServiceImpl authCommandServiceImpl;
+	private final AuthCommandService authCommandService;
 	private final MemberCommandService memberCommandService;
 
 	/**
@@ -39,8 +37,8 @@ public class AuthController {
 	 * @param request
 	 * @return
 	 */
-	@Operation(summary = "회원가입 완료 API", description = "소셜 로그인 후 추가 정보를 입력받아 회원가입을 완료하는 API")
-	@PostMapping("/signup")
+	@Operation(summary = "카카오로그인 회원가입 완료 API", description = "소셜 로그인 후 추가 정보를 입력받아 회원가입을 완료하는 API")
+	@PostMapping("/signup/oauth2")
 	@ApiResponses({
 		@ApiResponse(
 			responseCode = "200",
@@ -81,7 +79,7 @@ public class AuthController {
 		HttpServletResponse response) {
 
 		// 토큰 재발급을 서비스 단에서 수행하도록 함.
-		authCommandServiceImpl.reissueToken(refreshToken, response);
+		authCommandService.reissueToken(refreshToken, response);
 		return ResponseEntity.ok().build();
 	}
 
@@ -104,7 +102,7 @@ public class AuthController {
 	@PostMapping("/logout")
 	public ResponseEntity<Void> logout(@CookieValue(name = "refresh_token") String refreshToken,
 		HttpServletResponse response) {
-		authCommandServiceImpl.logout(refreshToken);
+		authCommandService.logout(refreshToken);
 
 		// 쿠키 삭제
 		ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", "")
@@ -118,4 +116,23 @@ public class AuthController {
 		response.setHeader("Set-Cookie", refreshTokenCookie.toString());
 		return ResponseEntity.ok().build();
 	}
+
+	@Operation(summary = "회원가입 API")
+	@PostMapping("/signup")
+	public BaseResponse<Void> joinMember(@Valid @RequestBody MemberJoinRequest request) {
+
+		memberCommandService.joinMember(request);
+		return BaseResponse.onSuccess(null);
+	}
+
+	@Operation(summary = "로그인 API", description = "사용자의 이메일과 비밀번호를 통해 JWT Access Token과 Refresh Token을 발급받습니다.")
+	@PostMapping("/login")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "로그인 성공"),
+			@ApiResponse(responseCode = "401", description = "잘못된 이메일 또는 비밀번호")
+	})
+	public ResponseEntity<Void> authLogin(@RequestBody @Valid MemberLoginReqeust loginReqeust) {
+		return ResponseEntity.ok().build();
+	}
+
 }

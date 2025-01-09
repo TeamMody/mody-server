@@ -43,6 +43,7 @@ public class Member extends BaseEntity {
 
 	private String provider;    // OAuth2 제공자 (kakao, google 등)
 
+	@Column(unique = true)
 	private String email;
 
 	private String nickname;
@@ -77,4 +78,7 @@ public class Member extends BaseEntity {
 		this.isRegistrationCompleted = true;
 	}
 
+	public void encodePassword(String password) {
+		this.password = password;
+	}
 }

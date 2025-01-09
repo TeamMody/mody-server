@@ -1,6 +1,11 @@
 package com.example.mody.domain.auth.service;
 
+import com.example.mody.domain.auth.dto.request.MemberJoinRequest;
+import com.example.mody.domain.exception.MemberException;
+import com.example.mody.domain.member.converter.MemberConverter;
+import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthCommandServiceImpl implements AuthCommandService {
 
 	private final JwtProvider jwtProvider;
-	private final MemberRepository memberRepository;
 	private final RefreshTokenRepository refreshTokenRepository;
 
 	public void reissueToken(String oldRefreshToken, HttpServletResponse response) {
