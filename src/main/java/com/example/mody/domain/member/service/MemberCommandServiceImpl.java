@@ -49,7 +49,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 		}
 
 		Member newMember = MemberConverter.toMember(request, email);
-		newMember.encodePassword(passwordEncoder.encode(request.getPassword()));
+		newMember.setEncodedPassword(passwordEncoder.encode(request.getPassword()));
 		memberRepository.save(newMember);
 	}
 }

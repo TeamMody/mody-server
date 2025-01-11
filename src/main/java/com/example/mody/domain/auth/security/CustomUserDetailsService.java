@@ -1,9 +1,8 @@
 package com.example.mody.domain.auth.security;
 
+import com.example.mody.domain.exception.MemberException;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.repository.MemberRepository;
-import com.example.mody.global.common.exception.RestApiException;
-import com.example.mody.global.common.exception.code.status.AuthErrorStatus;
 import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Member member = memberRepository.findByEmail(username)
-                .orElseThrow(() -> new RestApiException(MemberErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberErrorStatus.MEMBER_NOT_FOUND));
 
         return new CustomUserDetails(member);
     }
