@@ -51,8 +51,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			if (token != null) {
 				// 토큰 검증 및 추출
 				String providerId = jwtProvider.validateTokenAndGetSubject(token);
+				// findByProviderId로 Member 찾기
 				Member member = memberRepository.findByProviderId(providerId)
-					.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ACCESS_TOKEN));
+						.orElseGet(() ->
+								// providerId로 찾지 못했을 경우, findByEmail로 조회
+								memberRepository.findByEmail(providerId)
+										.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ACCESS_TOKEN))
+						);
 
 				Authentication authentication = new UsernamePasswordAuthenticationToken(
 					member.getId(),
