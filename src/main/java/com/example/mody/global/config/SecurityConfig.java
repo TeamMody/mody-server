@@ -5,6 +5,8 @@ import java.util.Collections;
 import com.example.mody.domain.auth.jwt.JwtLoginFilter;
 import com.example.mody.domain.auth.service.AuthCommandService;
 import com.example.mody.domain.auth.service.AuthCommandServiceImpl;
+import com.example.mody.domain.member.service.MemberCommandService;
+import com.example.mody.domain.member.service.MemberQueryService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,6 +43,7 @@ public class SecurityConfig {
 	private final ObjectMapper objectMapper;
 	private final AuthenticationConfiguration authenticationConfiguration;
 	private final AuthCommandService authCommandService;
+	private final MemberQueryService memberQueryService;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -99,7 +102,7 @@ public class SecurityConfig {
 
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
-		return new JwtAuthenticationFilter(jwtProvider, memberRepository, objectMapper);
+		return new JwtAuthenticationFilter(jwtProvider, memberRepository, objectMapper, memberQueryService);
 	}
 
 	//비밀번호 암호화
