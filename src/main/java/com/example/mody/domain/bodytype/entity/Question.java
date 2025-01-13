@@ -1,6 +1,5 @@
 package com.example.mody.domain.bodytype.entity;
 
-import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.global.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,15 +17,15 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class BodyType extends BaseEntity {
+public class Question extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 30)
-    private String name;
+    @Column(nullable = false, length = 100)
+    private String content; // 질문 내용
 
-    @OneToMany(mappedBy = "bodyType", cascade = CascadeType.ALL)
-    private List<MemberBodyType> memberBodyTypeList = new ArrayList<>();
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
+    private List<Answer> answerList = new ArrayList<>();
 }

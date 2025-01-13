@@ -1,14 +1,12 @@
-package com.example.mody.domain.bodytype.entity;
+package com.example.mody.domain.bodytype.entity.mapping;
 
-import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
+import com.example.mody.domain.bodytype.entity.Answer;
+import com.example.mody.domain.member.entity.Member;
 import com.example.mody.global.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -18,15 +16,17 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class BodyType extends BaseEntity {
+public class MemberAnswer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 30)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
 
-    @OneToMany(mappedBy = "bodyType", cascade = CascadeType.ALL)
-    private List<MemberBodyType> memberBodyTypeList = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "answer_id")
+    private Answer answer;
 }

@@ -54,6 +54,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authz -> authz
 				.requestMatchers("/auth/**", "/oauth2/**").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+				.requestMatchers("/body-analysis/result").permitAll() // 체형 분석 테스트용
 
 				.anyRequest().authenticated()
 			)
