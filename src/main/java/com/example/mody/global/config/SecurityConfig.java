@@ -60,7 +60,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // 커스텀 EntryPoint 등록
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint(objectMapper)) // 커스텀 EntryPoint 등록
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
