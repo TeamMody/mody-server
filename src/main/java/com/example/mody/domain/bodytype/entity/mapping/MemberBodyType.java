@@ -22,7 +22,7 @@ public class MemberBodyType extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, length = 1000)
     private String body;
 
     @ManyToOne(fetch = FetchType.LAZY)

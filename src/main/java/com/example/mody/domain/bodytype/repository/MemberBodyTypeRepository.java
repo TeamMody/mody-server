@@ -1,6 +1,6 @@
 package com.example.mody.domain.bodytype.repository;
 
-import com.example.mody.domain.bodytype.entity.MemberBodyType;
+import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
