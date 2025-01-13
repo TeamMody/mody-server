@@ -11,5 +11,7 @@ import com.example.mody.domain.member.entity.Member;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 	Optional<Member> findByEmail(String email);
 
+	Boolean existsByEmail(String email);
+
 	Optional<Member> findByProviderId(String providerId);
 }

@@ -35,10 +35,14 @@ public class Member extends BaseEntity {
 	@Column(name = "member_id")
 	private Long id;
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
+	private List<MemberBodyType> memberBodyType = new ArrayList<>();
+
 	private String providerId;  // OAuth2 제공자의 고유 ID
 
 	private String provider;    // OAuth2 제공자 (kakao, google 등)
 
+	@Column(unique = true)
 	private String email;
 
 	private String nickname;
@@ -76,4 +80,7 @@ public class Member extends BaseEntity {
 		this.isRegistrationCompleted = true;
 	}
 
+	public void setEncodedPassword(String password) {
+		this.password = password;
+	}
 }

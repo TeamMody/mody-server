@@ -3,7 +3,11 @@ package com.example.mody.domain.auth.jwt;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import com.example.mody.domain.auth.security.CustomUserDetails;
+import com.example.mody.domain.member.service.MemberCommandService;
+import com.example.mody.domain.member.service.MemberQueryService;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,6 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtProvider jwtProvider;
 	private final MemberRepository memberRepository;
 	private final ObjectMapper objectMapper;
+	private final MemberQueryService memberQueryService;
 
 	@Override
 	protected void doFilterInternal(
@@ -49,16 +54,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			// 만약 토큰이 있다면
 			if (token != null) {
-				// 토큰 검증 및 추출
+
+				/*
+
 				String providerId = jwtProvider.validateTokenAndGetSubject(token);
+				// findByProviderId로 Member 찾기
 				Member member = memberRepository.findByProviderId(providerId)
-					.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ACCESS_TOKEN));
+						.orElseGet(() ->
+								// providerId로 찾지 못했을 경우, findByEmail로 조회
+								memberRepository.findByEmail(providerId)
+										.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ACCESS_TOKEN))
+						);
 
 				Authentication authentication = new UsernamePasswordAuthenticationToken(
 					member.getId(),
 					null,
 					List.of(new SimpleGrantedAuthority(member.getRole().toString()))
 				);
+				*/
+
+				// 토큰 검증 및 추출
+				String payload = jwtProvider.validateTokenAndGetSubject(token);
+				Member member = memberQueryService.findMemberById(Long.parseLong(payload));
+				CustomUserDetails customUserDetails = new CustomUserDetails(member);
+
+				Authentication authentication = new UsernamePasswordAuthenticationToken(
+						customUserDetails,
+						null,
+						List.of(new SimpleGrantedAuthority(member.getRole().toString()))
+				);
+
+
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 			filterChain.doFilter(request, response);

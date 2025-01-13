@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.example.mody.domain.auth.dto.response.LoginResponse;
 import com.example.mody.domain.auth.jwt.JwtProvider;
 import com.example.mody.domain.auth.security.CustomOAuth2User;
-import com.example.mody.domain.auth.service.AuthCommandServiceImpl;
+import com.example.mody.domain.auth.service.AuthCommandService;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.enums.Role;
 import com.example.mody.domain.member.enums.Status;
@@ -31,7 +31,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private final JwtProvider jwtProvider;
 	private final ObjectMapper objectMapper;
 	private final MemberRepository memberRepository;
-	private final AuthCommandServiceImpl authCommandServiceImpl;
+	private final AuthCommandService authCommandService;
 
 	/**
 	 * OAuth2 로그인 성공 시 처리
@@ -58,7 +58,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		String refreshToken = jwtProvider.createRefreshToken(member.getProviderId());
 
 		// Refresh Token 저장
-		authCommandServiceImpl.saveRefreshToken(member, refreshToken);
+		authCommandService.saveRefreshToken(member, refreshToken);
 
 		// Refresh Token을 쿠키에 설정
 		ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
