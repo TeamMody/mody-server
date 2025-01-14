@@ -1,12 +1,8 @@
 package com.example.mody.global.config;
 
+import java.util.Arrays;
 import java.util.Collections;
 
-import com.example.mody.domain.auth.jwt.JwtLoginFilter;
-import com.example.mody.domain.auth.service.AuthCommandService;
-import com.example.mody.domain.auth.service.AuthCommandServiceImpl;
-import com.example.mody.domain.member.service.MemberCommandService;
-import com.example.mody.domain.member.service.MemberQueryService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,14 +19,20 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.example.mody.domain.auth.handler.OAuth2SuccessHandler;
 import com.example.mody.domain.auth.jwt.JwtAuthenticationFilter;
+import com.example.mody.domain.auth.jwt.JwtLoginFilter;
 import com.example.mody.domain.auth.jwt.JwtProvider;
 import com.example.mody.domain.auth.security.OAuth2UserService;
+import com.example.mody.domain.auth.service.AuthCommandService;
 import com.example.mody.domain.member.repository.MemberRepository;
+import com.example.mody.domain.member.service.MemberQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -62,37 +64,38 @@ public class SecurityConfig {
 					.userService(oAuth2UserService)
 				)
 				.successHandler(oAuth2SuccessHandler)
+				.failureHandler((request, response, exception) -> {
+					log.error("OAuth2 로그인 실패: ", exception);
+					response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "OAuth2 로그인 실패");
+				})
 			)
+
 			.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		http
 			.cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-
 				@Override
 				public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
 					CorsConfiguration configuration = new CorsConfiguration();
 
 					configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-					configuration.setAllowedMethods(Collections.singletonList("*"));
+					configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+					configuration.setAllowedHeaders(
+						Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
+					configuration.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie"));
 					configuration.setAllowCredentials(true);
-					configuration.setAllowedHeaders(Collections.singletonList("*"));
 					configuration.setMaxAge(3600L);
-
-					configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-					configuration.setExposedHeaders(Collections.singletonList("Authorization"));
 
 					return configuration;
 				}
 			}));
-
 		//로그인 필터 등록
 		JwtLoginFilter jwtLoginFilter = new JwtLoginFilter(
-				authenticationManager(authenticationConfiguration),
-				jwtProvider,
-				authCommandService,
-				memberRepository,
-				objectMapper
+			authenticationManager(authenticationConfiguration),
+			jwtProvider,
+			authCommandService,
+			memberRepository,
+			objectMapper
 		);
 		jwtLoginFilter.setFilterProcessesUrl("/auth/login");
 		http.addFilterAt(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class);
