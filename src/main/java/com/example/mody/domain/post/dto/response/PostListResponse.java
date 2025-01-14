@@ -14,6 +14,7 @@ public class PostListResponse {
     private CursorPagination cursorPagination;
 
     public static PostListResponse from(Boolean hasNext, List<PostResponse> postResponses){
-        return new PostListResponse(postResponses, new CursorPagination(hasNext, postResponses.getLast().getPostId()));
+        Long cursor = hasNext ? postResponses.getLast().getPostId() : null;
+        return new PostListResponse(postResponses, new CursorPagination(hasNext, cursor));
     }
 }
