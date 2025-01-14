@@ -42,4 +42,12 @@ public class PostQueryServiceImpl implements PostQueryService {
         }
         return postRepository.getLikedPosts(cursor, size, member);
     }
+
+    @Override
+    public PostListResponse getMyPosts(Member member, Integer size, Long cursor) {
+        if(size<=0){
+            throw new RestApiException(GlobalErrorStatus.NEGATIVE_PAGE_SIZE_REQUEST);
+        }
+        return postRepository.getMyPosts(cursor, size, member);
+    }
 }
