@@ -39,7 +39,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
 
 
     /**
-     * 조회할 post 목록을 조회하는 쿼리, 해당 목록의 데이터들을 가져오는 쿼리가 날라감.
+     * 게시글 전체 조회. 조회할 post 목록을 조회하는 쿼리, 해당 목록의 데이터들을 가져오는 쿼리, 각 게시글 별 좋아요 여부 확인 쿼리가 날라감.
      * @param cursor
      * @param size
      * @param member
@@ -95,8 +95,56 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 postResponses.subList(0, Math.min(size, postResponses.size())));
     }
 
-    private BiFunction<List<PostResponse> , Integer, Boolean> hasNext = (list, size) -> list.size() > size;
+    /**
+     * 좋아요 누른 게시글 목록 조회
+     * @param cursor
+     * @param size
+     * @param member
+     * @return
+     */
+    public PostListResponse getLikedPosts(Long cursor, Integer size, Member member) {
+        BooleanBuilder predicate = new BooleanBuilder();
 
+        if(cursor != null){
+            predicate.and(qPost.id.lt(cursor));
+        }
+
+        predicate.and(qMemberPostLike.member.eq(member));
+
+        List<Long> postIds = jpaQueryFactory
+                .select(qPost.id)
+                .from(qPost)
+                .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost).and(qMemberPostLike.member.eq(member)))
+                .where(predicate)
+                .orderBy(qPost.createdAt.desc())
+                .limit(size+1) //하나 더 가져와서 다음 요소가 존재하는지 확인
+                .fetch();
+
+        Map<Long, PostResponse> postResponseMap = jpaQueryFactory
+                .from(qPost)
+                .leftJoin(qPost.member, qMember)
+                .leftJoin(qPost.images, qPostImage)
+                .where(qPost.id.in(postIds))
+                .orderBy(qPost.createdAt.desc())
+                .transform(GroupBy.groupBy(qPost.id).as(
+                        Projections.constructor(PostResponse.class,
+                                qPost.id,
+                                qMember.nickname,
+                                qPost.content,
+                                qPost.isPublic,
+                                qPost.likeCount,
+                                Expressions.asBoolean(Expressions.TRUE),
+                                qPost.bodyType.name,
+                                GroupBy.list(qPostImage)
+                        )));
+
+        List<PostResponse> postResponses = new ArrayList<>(postResponseMap.values());
+
+        return PostListResponse.from(hasNext.apply(postResponses, size),
+                postResponses.subList(0, Math.min(size, postResponses.size())));
+    }
+
+    private BiFunction<List<PostResponse> , Integer, Boolean> hasNext = (list, size) -> list.size() > size;
 
     /**
      * // 정렬 기준. 특정 바디 타입이 요구되지 않으면 전부 1
