@@ -7,6 +7,8 @@ import com.example.mody.global.common.base.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -48,6 +50,23 @@ public class PostController {
     @Operation(summary = "게시글 삭제 API", description = "인증된 유저의 게시글 삭제 API")
     @ApiResponses({
             @ApiResponse(responseCode = "202", description = "게시글 삭제 성공"),
+            @ApiResponse(
+                    responseCode = "POST404",
+                    description = "해당 게시물을 찾을 수 없습니다.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+						{
+						    "timestamp": "2024-01-13T10:00:00",
+						    "isSuccess": "false",
+						    "code": "POST404",
+						    "message": "해당 게시물을 찾을 수 없습니다."
+						}
+						"""
+                            )
+                    )
+            )
     })
     @Parameters({
             @Parameter(name = "posts_id", description = "게시글 아이디, path variable 입니다")

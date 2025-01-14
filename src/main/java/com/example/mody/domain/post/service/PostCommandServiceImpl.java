@@ -1,5 +1,6 @@
 package com.example.mody.domain.post.service;
 
+import com.example.mody.domain.backupimage.repository.BackupFileRepository;
 import com.example.mody.domain.backupimage.service.BackupFileService;
 import com.example.mody.domain.bodytype.entity.BodyType;
 import com.example.mody.domain.bodytype.service.BodyTypeService;
@@ -9,13 +10,13 @@ import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.post.dto.request.PostCreateRequest;
 import com.example.mody.domain.post.entity.Post;
 import com.example.mody.domain.post.entity.PostImage;
+import com.example.mody.domain.post.repository.PostImageRepository;
 import com.example.mody.domain.post.repository.PostRepository;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.mody.global.common.exception.code.status.BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND;
@@ -28,6 +29,8 @@ public class PostCommandServiceImpl implements PostCommandService{
 
     private final BodyTypeService bodyTypeService;
     private final BackupFileService backupFileService;
+    private final PostImageRepository postImageRepository;
+    private final BackupFileRepository backupFileRepository;
 
     /**
      * 게시글 작성 비즈니스 로직. BodyType은 요청 유저의 가장 마지막 BodyType을 적용함. 유저의 BodyType이 존재하지 않을 경우 예외 발생.
@@ -57,12 +60,17 @@ public class PostCommandServiceImpl implements PostCommandService{
 
 
     @Override
+    @Transactional
     public void deletePost(Long posts_id) {
 
         // 게시글 조회 및 존재 여부 확인
         Post post = postRepository.findById(posts_id)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        postRepository.deleteById(posts_id);
+        List<Long> postImageIdList=postImageRepository.findPostImageIdByPostId(post.getId());
+
+        backupFileRepository.deleteAllByIdIn(postImageIdList);
+
+        postRepository.deleteById(post.getId());
     }
 }
