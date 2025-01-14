@@ -4,11 +4,14 @@ import com.example.mody.domain.backupimage.service.BackupFileService;
 import com.example.mody.domain.bodytype.entity.BodyType;
 import com.example.mody.domain.bodytype.service.BodyTypeService;
 import com.example.mody.domain.exception.BodyTypeException;
+import com.example.mody.domain.exception.PostException;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.post.dto.request.PostCreateRequest;
 import com.example.mody.domain.post.entity.Post;
 import com.example.mody.domain.post.entity.PostImage;
 import com.example.mody.domain.post.repository.PostRepository;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static com.example.mody.global.common.exception.code.status.BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND;
+import static com.example.mody.global.common.exception.code.status.PostErrorStatus.POST_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -49,5 +53,16 @@ public class PostCommandServiceImpl implements PostCommandService{
         });
 
         postRepository.save(post);
+    }
+
+
+    @Override
+    public void deletePost(Long posts_id) {
+
+        // 게시글 조회 및 존재 여부 확인
+        Post post = postRepository.findById(posts_id)
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
+
+        postRepository.deleteById(posts_id);
     }
 }
