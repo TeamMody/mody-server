@@ -1,7 +1,11 @@
 package com.example.mody.domain.member.entity;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import com.example.mody.domain.style.entity.Style;
+import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -10,14 +14,6 @@ import com.example.mody.domain.member.enums.Role;
 import com.example.mody.domain.member.enums.Status;
 import com.example.mody.global.common.base.BaseEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -67,6 +63,9 @@ public class Member extends BaseEntity {
 
 	@Builder.Default
 	private boolean isRegistrationCompleted = false;  // 회원가입 완료 여부
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<Style> styles = new ArrayList<>();
 
 	public void completeRegistration(String nickname, LocalDate birthDate, Gender gender, Integer height
 		, String profileImageUrl) {
