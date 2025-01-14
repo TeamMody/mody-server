@@ -144,6 +144,50 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 postResponses.subList(0, Math.min(size, postResponses.size())));
     }
 
+    @Override
+    public PostListResponse getMyPosts(Long cursor, Integer size, Member member) {
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        if(cursor != null){
+            predicate.and(qPost.id.lt(cursor));
+        }
+
+        List<Long> postIds = jpaQueryFactory
+                .select(qPost.id)
+                .from(qPost)
+                .where(predicate)
+                .orderBy(qPost.createdAt.desc())
+                .limit(size+1) //하나 더 가져와서 다음 요소가 존재하는지 확인
+                .fetch();
+
+        Map<Long, PostResponse> postResponseMap = jpaQueryFactory
+                .from(qPost)
+                .leftJoin(qPost.member, qMember)
+                .leftJoin(qPost.images, qPostImage)
+                .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost))
+                .where(qPost.id.in(postIds))
+                .orderBy( qPost.createdAt.desc())
+                .transform(GroupBy.groupBy(qPost.id).as(
+                        Projections.constructor(PostResponse.class,
+                                qPost.id,
+                                qMember.nickname,
+                                qPost.content,
+                                qPost.isPublic,
+                                qPost.likeCount,
+                                JPAExpressions
+                                        .selectFrom(qMemberPostLike)
+                                        .where(qMemberPostLike.member.eq(member).and(qMemberPostLike.post.eq(qPost)))
+                                        .exists(),
+                                qPost.bodyType.name,
+                                GroupBy.list(qPostImage)
+                        )));
+
+        List<PostResponse> postResponses = new ArrayList<>(postResponseMap.values());
+
+        return PostListResponse.from(hasNext.apply(postResponses, size),
+                postResponses.subList(0, Math.min(size, postResponses.size())));
+    }
+
     private BiFunction<List<PostResponse> , Integer, Boolean> hasNext = (list, size) -> list.size() > size;
 
     /**

@@ -11,4 +11,5 @@ public interface PostCustomRepository {
 
     public PostListResponse getPostList(Long cursor, Integer size, Member member, Optional<BodyType> bodyType);
     public PostListResponse getLikedPosts(Long cursor, Integer size, Member member);
+    public PostListResponse getMyPosts(Long cursor, Integer size, Member member);
 }
