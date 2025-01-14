@@ -25,7 +25,7 @@ public class BodyType extends BaseEntity {
     private Long id;
 
     @Column(nullable = false, length = 30)
-    private String name;
+    private String name; // 네추럴, 스트레이트, 웨이브
 
     @OneToMany(mappedBy = "bodyType", cascade = CascadeType.ALL)
     private List<MemberBodyType> memberBodyTypeList = new ArrayList<>();

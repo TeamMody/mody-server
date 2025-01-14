@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface MemberBodyTypeRepository extends JpaRepository<MemberBodyType, Long> {
     Optional<MemberBodyType> findTopByMemberOrderByCreatedAt(Member member);
+
+    Optional<MemberBodyType> findMemberBodyTypeByMember(Member member);
 }

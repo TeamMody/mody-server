@@ -32,4 +32,10 @@ public class MemberBodyType extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "body_type_id")
     private BodyType bodyType;
+
+    public MemberBodyType(String body, Member member, BodyType bodyType) {
+        this.body = body;
+        this.member = member;
+        this.bodyType = bodyType;
+    }
 }
