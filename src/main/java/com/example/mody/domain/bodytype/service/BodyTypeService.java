@@ -1,7 +1,7 @@
 package com.example.mody.domain.bodytype.service;
 
 import com.example.mody.domain.bodytype.entity.BodyType;
-import com.example.mody.domain.bodytype.entity.MemberBodyType;
+import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.bodytype.repository.BodyTypeRepository;
 import com.example.mody.domain.bodytype.repository.MemberBodyTypeRepository;
 import com.example.mody.domain.member.entity.Member;

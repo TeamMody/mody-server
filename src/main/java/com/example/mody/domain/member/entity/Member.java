@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
+import jakarta.persistence.*;
+
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -80,6 +83,9 @@ public class Member extends BaseEntity {
 
 	@Builder.Default
 	private boolean isRegistrationCompleted = false;  // 회원가입 완료 여부
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<MemberBodyType> memberBodyTypeList = new ArrayList<>();
 
 	public void completeRegistration(String nickname, LocalDate birthDate, Gender gender, Integer height
 		, String profileImageUrl) {
