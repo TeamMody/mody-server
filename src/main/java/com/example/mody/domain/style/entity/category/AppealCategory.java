@@ -1,11 +1,11 @@
 package com.example.mody.domain.style.entity.category;
 
 import com.example.mody.global.common.base.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Getter;
 
+@Entity
+@Getter
 public class AppealCategory extends BaseEntity {
 
     @Id
@@ -13,6 +13,6 @@ public class AppealCategory extends BaseEntity {
     @Column(name = "appeal_category_id")
     private Long id;
 
-    @Column(length = 10, nullable = false)
+    @Column(length = 50, nullable = false)
     private String name;
 }

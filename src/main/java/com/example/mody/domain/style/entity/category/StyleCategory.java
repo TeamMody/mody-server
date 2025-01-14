@@ -13,6 +13,6 @@ public class StyleCategory extends BaseEntity {
     @Column(name = "style_category_id")
     private Long id;
 
-    @Column(length = 10, nullable = false)
+    @Column(length = 50, nullable = false)
     private String name;
 }
