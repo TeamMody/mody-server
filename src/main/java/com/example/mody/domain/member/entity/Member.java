@@ -6,14 +6,28 @@ import java.util.List;
 
 import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import jakarta.persistence.*;
+
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.example.mody.domain.bodytype.entity.MemberBodyType;
 import com.example.mody.domain.member.enums.Gender;
+import com.example.mody.domain.member.enums.LoginType;
 import com.example.mody.domain.member.enums.Role;
 import com.example.mody.domain.member.enums.Status;
 import com.example.mody.global.common.base.BaseEntity;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -63,6 +77,9 @@ public class Member extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	private Role role;
+
+	@Enumerated(EnumType.STRING)
+	private LoginType loginType;
 
 	@Builder.Default
 	private boolean isRegistrationCompleted = false;  // 회원가입 완료 여부
