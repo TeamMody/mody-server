@@ -8,6 +8,8 @@ import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.style.entity.Style;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+
+import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.member.enums.LoginType;
 import com.example.mody.domain.member.enums.Role;
@@ -80,9 +82,6 @@ public class Member extends BaseEntity {
 
 	@Builder.Default
 	private boolean isRegistrationCompleted = false;  // 회원가입 완료 여부
-
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<Style> styles = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<MemberBodyType> memberBodyTypeList = new ArrayList<>();
