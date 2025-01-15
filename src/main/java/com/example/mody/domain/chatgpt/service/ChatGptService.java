@@ -1,6 +1,7 @@
 package com.example.mody.domain.chatgpt.service;
 
 import com.example.mody.domain.bodytype.dto.BodyTypeAnalysisResponse;
+import com.example.mody.domain.member.enums.Gender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import com.example.mody.global.common.exception.RestApiException;
@@ -43,21 +44,9 @@ public final class ChatGptService {
 
     private final String userRole = "user"; // 대화에서의 역할(사용자 메시지)
 
-    // 체형 분석 메서드
-    public BodyTypeAnalysisResponse analyzeBodyType(String name, String gender, String answers) {
-
-        // 템플릿 생성
-        String prompt = promptManager.createBodyTypeAnalysisPrompt(name, gender, answers);
-
-        // OpenAI API 호출
-        ChatGPTResponse response = openAiApiClient.sendRequestToModel(
-                model,
-                List.of(
-                        new Message(systemRole, prompt)
-                ),
-                maxTokens,
-                temperature
-        );
+    // OpenAi 응답에서 content 추출하는 메서드
+    public String getContent(String nickName, Gender gender, String answers) {
+        ChatGPTResponse response = getChatGPTResponse(nickName, gender, answers);
 
         // response에서 content 추출
         String content = response.getChoices().get(0).getMessage().getContent().trim();
@@ -68,6 +57,28 @@ public final class ChatGptService {
             content = content.replaceAll("```[a-z]*", "").trim();
         }
         log.info("백틱 제거 후 content: {}", content);
+        return content;
+    }
+
+    // OpenAi 응답 메서드
+    private ChatGPTResponse getChatGPTResponse(String nickName, Gender gender, String answers) {
+        // 템플릿 생성
+        String prompt = promptManager.createBodyTypeAnalysisPrompt(nickName, gender, answers);
+
+        // OpenAI API 호출
+        ChatGPTResponse response = openAiApiClient.sendRequestToModel(
+                model,
+                List.of(
+                        new Message(systemRole, prompt)
+                ),
+                maxTokens,
+                temperature
+        );
+        return response;
+    }
+
+    // 체형 분석 메서드
+    public BodyTypeAnalysisResponse analyzeBodyType(String content) {
 
         try {
             // content -> BodyTypeAnalysisResponse 객체로 변환
@@ -78,4 +89,6 @@ public final class ChatGptService {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         }
     }
+
+
 }

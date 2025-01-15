@@ -20,6 +20,7 @@ public class MemberBodyType extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_body_type_id")
     private Long id;
 
     @Column(nullable = false, length = 1000)
@@ -32,4 +33,10 @@ public class MemberBodyType extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "body_type_id")
     private BodyType bodyType;
+
+    public MemberBodyType(String body, Member member, BodyType bodyType) {
+        this.body = body;
+        this.member = member;
+        this.bodyType = bodyType;
+    }
 }
