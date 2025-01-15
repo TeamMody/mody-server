@@ -71,7 +71,7 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     public Post findById(Long id){
         return postRepository.findById(id).orElseThrow(()->
-                new PostException(PostErrorStatus.MEMBER_NOT_FOUND));
+                new PostException(PostErrorStatus.POST_NOT_FOUND));
     }
 
     public MemberPostLike findByMemberAndPostId(Member member, Long postId){
