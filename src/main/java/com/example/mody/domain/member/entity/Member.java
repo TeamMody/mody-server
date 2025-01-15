@@ -9,8 +9,6 @@ import jakarta.persistence.*;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-
-import com.example.mody.domain.bodytype.entity.MemberBodyType;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.member.enums.LoginType;
 import com.example.mody.domain.member.enums.Role;
@@ -48,9 +46,6 @@ public class Member extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_id")
 	private Long id;
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
-	private List<MemberBodyType> memberBodyType = new ArrayList<>();
 
 	private String providerId;  // OAuth2 제공자의 고유 ID
 
