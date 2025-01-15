@@ -5,5 +5,8 @@ import com.example.mody.domain.post.dto.request.PostCreateRequest;
 
 public interface PostCommandService {
 
-    public void createPost(PostCreateRequest postCreateRequest, Member member);
+	public void createPost(PostCreateRequest postCreateRequest, Member member);
+
+	void togglePostLike(Long myId, Long postId);
+
 }
