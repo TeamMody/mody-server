@@ -3,6 +3,9 @@ package com.example.mody.global.config;
 import java.util.Arrays;
 import java.util.Collections;
 
+import com.example.mody.domain.auth.jwt.JwtLoginFilter;
+import com.example.mody.domain.auth.service.AuthCommandService;
+import com.example.mody.domain.auth.service.AuthCommandServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-  
+
     private final OAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final JwtProvider jwtProvider;
@@ -81,7 +84,7 @@ public class SecurityConfig {
                 @Override
                 public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                     CorsConfiguration configuration = new CorsConfiguration();
-                    
+
                     // 프론트엔드 애플리케이션의 도메인 허용
                     configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
                     // 허용할 HTTP 메서드 설정
