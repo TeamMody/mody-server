@@ -75,6 +75,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .from(qPost)
                 .leftJoin(qPost.member, qMember)
                 .leftJoin(qPost.images, qPostImage)
+                .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost))
                 .where(qPost.id.in(postIds))
                 .orderBy(caseExpression.asc(), qPost.createdAt.desc())
                 .transform(GroupBy.groupBy(qPost.id).as(
@@ -205,9 +206,9 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     }
 
     private BooleanExpression isLikedResult(Member member){
-        return JPAExpressions.selectFrom(qMemberPostLike)
-                .where(qMemberPostLike.post.eq(qPost)
-                        .and(qMemberPostLike.member.eq(member)))
+        return JPAExpressions
+                .selectFrom(qMemberPostLike)
+                .where(qMemberPostLike.member.eq(member).and(qMemberPostLike.post.eq(qPost)))
                 .exists();
     }
 }
