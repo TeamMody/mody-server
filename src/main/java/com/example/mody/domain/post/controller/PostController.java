@@ -152,4 +152,20 @@ public class PostController {
 		postCommandService.togglePostLike(myId, postId);
 		return BaseResponse.onSuccess(null);
 	}
+
+    @GetMapping("/liked")
+    @Operation(summary = "좋아요 누른 목록 조회 API", description = "좋아요 누른 게시글에 대한 목록 조회 API")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "게시글 목록 조회 성공"
+            )
+    })
+    public BaseResponse<PostListResponse> getLikedPosts(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam(name = "cursor", required = false) Long cursor,
+            @RequestParam(name = "size", defaultValue = "15") Integer size) {
+        PostListResponse postListResponse =  postQueryService.getLikedPosts(customUserDetails.getMember(), size, cursor);
+        return BaseResponse.onSuccess(postListResponse);
+    }
 }
