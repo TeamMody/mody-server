@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.mody.domain.auth.dto.response.KakaoResponse;
 import com.example.mody.domain.auth.dto.response.OAuth2Response;
 import com.example.mody.domain.member.entity.Member;
+import com.example.mody.domain.member.enums.LoginType;
 import com.example.mody.domain.member.enums.Role;
 import com.example.mody.domain.member.enums.Status;
 import com.example.mody.domain.member.repository.MemberRepository;
@@ -43,7 +44,10 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 		// 회원 정보를 조회.
 		// 만약 회원이 없다면 회원을 저장함.
 		// 그 다음 AuthController의 회원가입 API를 통해 회원가입을 완료해야 함.
-		Member member = memberRepository.findByProviderId(oAuth2Response.getProviderId())
+		Member member = memberRepository.findByProviderIdAndLoginType(
+				oAuth2Response.getProviderId(),
+				LoginType.KAKAO
+			)
 			.orElseGet(() -> saveMember(oAuth2Response));
 
 		return new CustomOAuth2User(oAuth2Response, oAuth2User.getAttributes(), member.isRegistrationCompleted());
@@ -56,7 +60,8 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 			.nickname(oAuth2Response.getName())
 			.status(Status.ACTIVE)
 			.role(Role.ROLE_USER)
-			.isRegistrationCompleted(false)  // 최초 가입 시 미완료 상태로 설정
+			.loginType(LoginType.KAKAO)
+			.isRegistrationCompleted(false)
 			.build();
 
 		return memberRepository.save(member);

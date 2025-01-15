@@ -21,13 +21,6 @@ import lombok.NoArgsConstructor;
 public class MemberRegistrationRequest {
 
 	@Schema(
-		description = "회원 ID",
-		example = "1"
-	)
-	@NotNull(message = "OAuth2 제공자의 고유 ID는 필수입니다")
-	private Long memberId;
-
-	@Schema(
 		description = "닉네임",
 		example = "모디",
 		minLength = 2,
