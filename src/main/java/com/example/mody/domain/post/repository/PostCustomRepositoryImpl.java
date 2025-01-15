@@ -85,6 +85,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .transform(GroupBy.groupBy(qPost.id).as(
                         Projections.constructor(PostResponse.class,
                                 qPost.id,
+                                qMember.id,
                                 qMember.nickname,
                                 qPost.content,
                                 qPost.isPublic,
@@ -134,6 +135,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .transform(GroupBy.groupBy(qPost.id).as(
                         Projections.constructor(PostResponse.class,
                                 qPost.id,
+                                qMember.id,
                                 qMember.nickname,
                                 qPost.content,
                                 qPost.isPublic,
@@ -180,6 +182,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .transform(GroupBy.groupBy(qPost.id).as(
                         Projections.constructor(PostResponse.class,
                                 qPost.id,
+                                qMember.id,
                                 qMember.nickname,
                                 qPost.content,
                                 qPost.isPublic,

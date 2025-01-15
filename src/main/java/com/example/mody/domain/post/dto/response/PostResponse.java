@@ -13,7 +13,8 @@ import java.util.List;
 public class PostResponse {
 
     private Long postId;
-    private String nickName;
+    private Long writerId;
+    private String writerNickName;
     private String content;
     private Boolean isPublic;
     private Integer likeCount;
@@ -22,7 +23,8 @@ public class PostResponse {
     private List<PostImageResponse> files;
 
     public PostResponse(Long postId,
-                        String nickName ,
+                        Long writerId,
+                        String nickName,
                         String content,
                         Boolean isPublic,
                         Integer likeCount,
@@ -30,7 +32,8 @@ public class PostResponse {
                         String bodyType,
                         List<PostImage> files) {
         this.postId = postId;
-        this.nickName = nickName;
+        this.writerId = writerId;
+        this.writerNickName = nickName;
         this.content = content;
         this.isPublic = isPublic;
         this.likeCount = likeCount;
