@@ -7,7 +7,7 @@ import java.util.List;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-
+import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.member.enums.LoginType;
 import com.example.mody.domain.member.enums.Role;
