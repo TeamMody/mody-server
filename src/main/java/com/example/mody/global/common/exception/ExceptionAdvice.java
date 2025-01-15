@@ -8,6 +8,8 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -81,6 +83,19 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
         return handleExceptionInternalArgs(GlobalErrorStatus._VALIDATION_ERROR.getCode(), errors);
 
     }
+
+    // 인증되지 않은 사용자에 대한 처리
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<BaseResponse<String>> handleAuthenticationException(AuthenticationException e) {
+        return handleExceptionInternal(GlobalErrorStatus._UNAUTHORIZED.getCode());
+    }
+
+    // 권한이 없는 사용자에 대한 처리
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<BaseResponse<String>> handleAccessDeniedException(AccessDeniedException e) {
+        return handleExceptionInternal(GlobalErrorStatus._ACCESS_DENIED.getCode());
+    }
+
 
     private ResponseEntity<BaseResponse<String>> handleExceptionInternal(BaseCodeDto errorCode) {
         return ResponseEntity

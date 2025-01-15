@@ -4,7 +4,7 @@ import com.example.mody.domain.auth.dto.request.MemberJoinRequest;
 import com.example.mody.domain.auth.dto.request.MemberRegistrationRequest;
 
 public interface MemberCommandService {
-	void completeRegistration(MemberRegistrationRequest request);
+	void completeRegistration(Long memberId, MemberRegistrationRequest request);
 
 	void joinMember(MemberJoinRequest request);
 }
