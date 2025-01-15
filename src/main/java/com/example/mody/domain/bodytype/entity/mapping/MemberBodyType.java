@@ -20,6 +20,7 @@ public class MemberBodyType extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_body_type_id")
     private Long id;
 
     @Column(nullable = false, length = 1000)

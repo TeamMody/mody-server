@@ -22,6 +22,7 @@ public class BodyType extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "body_type_id")
     private Long id;
 
     @Column(nullable = false, length = 30)
