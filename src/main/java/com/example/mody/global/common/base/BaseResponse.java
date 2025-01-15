@@ -25,6 +25,10 @@ public class BaseResponse<T> {
         return new BaseResponse<>("COMMON200", "요청에 성공하였습니다.", result);
     }
 
+    public static <T> BaseResponse<T> onSuccessCreate(T result) {
+        return new BaseResponse<>("COMMON201", "요청에 성공하였습니다.", result);
+    }
+
     public static <T> BaseResponse<T> of(BaseCodeInterface code, T result) {
         return new BaseResponse<>(code.getCode().getCode(), code.getCode().getMessage(), result);
     }

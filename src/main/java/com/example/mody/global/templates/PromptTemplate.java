@@ -1,11 +1,14 @@
-package com.example.mody.domain.style.templates;
+package com.example.mody.global.templates;
 
+/**
+ * OpenAi Api와 통신하기 위한 프롬프트 템플릿
+ */
 public class PromptTemplate {
 
     private static final String BASE_TEMPLATE = """
             ### 요청하고 싶은 것
             {{request}}
-            
+                    
             ### 응답 값 형식
             {{responseFormat}}
             """;

@@ -23,7 +23,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -54,8 +56,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		boolean isNewMember = member.getCreatedAt().equals(member.getUpdatedAt());
 
 		// Access Token, Refresh Token 발급
-		String accessToken = jwtProvider.createAccessToken(member.getProviderId());
-		String refreshToken = jwtProvider.createRefreshToken(member.getProviderId());
+		// 사용자의 ID를 기반으로 Access Token, Refresh Token 생성
+		String accessToken = jwtProvider.createAccessToken(member.getId().toString());
+		String refreshToken = jwtProvider.createRefreshToken(member.getId().toString());
 
 		// Refresh Token 저장
 		authCommandService.saveRefreshToken(member, refreshToken);
@@ -70,7 +73,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 			.build();
 
 		// Access Token을 Authorization 헤더에 설정
-		response.setHeader("Authorization", "Bearer " + accessToken);
+		response.addHeader("Authorization", "Bearer " + accessToken);
 		response.setHeader("Set-Cookie", refreshTokenCookie.toString());
 
 		// 로그인 응답 데이터 설정
@@ -85,6 +88,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(objectMapper.writeValueAsString(BaseResponse.onSuccess(loginResponse)));
+
 	}
 
 	private Member saveMember(CustomOAuth2User oAuth2User) {

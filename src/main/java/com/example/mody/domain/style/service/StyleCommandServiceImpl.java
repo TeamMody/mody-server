@@ -1,5 +1,6 @@
 package com.example.mody.domain.style.service;
 
+import com.example.mody.domain.chatgpt.service.ChatGptService;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
 import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
 import com.example.mody.domain.style.entity.Style;

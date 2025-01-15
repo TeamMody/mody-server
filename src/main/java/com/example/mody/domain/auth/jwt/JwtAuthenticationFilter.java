@@ -12,8 +12,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.mody.domain.auth.security.CustomUserDetails;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.repository.MemberRepository;
+import com.example.mody.domain.member.service.MemberQueryService;
 import com.example.mody.global.common.exception.RestApiException;
 import com.example.mody.global.common.exception.code.status.AuthErrorStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,6 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtProvider jwtProvider;
 	private final MemberRepository memberRepository;
 	private final ObjectMapper objectMapper;
+	private final MemberQueryService memberQueryService;
 
 	@Override
 	protected void doFilterInternal(
@@ -49,21 +52,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			// 만약 토큰이 있다면
 			if (token != null) {
-				// 토큰 검증 및 추출
-				String providerId = jwtProvider.validateTokenAndGetSubject(token);
-				// findByProviderId로 Member 찾기
-				Member member = memberRepository.findByProviderId(providerId)
-						.orElseGet(() ->
-								// providerId로 찾지 못했을 경우, findByEmail로 조회
-								memberRepository.findByEmail(providerId)
-										.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ACCESS_TOKEN))
-						);
+
+				String memberId = jwtProvider.validateTokenAndGetSubject(token);
+				Member member = memberRepository.findById(Long.parseLong(memberId))
+					.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ACCESS_TOKEN));
+
+				CustomUserDetails customUserDetails = new CustomUserDetails(member);
 
 				Authentication authentication = new UsernamePasswordAuthenticationToken(
-					member.getId(),
+					customUserDetails,
 					null,
 					List.of(new SimpleGrantedAuthority(member.getRole().toString()))
 				);
+
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			}
 			filterChain.doFilter(request, response);

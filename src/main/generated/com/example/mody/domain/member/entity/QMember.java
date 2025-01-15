@@ -40,6 +40,12 @@ public class QMember extends EntityPathBase<Member> {
 
     public final BooleanPath isRegistrationCompleted = createBoolean("isRegistrationCompleted");
 
+    public final EnumPath<com.example.mody.domain.member.enums.LoginType> loginType = createEnum("loginType", com.example.mody.domain.member.enums.LoginType.class);
+
+    public final ListPath<com.example.mody.domain.bodytype.entity.mapping.MemberBodyType, com.example.mody.domain.bodytype.entity.mapping.QMemberBodyType> memberBodyType = this.<com.example.mody.domain.bodytype.entity.mapping.MemberBodyType, com.example.mody.domain.bodytype.entity.mapping.QMemberBodyType>createList("memberBodyType", com.example.mody.domain.bodytype.entity.mapping.MemberBodyType.class, com.example.mody.domain.bodytype.entity.mapping.QMemberBodyType.class, PathInits.DIRECT2);
+
+    public final ListPath<com.example.mody.domain.bodytype.entity.mapping.MemberBodyType, com.example.mody.domain.bodytype.entity.mapping.QMemberBodyType> memberBodyTypeList = this.<com.example.mody.domain.bodytype.entity.mapping.MemberBodyType, com.example.mody.domain.bodytype.entity.mapping.QMemberBodyType>createList("memberBodyTypeList", com.example.mody.domain.bodytype.entity.mapping.MemberBodyType.class, com.example.mody.domain.bodytype.entity.mapping.QMemberBodyType.class, PathInits.DIRECT2);
+
     public final StringPath nickname = createString("nickname");
 
     public final StringPath password = createString("password");
