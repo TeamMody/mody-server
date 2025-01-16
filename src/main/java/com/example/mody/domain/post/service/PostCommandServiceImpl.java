@@ -73,10 +73,10 @@ public class PostCommandServiceImpl implements PostCommandService {
   
     @Override
     @Transactional
-    public void deletePost(Long posts_id) {
+    public void deletePost(Long postId) {
 
         // 게시글 조회 및 존재 여부 확인
-        Post post = postRepository.findById(posts_id)
+        Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
         List<Long> postImageIdList=postImageRepository.findPostImageIdByPostId(post.getId());
