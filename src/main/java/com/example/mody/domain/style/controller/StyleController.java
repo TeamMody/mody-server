@@ -9,6 +9,7 @@ import com.example.mody.domain.style.service.StyleQueryService;
 import com.example.mody.global.common.base.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -49,7 +50,23 @@ public class StyleController {
             @ApiResponse(
                     responseCode = "200",
                     description = "스타일 추천 성공",
-                    content = @Content(schema = @Schema(implementation = BaseResponse.class))
+                    content = @Content(schema = @Schema(implementation = StyleRecommendResponse.class))
+            ),
+            @ApiResponse(
+            responseCode = "400",
+            description = "사용자의 체형 정보를 찾을 수 없음",
+            content = @Content(
+                    mediaType = "application/json",
+                    examples = @ExampleObject(
+                            value = """
+                                            {
+                                              "timestamp": "2025-01-17T00:48:53.9237864",
+                                              "code": "MEMBER_BODY_TYPE404",
+                                              "message": "체형 분석 결과를 찾을 수 없습니다."
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     public BaseResponse<StyleRecommendResponse> recommendStyle(
