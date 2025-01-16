@@ -1,5 +1,6 @@
 package com.example.mody.domain.file.service;
 
+import com.example.mody.domain.file.dto.request.BackUpFileRequests;
 import com.example.mody.domain.file.dto.request.BackupFileRequest;
 import com.example.mody.domain.file.dto.request.FileCreateResponse;
 import com.example.mody.domain.file.entity.BackupFile;
@@ -16,6 +17,12 @@ public class FileService {
 
     private final BackupFileRepository backupFileRepository;
 
+    public void saveBackupFiles(BackUpFileRequests backupFileRequests){
+        backupFileRequests.getFiles()
+                .forEach(this::saveBackupFile);
+    }
+
+    @Transactional
     public void saveBackupFile(BackupFileRequest backupFileRequest){
         BackupFile backupFile = new BackupFile(backupFileRequest.getFileName(),
                 backupFileRequest.getFileSize(),
@@ -23,6 +30,5 @@ public class FileService {
 
         backupFileRepository.save(backupFile);
     }
-
 
 }
