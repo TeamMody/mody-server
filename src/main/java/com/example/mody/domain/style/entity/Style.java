@@ -16,14 +16,18 @@ public class Style extends BaseEntity {
     @Column(name = "style_recommendation_id")
     private Long id;
 
-    @Column(length = 10, nullable = false)
+    @Column(length = 1000, nullable = false)
     private String recommendedStyle;
 
+    @Column(length = 1000, nullable = false)
     private String introduction;
 
+    @Column(length = 1000, nullable = false)
     private String styleDirection;
 
+    @Column(length = 1000, nullable = false)
     private String practicalStylingTips;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -31,13 +35,16 @@ public class Style extends BaseEntity {
     @OneToOne(mappedBy = "style", cascade = CascadeType.ALL)
     private StyleImage styleImage;
 
-    public Style(String recommendedStyle, String introduction, String styleDirection, String practicalStylingTips, Member member, StyleImage styleImage) {
+    public Style(String recommendedStyle, String introduction, String styleDirection, String practicalStylingTips, Member member) {
 
         this.recommendedStyle = recommendedStyle;
         this.introduction = introduction;
         this.styleDirection = styleDirection;
         this.practicalStylingTips = practicalStylingTips;
         this.member = member;
+    }
+
+    public void setStyleImage(StyleImage styleImage) {
         this.styleImage = styleImage;
     }
 }
