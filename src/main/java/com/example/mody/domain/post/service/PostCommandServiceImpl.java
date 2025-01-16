@@ -40,8 +40,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 	private final PostRepository postRepository;
 	private final MemberRepository memberRepository;
 	private final MemberPostLikeRepository postLikeRepository;
-  private final PostImageRepository postImageRepository;
-  private final BackupFileRepository backupFileRepository;
+  	private final PostImageRepository postImageRepository;
+  	private final BackupFileRepository backupFileRepository;
 
 	private final BodyTypeService bodyTypeService;
 	private final BackupFileService backupFileService;
