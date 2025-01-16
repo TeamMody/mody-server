@@ -35,7 +35,6 @@ public class PostCommandServiceImpl implements PostCommandService {
 	private final MemberPostLikeRepository postLikeRepository;
 
 	private final BodyTypeService bodyTypeService;
-	private final FileService fileService;
 
 	/**
 	 * 게시글 작성 비즈니스 로직. BodyType은 요청 유저의 가장 마지막 BodyType을 적용함. 유저의 BodyType이 존재하지 않을 경우 예외 발생.
@@ -54,9 +53,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 			postCreateRequest.getIsPublic());
 
 		postCreateRequest.getFiles().forEach(file -> {
-			PostImage postImage = new PostImage(post, file.getS3Url());
+			PostImage postImage = new PostImage(post, file);
 			post.getImages().add(postImage);
-			fileService.saveBackupFile(file); // 백업파일 저장
 		});
 
 		postRepository.save(post);
