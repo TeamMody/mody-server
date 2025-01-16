@@ -3,11 +3,13 @@ package com.example.mody.domain.post.entity;
 import com.example.mody.global.common.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "post_image")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class PostImage extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

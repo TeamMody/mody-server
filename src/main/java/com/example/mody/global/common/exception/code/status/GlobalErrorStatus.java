@@ -27,6 +27,9 @@ public enum GlobalErrorStatus implements BaseCodeInterface {
 
     // For test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "예외처리 테스트입니다."),
+
+    //페이지 관련 오류
+    NEGATIVE_PAGE_SIZE_REQUEST(HttpStatus.BAD_REQUEST, "PAGE4001", "잘못된 페이지 사이즈 요청입니다."),
     ;
 
     private final HttpStatus httpStatus;
