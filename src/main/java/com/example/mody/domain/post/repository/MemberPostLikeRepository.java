@@ -11,5 +11,5 @@ import com.example.mody.domain.post.entity.mapping.MemberPostLike;
 public interface MemberPostLikeRepository extends JpaRepository<MemberPostLike, Long> {
 
 	Optional<MemberPostLike> findByPostAndMember(Post post, Member member);
-	
+    Optional<MemberPostLike> findByMemberAndPostId(Member member, Long postId);
 }
