@@ -17,6 +17,7 @@ import com.example.mody.global.common.exception.code.status.MemberPostLikeErrorS
 import com.example.mody.global.common.exception.code.status.PostErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -28,6 +29,7 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final MemberPostLikeRepository memberPostLikeRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public PostListResponse getPosts(Member member, Integer size, Long cursor) {
 
         if(size<=0){
@@ -45,6 +47,7 @@ public class PostQueryServiceImpl implements PostQueryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PostListResponse getLikedPosts(Member member, Integer size, Long cursor) {
         if(size<=0){
             throw new RestApiException(GlobalErrorStatus.NEGATIVE_PAGE_SIZE_REQUEST);
@@ -58,6 +61,7 @@ public class PostQueryServiceImpl implements PostQueryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PostListResponse getMyPosts(Member member, Integer size, Long cursor) {
         if(size<=0){
             throw new RestApiException(GlobalErrorStatus.NEGATIVE_PAGE_SIZE_REQUEST);
