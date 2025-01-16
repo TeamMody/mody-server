@@ -1,12 +1,9 @@
 package com.example.mody.domain.post.dto.request;
 
-import com.example.mody.domain.backupimage.dto.request.BackupFileRequest;
-import com.example.mody.domain.bodytype.entity.BodyType;
+import com.example.mody.domain.file.dto.request.BackupFileRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;

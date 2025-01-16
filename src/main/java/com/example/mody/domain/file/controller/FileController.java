@@ -1,6 +1,6 @@
 package com.example.mody.domain.file.controller;
 
-import com.example.mody.domain.file.dto.FileCreateResponse;
+import com.example.mody.domain.file.dto.request.FileCreateResponse;
 import com.example.mody.domain.file.service.FileService;
 import com.example.mody.global.common.base.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,10 +32,4 @@ public class FileController {
         return BaseResponse.onSuccess(fileService.createFile("", file));
     }
 
-    @DeleteMapping
-    @Operation(summary = "파일 삭제 API", description = "파일을 삭제하는 API입니다. 파일 URL을 입력하면 해당 파일을 삭제합니다.")
-    public BaseResponse<String> deleteFile(@RequestParam("fileUrl") String fileUrl) {
-        fileService.deleteFile(fileUrl);
-        return BaseResponse.onSuccess("파일 삭제 성공");
-    }
 }

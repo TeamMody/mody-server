@@ -1,26 +1,28 @@
 package com.example.mody.domain.file.service;
 
-import com.example.mody.domain.file.dto.FileCreateResponse;
+import com.example.mody.domain.file.dto.request.BackupFileRequest;
+import com.example.mody.domain.file.dto.request.FileCreateResponse;
+import com.example.mody.domain.file.entity.BackupFile;
+import com.example.mody.domain.file.repository.BackupFileRepository;
 import com.example.mody.global.util.S3FileComponent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-//@Service
+@Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class FileService {
 
-    private final S3FileComponent s3FileComponent;
+    private final BackupFileRepository backupFileRepository;
 
-    @Transactional
-    public FileCreateResponse createFile(String domain , final MultipartFile file) {
-        String imageUrl = s3FileComponent.uploadFile(domain, file);
-        return new FileCreateResponse(imageUrl);
+    public void saveBackupFile(BackupFileRequest backupFileRequest){
+        BackupFile backupFile = new BackupFile(backupFileRequest.getFileName(),
+                backupFileRequest.getFileSize(),
+                backupFileRequest.getS3Url());
+
+        backupFileRepository.save(backupFile);
     }
 
-    public void deleteFile(String fileUrl) {
-        s3FileComponent.deleteFile(fileUrl);
-    }
 
 }
