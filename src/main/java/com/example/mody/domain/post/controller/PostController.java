@@ -75,6 +75,37 @@ public class PostController {
 		postCommandService.createPost(request, customUserDetails.getMember());
 		return BaseResponse.onSuccessCreate(null);
 	}
+  
+    @DeleteMapping("/{posts_id}")
+    @Operation(summary = "게시글 삭제 API", description = "인증된 유저의 게시글 삭제 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "202", description = "게시글 삭제 성공"),
+            @ApiResponse(
+                    responseCode = "POST404",
+                    description = "해당 게시물을 찾을 수 없습니다.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+						{
+						    "timestamp": "2024-01-13T10:00:00",
+						    "isSuccess": "false",
+						    "code": "POST404",
+						    "message": "해당 게시물을 찾을 수 없습니다."
+						}
+						"""
+                            )
+                    )
+            )
+    })
+    @Parameters({
+            @Parameter(name = "posts_id", description = "게시글 아이디, path variable 입니다")
+    })
+    public BaseResponse<Void> deletePost(
+            @PathVariable Long posts_id) {
+        postCommandService.deletePost(posts_id);
+        return BaseResponse.onSuccessDelete(null);
+    }
 
 	@Operation(
 		summary = "게시글 좋아요 API",
