@@ -1,12 +1,9 @@
 package com.example.mody.domain.post.dto.request;
 
-import com.example.mody.domain.backupimage.dto.request.BackupFileRequest;
-import com.example.mody.domain.bodytype.entity.BodyType;
+import com.example.mody.domain.file.dto.request.BackupFileRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -39,15 +36,10 @@ public class PostCreateRequest {
 
     @Schema(
             description = "파일명, 파일 크기, S3 URL 목록",
-            example = "[{" +
-                    "\"fileName\": \"test.jpg\"," +
-                    "\"fileSize\": 200," +
-                    "\"s3Url\": \"https://mody-s3-bucket.s3.ap-northeast-2.amazonaws.com/filea8500f7a-c902-4f64-b605-7bc6247b4e75\"" +
-                    "}, {" +
-                    "\"fileName\": \"example.png\"," +
-                    "\"fileSize\": 150," +
-                    "\"s3Url\": \"https://mody-s3-bucket.s3.ap-northeast-2.amazonaws.com/fileb8500f7a-c902-4f64-b605-7bc6247b4e76\"" +
-                    "}]"
+            example = "[\"" +
+                    "https://mody-s3-bucket.s3.ap-northeast-2.amazonaws.com/filea8500f7a-c902-4f64-b605-7bc6247b4e75\", " +
+                    "https://mody-s3-bucket.s3.ap-northeast-2.amazonaws.com/fileb8500f7a-c902-4f64-b605-7bc6247b4e76\"" +
+                    "]"
     )
-    private List<BackupFileRequest> files;
+    private List<String> files;
 }

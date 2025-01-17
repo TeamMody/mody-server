@@ -32,7 +32,7 @@ public class QStyleImage extends EntityPathBase<StyleImage> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final StringPath image_url = createString("image_url");
+    public final StringPath imageUrl = createString("imageUrl");
 
     public final QStyle style;
 

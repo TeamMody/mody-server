@@ -1,4 +1,4 @@
-package com.example.mody.domain.file.dto;
+package com.example.mody.domain.file.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

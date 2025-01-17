@@ -1,4 +1,4 @@
-package com.example.mody.domain.backupimage.dto.request;
+package com.example.mody.domain.file.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
