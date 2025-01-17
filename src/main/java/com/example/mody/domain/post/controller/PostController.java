@@ -1,5 +1,6 @@
 package com.example.mody.domain.post.controller;
 
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
