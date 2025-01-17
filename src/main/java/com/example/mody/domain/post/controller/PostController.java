@@ -1,5 +1,8 @@
 package com.example.mody.domain.post.controller;
 
+import com.example.mody.domain.member.entity.Member;
+import com.example.mody.domain.member.repository.MemberRepository;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,8 +42,9 @@ public class PostController {
 
     private final PostCommandService postCommandService;
     private final PostQueryService postQueryService;
+	private final MemberRepository memberRepository;
 
-    @GetMapping
+	@GetMapping
     @Operation(summary = "게시글 목록 조회 API", description = "전체 게시글에 대한 목록 조회 API")
     @ApiResponses({
             @ApiResponse(
@@ -215,4 +219,37 @@ public class PostController {
         PostListResponse postListResponse =  postQueryService.getMyPosts(customUserDetails.getMember(), size, cursor);
         return BaseResponse.onSuccess(postListResponse);
     }
+
+	@PostMapping("/{posts_id}/reports")
+	@Operation(summary = "게시글 신고 API", description = "인증된 유저의 게시글 신고 API")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "게시글 신고 성공"),
+			@ApiResponse(
+					responseCode = "POST400",
+					description = "이미 신고한 게시물 입니다.",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+						{
+						    "timestamp": "2024-01-13T10:00:00",
+						    "isSuccess": "false",
+						    "code": "POST400",
+						    "message": "이미 신고한 게시물 입니다."
+						}
+						"""
+							)
+					)
+			)
+	})
+	@Parameters({
+			@Parameter(name = "posts_id", description = "게시글 아이디, path variable 입니다")
+	})
+	public BaseResponse<Void> reportPost(
+			@AuthenticationPrincipal CustomUserDetails customUserDetails,
+			@PathVariable Long posts_id) {
+		postCommandService.reportPost(customUserDetails.getMember(), posts_id);
+
+		return BaseResponse.onSuccess(null);
+	}
 }
