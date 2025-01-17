@@ -1,5 +1,6 @@
 package com.example.mody.domain.post.controller;
 
+import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.mody.domain.auth.security.CustomUserDetails;
 import com.example.mody.domain.post.dto.request.PostCreateRequest;
 import com.example.mody.domain.post.exception.annotation.ExistsPost;
+import com.example.mody.domain.post.dto.response.PostListResponse;
 import com.example.mody.domain.post.service.PostCommandService;
+import com.example.mody.domain.post.service.PostQueryService;
 import com.example.mody.global.common.base.BaseResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +26,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "POST API", description = "게시글 관련 API")
 @RestController
@@ -32,12 +38,29 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class PostController {
 
-	private final PostCommandService postCommandService;
+    private final PostCommandService postCommandService;
+    private final PostQueryService postQueryService;
+
+    @GetMapping
+    @Operation(summary = "게시글 목록 조회 API", description = "전체 게시글에 대한 목록 조회 API")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "게시글 목록 조회 성공"
+            )
+    })
+    public BaseResponse<PostListResponse> getAllPosts(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam(name = "cursor", required = false) Long cursor,
+            @RequestParam(name = "size", defaultValue = "15") Integer size) {
+        PostListResponse postListResponse =  postQueryService.getPosts(customUserDetails.getMember(), size, cursor);
+        return BaseResponse.onSuccess(postListResponse);
+    }
 
 	/**
 	 *
 	 * @param request
-	 * @param customUserDetails 현재는 동작하지 않으므로 SecurityContextHolder에서 직접 memberId를 추출하여 사용함. memberId로 member를 찾는 부분도 서비스 단으로 들어가는게 좋다고 판단되지만, 인증 부분이
+	 * @param customUserDetails
 	 * @return
 	 */
 	@PostMapping
@@ -53,6 +76,37 @@ public class PostController {
 		postCommandService.createPost(request, customUserDetails.getMember());
 		return BaseResponse.onSuccessCreate(null);
 	}
+  
+    @DeleteMapping("/{posts_id}")
+    @Operation(summary = "게시글 삭제 API", description = "인증된 유저의 게시글 삭제 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "202", description = "게시글 삭제 성공"),
+            @ApiResponse(
+                    responseCode = "POST404",
+                    description = "해당 게시물을 찾을 수 없습니다.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+						{
+						    "timestamp": "2024-01-13T10:00:00",
+						    "isSuccess": "false",
+						    "code": "POST404",
+						    "message": "해당 게시물을 찾을 수 없습니다."
+						}
+						"""
+                            )
+                    )
+            )
+    })
+    @Parameters({
+            @Parameter(name = "posts_id", description = "게시글 아이디, path variable 입니다")
+    })
+    public BaseResponse<Void> deletePost(
+            @PathVariable Long posts_id) {
+        postCommandService.deletePost(posts_id);
+        return BaseResponse.onSuccessDelete(null);
+    }
 
 	@Operation(
 		summary = "게시글 좋아요 API",
@@ -130,4 +184,36 @@ public class PostController {
 		postCommandService.togglePostLike(myId, postId);
 		return BaseResponse.onSuccess(null);
 	}
+
+    @GetMapping("/liked")
+    @Operation(summary = "좋아요 누른 목록 조회 API", description = "좋아요 누른 게시글에 대한 목록 조회 API")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "게시글 목록 조회 성공"
+            )
+    })
+    public BaseResponse<PostListResponse> getLikedPosts(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam(name = "cursor", required = false) Long cursor,
+            @RequestParam(name = "size", defaultValue = "15") Integer size) {
+        PostListResponse postListResponse =  postQueryService.getLikedPosts(customUserDetails.getMember(), size, cursor);
+        return BaseResponse.onSuccess(postListResponse);
+    }
+
+    @GetMapping("/me")
+    @Operation(summary = "내가 작성한 게시글 목록 조회 API", description = "내가 작성한 게시글에 대한 목록 조회 API")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "게시글 목록 조회 성공"
+            )
+    })
+    public BaseResponse<PostListResponse> getMyPosts(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam(name = "cursor", required = false) Long cursor,
+            @RequestParam(name = "size", defaultValue = "15") Integer size) {
+        PostListResponse postListResponse =  postQueryService.getMyPosts(customUserDetails.getMember(), size, cursor);
+        return BaseResponse.onSuccess(postListResponse);
+    }
 }

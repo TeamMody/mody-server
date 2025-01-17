@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
+import com.example.mody.domain.post.entity.mapping.MemberPostLike;
 import com.example.mody.domain.style.entity.Style;
+
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
-import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.member.enums.LoginType;
 import com.example.mody.domain.member.enums.Role;
@@ -48,6 +49,12 @@ public class Member extends BaseEntity {
 	@Column(name = "member_id")
 	private Long id;
 
+	@OneToMany(mappedBy = "member",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true,
+			fetch = FetchType.LAZY)
+	private List<MemberPostLike> likes = new ArrayList<>();
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
 	private List<MemberBodyType> memberBodyType = new ArrayList<>();
 
@@ -82,9 +89,6 @@ public class Member extends BaseEntity {
 
 	@Builder.Default
 	private boolean isRegistrationCompleted = false;  // 회원가입 완료 여부
-
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<MemberBodyType> memberBodyTypeList = new ArrayList<>();
 
 	public void completeRegistration(String nickname, LocalDate birthDate, Gender gender, Integer height
 		, String profileImageUrl) {

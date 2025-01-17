@@ -16,15 +16,15 @@ public class StyleImage extends BaseEntity {
     @Column(name = "style_image_id")
     private Long id;
 
-    private String image_url;
+    private String imageUrl;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "style_recommendation_id")
     private Style style;
 
-    public StyleImage(String image_url, Style style){
+    public StyleImage(String imageUrl, Style style){
 
-        this.image_url = image_url;
+        this.imageUrl = imageUrl;
         this.style = style;
     }
 }
