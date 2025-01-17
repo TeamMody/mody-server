@@ -1,4 +1,4 @@
-package com.example.mody.domain.backupimage.entity;
+package com.example.mody.domain.file.entity;
 
 import com.example.mody.global.common.base.BaseEntity;
 import jakarta.persistence.*;

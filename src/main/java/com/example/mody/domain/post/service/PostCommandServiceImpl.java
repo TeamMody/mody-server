@@ -1,14 +1,13 @@
 package com.example.mody.domain.post.service;
 
-import com.example.mody.domain.backupimage.repository.BackupFileRepository;
-import static com.example.mody.global.common.exception.code.status.BodyTypeErrorStatus.*;
 
 import java.util.Optional;
 
+import com.example.mody.domain.file.repository.BackupFileRepository;
+import com.example.mody.domain.file.service.FileService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.mody.domain.backupimage.service.BackupFileService;
 import com.example.mody.domain.bodytype.entity.BodyType;
 import com.example.mody.domain.bodytype.service.BodyTypeService;
 import com.example.mody.domain.exception.BodyTypeException;
@@ -44,7 +43,6 @@ public class PostCommandServiceImpl implements PostCommandService {
   	private final BackupFileRepository backupFileRepository;
 
 	private final BodyTypeService bodyTypeService;
-	private final BackupFileService backupFileService;
 
 	/**
 	 * 게시글 작성 비즈니스 로직. BodyType은 요청 유저의 가장 마지막 BodyType을 적용함. 유저의 BodyType이 존재하지 않을 경우 예외 발생.
@@ -63,9 +61,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 			postCreateRequest.getIsPublic());
 
 		postCreateRequest.getFiles().forEach(file -> {
-			PostImage postImage = new PostImage(post, file.getS3Url());
+			PostImage postImage = new PostImage(post, file);
 			post.getImages().add(postImage);
-			backupFileService.saveBackupFile(file); // 백업파일 저장
 		});
 
 		postRepository.save(post);
