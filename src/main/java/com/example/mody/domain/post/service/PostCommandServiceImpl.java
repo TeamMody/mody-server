@@ -134,6 +134,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 		postReportRepository.save(postReport);
 
 		// 신고 횟수 증가
+		post.getMember().increaseReportCount();
 		post.increaseReportCount();
 
 		// 신고 횟수가 10회 이상이면 게시글 삭제
