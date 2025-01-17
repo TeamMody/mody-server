@@ -42,9 +42,9 @@ public class PostController {
 
     private final PostCommandService postCommandService;
     private final PostQueryService postQueryService;
-	private final MemberRepository memberRepository;
-
-	@GetMapping
+    private final MemberRepository memberRepository;
+	
+    @GetMapping
     @Operation(summary = "게시글 목록 조회 API", description = "전체 게시글에 대한 목록 조회 API")
     @ApiResponses({
             @ApiResponse(
