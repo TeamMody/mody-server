@@ -20,6 +20,7 @@ public class MemberConverter {
 			.role(Role.ROLE_USER)
 			.loginType(LoginType.GENERAL)
 			.isRegistrationCompleted(true)
+			.reportCount(0)
 			.build();
 	}
 }

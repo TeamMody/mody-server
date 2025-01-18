@@ -81,6 +81,9 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 
+	@Column(nullable = false)
+	private Integer reportCount;
+
 	@Enumerated(EnumType.STRING)
 	private Role role;
 
@@ -98,9 +101,14 @@ public class Member extends BaseEntity {
 		this.height = height;
 		this.profileImageUrl = profileImageUrl;
 		this.isRegistrationCompleted = true;
+		this.reportCount = 0;
 	}
 
 	public void setEncodedPassword(String password) {
 		this.password = password;
+	}
+
+	public void increaseReportCount() {
+		this.reportCount++;
 	}
 }

@@ -1,10 +1,11 @@
 package com.example.mody.domain.post.service;
 
-
 import java.util.Optional;
 
 import com.example.mody.domain.file.repository.BackupFileRepository;
 import com.example.mody.domain.file.service.FileService;
+import com.example.mody.domain.post.entity.mapping.PostReport;
+import com.example.mody.domain.post.repository.PostReportRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +27,9 @@ import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
 import com.example.mody.global.common.exception.code.status.PostErrorStatus;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.example.mody.global.common.exception.code.status.BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND;
+import static com.example.mody.global.common.exception.code.status.PostErrorStatus.POST_ALREADY_REPORT;
 import static com.example.mody.global.common.exception.code.status.PostErrorStatus.POST_NOT_FOUND;
 import lombok.RequiredArgsConstructor;
 
@@ -41,6 +42,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 	private final MemberPostLikeRepository postLikeRepository;
   	private final PostImageRepository postImageRepository;
   	private final BackupFileRepository backupFileRepository;
+	private final PostReportRepository postReportRepository;
 
 	private final BodyTypeService bodyTypeService;
 
@@ -111,5 +113,31 @@ public class PostCommandServiceImpl implements PostCommandService {
 		}
 
 		// 게시글 엔티티는 @Transactional에 의해 자동으로 저장됩니다.
+	}
+
+	@Override
+	public void reportPost(Member member, Long postId) {
+
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new PostException(POST_NOT_FOUND));
+
+		// 이미 신고를 했는지 확인
+		if (postReportRepository.existsByMemberAndPost(member, post)) {
+			throw new PostException(POST_ALREADY_REPORT);
+		}
+
+		// 신고 기록 저장
+		PostReport postReport = new PostReport(member, post);
+		postReportRepository.save(postReport);
+
+		// 신고 횟수 증가
+		post.getMember().increaseReportCount();
+		post.increaseReportCount();
+
+		// 신고 횟수가 10회 이상이면 게시글 삭제
+		if (post.getReportCount() >= 10) {
+			postReportRepository.deleteAllByPost(post);
+			deletePost(post.getId());
+		}
 	}
 }
