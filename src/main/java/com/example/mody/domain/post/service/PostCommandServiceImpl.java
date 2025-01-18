@@ -136,7 +136,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 		// 신고 횟수가 10회 이상이면 게시글 삭제
 		if (post.getReportCount() >= 10) {
-			postReportRepository.deleteByPost(post);
+			postReportRepository.deleteAllByPost(post);
 			deletePost(post.getId());
 		}
 	}
