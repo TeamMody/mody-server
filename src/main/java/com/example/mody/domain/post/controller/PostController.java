@@ -247,8 +247,8 @@ public class PostController {
 	})
 	public BaseResponse<Void> reportPost(
 			@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@PathVariable Long posts_id) {
-		postCommandService.reportPost(customUserDetails.getMember(), posts_id);
+			@PathVariable Long postsId) {
+		postCommandService.reportPost(customUserDetails.getMember(), postsId);
 
 		return BaseResponse.onSuccess(null);
 	}
