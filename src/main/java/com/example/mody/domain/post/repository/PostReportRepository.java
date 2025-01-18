@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostReportRepository extends JpaRepository<PostReport, Long> {
     boolean existsByMemberAndPost(Member member, Post post);
-    void deleteByMemberAndPost(Member member,Post post);
+    void deleteByPost(Post post);
 }

@@ -220,12 +220,12 @@ public class PostController {
         return BaseResponse.onSuccess(postListResponse);
     }
 
-	@PostMapping("/{posts_id}/reports")
+	@PostMapping("/{postsId}/reports")
 	@Operation(summary = "게시글 신고 API", description = "인증된 유저의 게시글 신고 API")
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", description = "게시글 신고 성공"),
 			@ApiResponse(
-					responseCode = "POST400",
+					responseCode = "POST409",
 					description = "이미 신고한 게시물 입니다.",
 					content = @Content(
 							mediaType = "application/json",
@@ -234,7 +234,7 @@ public class PostController {
 						{
 						    "timestamp": "2024-01-13T10:00:00",
 						    "isSuccess": "false",
-						    "code": "POST400",
+						    "code": "POST409",
 						    "message": "이미 신고한 게시물 입니다."
 						}
 						"""
@@ -243,7 +243,7 @@ public class PostController {
 			)
 	})
 	@Parameters({
-			@Parameter(name = "posts_id", description = "게시글 아이디, path variable 입니다")
+			@Parameter(name = "postsId", description = "게시글 아이디, path variable 입니다")
 	})
 	public BaseResponse<Void> reportPost(
 			@AuthenticationPrincipal CustomUserDetails customUserDetails,
