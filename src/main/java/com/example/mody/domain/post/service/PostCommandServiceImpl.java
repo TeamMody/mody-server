@@ -3,7 +3,8 @@ package com.example.mody.domain.post.service;
 import java.util.Optional;
 
 import com.example.mody.domain.file.repository.BackupFileRepository;
-import com.example.mody.domain.file.service.FileService;
+import com.example.mody.domain.post.dto.request.PostUpdateRequest;
+import com.example.mody.domain.post.dto.response.PostResponse;
 import com.example.mody.domain.post.entity.mapping.PostReport;
 import com.example.mody.domain.post.repository.PostReportRepository;
 import org.springframework.stereotype.Service;
@@ -139,5 +140,25 @@ public class PostCommandServiceImpl implements PostCommandService {
 			postReportRepository.deleteAllByPost(post);
 			deletePost(post.getId());
 		}
+	}
+
+	@Override
+	public PostResponse getPost(Member member, Long postId){
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new PostException(POST_NOT_FOUND));
+
+		Optional<MemberPostLike> existingLike = postLikeRepository.findByPostAndMember(post, member);
+
+		PostResponse postResponse = new PostResponse(post.getId(), post.getMember().getId(),post.getMember().getNickname(), post.getContent(), post.getIsPublic(), post.getLikeCount(), existingLike.isPresent() ,post.getBodyType().getName(), post.getImages());
+
+		return postResponse;
+	}
+
+	@Override
+	public void updatePost(PostUpdateRequest request, Long postId){
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new PostException(POST_NOT_FOUND));
+
+		post.updatePost(request.getContent(), request.getIsPublic());
 	}
 }
