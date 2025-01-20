@@ -12,5 +12,4 @@ public interface PostCommandService {
 	void togglePostLike(Long myId, Long postId);
 	public void reportPost(Member member, Long postId);
 	public void updatePost(PostUpdateRequest request, Long postId);
-	public PostResponse getPost(Member member, Long postId);
 }

@@ -281,7 +281,7 @@ public class PostController {
 	public BaseResponse<PostResponse> getPost(
 			@AuthenticationPrincipal CustomUserDetails customUserDetails,
 			@PathVariable Long postsId) {
-		PostResponse postResponse=postCommandService.getPost(customUserDetails.getMember(), postsId);
+		PostResponse postResponse=postQueryService.getPost(customUserDetails.getMember(), postsId);
 
 		return BaseResponse.onSuccess(postResponse);
 	}
