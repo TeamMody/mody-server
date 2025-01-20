@@ -23,21 +23,21 @@ public class MemberBodyTypeQueryServiceImpl implements MemberBodyTypeQueryServic
     private final MemberBodyTypeRepository memberBodyTypeRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // Member로 MemberBodyType 조회
     @Override
-    public MemberBodyType findMemberBodyTypeByMember(Member member) {
-        Optional<MemberBodyType> optionalMemberBodyType = memberBodyTypeRepository.findMemberBodyTypeByMember(member);
-        return optionalMemberBodyType.orElseThrow(()-> new BodyTypeException(BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND));
-    }
+    public BodyTypeAnalysisResponse getBodyTypeAnalysis(Member member) {
+        MemberBodyType memberBodyType = getMemberBodyType(member);
 
-    // MemberBodyType의 body 내용을 BodyTypeAnalysisResponse로 변환
-    @Override
-    public BodyTypeAnalysisResponse getBodyTypeAnalysis(String body) {
-        // String -> DTO 변환
+        // MemberBodyType의 body 내용을 BodyTypeAnalysisResponse로 변환
         try {
-            return objectMapper.readValue(body, BodyTypeAnalysisResponse.class);
+            return objectMapper.readValue(memberBodyType.getBody(), BodyTypeAnalysisResponse.class);
         } catch (JsonProcessingException e) {
             throw new BodyTypeException(BodyTypeErrorStatus.JSON_PARSING_ERROR);
         }
+    }
+
+    // Member로 MemberBodyType 조회
+    private MemberBodyType getMemberBodyType(Member member) {
+        Optional<MemberBodyType> optionalMemberBodyType = memberBodyTypeRepository.findMemberBodyTypeByMember(member);
+        return optionalMemberBodyType.orElseThrow(() -> new BodyTypeException(BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND));
     }
 }

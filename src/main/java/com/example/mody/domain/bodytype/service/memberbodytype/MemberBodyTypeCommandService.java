@@ -1,7 +1,8 @@
 package com.example.mody.domain.bodytype.service.memberbodytype;
 
-import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
+import com.example.mody.domain.bodytype.dto.BodyTypeAnalysisResponse;
+import com.example.mody.domain.member.entity.Member;
 
 public interface MemberBodyTypeCommandService {
-    public void saveMemberBodyType(MemberBodyType memberBodyType);
+    public BodyTypeAnalysisResponse analyzeBodyType(Member member, String answers);
 }
