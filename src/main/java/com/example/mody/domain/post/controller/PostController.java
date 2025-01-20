@@ -288,7 +288,7 @@ public class PostController {
 
 
 	@PatchMapping("/{postsId}")
-	@Operation(summary = "게시글 수정 API", description = "인증된 유저의 게시글 수정 API")
+	@Operation(summary = "게시글 수정 API", description = "인증된 유저의 게시글 수정 API.\ncontent만 수정하더라도 항상 isPublic의 수정 정보까지 함께 받아오므로 이 점 주의해서 request body 작성해주시면 감사하겠습니다")
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", description = "게시글 수정 성공"),
 			@ApiResponse(
