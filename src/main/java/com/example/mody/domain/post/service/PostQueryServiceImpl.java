@@ -21,12 +21,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.example.mody.global.common.exception.code.status.PostErrorStatus.POST_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class PostQueryServiceImpl implements PostQueryService {
     private final BodyTypeService bodyTypeService;
     private final PostRepository postRepository;
     private final MemberPostLikeRepository memberPostLikeRepository;
+    private final MemberPostLikeRepository postLikeRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -82,5 +85,18 @@ public class PostQueryServiceImpl implements PostQueryService {
         return memberPostLikeRepository.findByMemberAndPostId(member, postId).orElseThrow(()
                 -> new PostException(MemberPostLikeErrorStatus.LIKE_NOT_FOUND));
     }
+
+    @Override
+    public PostResponse getPost(Member member, Long postId){
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
+
+        Optional<MemberPostLike> existingLike = postLikeRepository.findByPostAndMember(post, member);
+
+        PostResponse postResponse = new PostResponse(post.getId(), post.getMember().getId(),post.getMember().getNickname(), post.getContent(), post.getIsPublic(), post.getLikeCount(), existingLike.isPresent() ,post.getBodyType().getName(), post.getImages());
+
+        return postResponse;
+    }
+
 
 }

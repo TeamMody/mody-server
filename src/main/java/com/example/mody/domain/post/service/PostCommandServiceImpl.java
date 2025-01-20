@@ -3,7 +3,8 @@ package com.example.mody.domain.post.service;
 import java.util.Optional;
 
 import com.example.mody.domain.file.repository.BackupFileRepository;
-import com.example.mody.domain.file.service.FileService;
+import com.example.mody.domain.post.dto.request.PostUpdateRequest;
+import com.example.mody.domain.post.dto.response.PostResponse;
 import com.example.mody.domain.post.entity.mapping.PostReport;
 import com.example.mody.domain.post.repository.PostReportRepository;
 import org.springframework.stereotype.Service;
@@ -139,5 +140,13 @@ public class PostCommandServiceImpl implements PostCommandService {
 			postReportRepository.deleteAllByPost(post);
 			deletePost(post.getId());
 		}
+	}
+
+	@Override
+	public void updatePost(PostUpdateRequest request, Long postId){
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new PostException(POST_NOT_FOUND));
+
+		post.updatePost(request.getContent(), request.getIsPublic());
 	}
 }
