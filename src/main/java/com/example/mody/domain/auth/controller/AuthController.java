@@ -44,8 +44,7 @@ public class AuthController {
 		description = """
 			소셜 로그인 후 추가 정보를 입력받아 회원가입을 완료합니다.
 			카카오 로그인 성공 후 신규 회원인 경우 호출해야 하는 API입니다.
-			""",
-		tags = {"회원가입"}
+			"""
 	)
 	@ApiResponses({
 		@ApiResponse(
@@ -296,8 +295,7 @@ public class AuthController {
 
 	@Operation(
 		summary = "일반 회원가입 API",
-		description = "이메일과 비밀번호를 사용하여 새로운 회원을 등록합니다.",
-		tags = {"회원가입"}
+		description = "이메일과 비밀번호를 사용하여 새로운 회원을 등록합니다."
 	)
 	@ApiResponses({
 		@ApiResponse(

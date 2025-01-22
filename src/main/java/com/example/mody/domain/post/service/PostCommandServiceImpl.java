@@ -1,11 +1,11 @@
 package com.example.mody.domain.post.service;
 
+import static com.example.mody.global.common.exception.code.status.BodyTypeErrorStatus.*;
+import static com.example.mody.global.common.exception.code.status.PostErrorStatus.*;
+
+import java.util.List;
 import java.util.Optional;
 
-import com.example.mody.domain.file.repository.BackupFileRepository;
-import com.example.mody.domain.file.service.FileService;
-import com.example.mody.domain.post.entity.mapping.PostReport;
-import com.example.mody.domain.post.repository.PostReportRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,23 +14,21 @@ import com.example.mody.domain.bodytype.service.BodyTypeService;
 import com.example.mody.domain.exception.BodyTypeException;
 import com.example.mody.domain.exception.MemberException;
 import com.example.mody.domain.exception.PostException;
+import com.example.mody.domain.file.repository.BackupFileRepository;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.domain.post.dto.request.PostCreateRequest;
 import com.example.mody.domain.post.entity.Post;
 import com.example.mody.domain.post.entity.PostImage;
-import com.example.mody.domain.post.repository.PostImageRepository;
 import com.example.mody.domain.post.entity.mapping.MemberPostLike;
+import com.example.mody.domain.post.entity.mapping.PostReport;
 import com.example.mody.domain.post.repository.MemberPostLikeRepository;
+import com.example.mody.domain.post.repository.PostImageRepository;
+import com.example.mody.domain.post.repository.PostReportRepository;
 import com.example.mody.domain.post.repository.PostRepository;
 import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
 import com.example.mody.global.common.exception.code.status.PostErrorStatus;
 
-import java.util.List;
-
-import static com.example.mody.global.common.exception.code.status.BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND;
-import static com.example.mody.global.common.exception.code.status.PostErrorStatus.POST_ALREADY_REPORT;
-import static com.example.mody.global.common.exception.code.status.PostErrorStatus.POST_NOT_FOUND;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -40,8 +38,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 	private final PostRepository postRepository;
 	private final MemberRepository memberRepository;
 	private final MemberPostLikeRepository postLikeRepository;
-  	private final PostImageRepository postImageRepository;
-  	private final BackupFileRepository backupFileRepository;
+	private final PostImageRepository postImageRepository;
+	private final BackupFileRepository backupFileRepository;
 	private final PostReportRepository postReportRepository;
 
 	private final BodyTypeService bodyTypeService;
@@ -69,21 +67,21 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 		postRepository.save(post);
 	}
-  
-    @Override
-    @Transactional
-    public void deletePost(Long postId) {
 
-        // 게시글 조회 및 존재 여부 확인
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new PostException(POST_NOT_FOUND));
+	@Override
+	@Transactional
+	public void deletePost(Long postId) {
 
-        List<Long> postImageIdList=postImageRepository.findPostImageIdByPostId(post.getId());
+		// 게시글 조회 및 존재 여부 확인
+		Post post = postRepository.findById(postId)
+			.orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-        backupFileRepository.deleteAllByIdIn(postImageIdList);
+		List<Long> postImageIdList = postImageRepository.findPostImageIdByPostId(post.getId());
 
-        postRepository.deleteById(post.getId());
-    }
+		backupFileRepository.deleteAllByIdIn(postImageIdList);
+
+		postRepository.deleteById(post.getId());
+	}
 
 	@Override
 	public void togglePostLike(Long myId, Long postId) {
@@ -119,7 +117,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 	public void reportPost(Member member, Long postId) {
 
 		Post post = postRepository.findById(postId)
-				.orElseThrow(() -> new PostException(POST_NOT_FOUND));
+			.orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
 		// 이미 신고를 했는지 확인
 		if (postReportRepository.existsByMemberAndPost(member, post)) {
