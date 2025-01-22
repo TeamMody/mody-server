@@ -169,6 +169,7 @@ public class PostController {
 			)
 		)
 	})
+	@PostMapping("/{postId}/like")
 	public BaseResponse<Void> togglePostLike(
 		@PathVariable("postId")
 		@Parameter(
