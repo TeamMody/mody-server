@@ -1,5 +1,6 @@
 package com.example.mody.domain.auth.controller;
 
+import com.example.mody.domain.auth.dto.response.LoginResponse;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -40,10 +41,12 @@ public class AuthController {
 	private final MemberCommandService memberCommandService;
 
 	@Operation(
-		summary = "소셜 로그인 회원가입 완료",
+		summary = "회원가입 완료",
 		description = """
-			소셜 로그인 후 추가 정보를 입력받아 회원가입을 완료합니다.
-			카카오 로그인 성공 후 신규 회원인 경우 호출해야 하는 API입니다.
+			소셜 로그인 혹은 자체 회원가입 후 추가 정보를 입력받아 회원가입을 완료합니다.
+			- 카카오 로그인 시, 로그인 성공 후 신규 회원인 경우 호출해야하는 API입니다.
+			- 자체 회원 가입 시, /auth/signup 성공 후 /auth/login으로 로그인 후 호출해야하는 API입니다.
+			(자체 회원가입 API에서는 이메일, 비밀번호만 입력받고 현재 API를 호출하여 회원가입을 완료합니다.)
 			""",
 		tags = {"회원가입"}
 	)
@@ -101,7 +104,7 @@ public class AuthController {
 			)
 		)
 	})
-	@PostMapping("/signup/oauth2")
+	@PostMapping("/signup/complete")
 	public BaseResponse<Void> completeRegistration(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @RequestBody
@@ -344,7 +347,7 @@ public class AuthController {
 		)
 	})
 	@PostMapping("/signup")
-	public BaseResponse<Void> joinMember(
+	public BaseResponse<LoginResponse> joinMember(
 		@Valid @RequestBody
 		@Parameter(
 			description = "회원가입 요청 정보",
@@ -362,21 +365,22 @@ public class AuthController {
 						"""
 				)
 			)
-		) MemberJoinRequest request
+		) MemberJoinRequest request,
+		HttpServletResponse response
 	) {
-		memberCommandService.joinMember(request);
-		return BaseResponse.onSuccess(null);
+		LoginResponse loginResponse = memberCommandService.joinMember(request, response);
+		return BaseResponse.onSuccess(loginResponse);
 	}
 
 	/**
 	 * Swagger 명세를 위한 API
-	 * @param loginReqeust
+	 * 실제 동작은 이 controller를 거치지 않고 JwtLoginFilter를 통해 이루어집니다.
+	 * @param loginRequest
 	 * @return
 	 */
 	@Operation(
 		summary = "로그인 API",
-		description = "이메일과 비밀번호를 사용하여 로그인합니다. 성공 시 Access Token과 Refresh Token이 발급됩니다.",
-		tags = {"인증", "로그인"}
+		description = "이메일과 비밀번호를 사용하여 로그인합니다. 성공 시 Access Token과 Refresh Token이 발급됩니다."
 	)
 	@ApiResponses({
 		@ApiResponse(
@@ -435,7 +439,7 @@ public class AuthController {
 						"""
 				)
 			)
-		) MemberLoginReqeust loginReqeust
+		) MemberLoginReqeust loginRequest
 	) {
 
 		return BaseResponse.onSuccess(null);

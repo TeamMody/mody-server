@@ -1,5 +1,6 @@
 package com.example.mody.domain.auth.service;
 
+import com.example.mody.domain.auth.dto.TokenDto;
 import com.example.mody.domain.auth.dto.request.MemberJoinRequest;
 import com.example.mody.domain.member.entity.Member;
 
@@ -13,4 +14,5 @@ public interface AuthCommandService {
 
 	void logout(String refreshToken);
 
+	void processLoginSuccess(Member member, HttpServletResponse response);
 }

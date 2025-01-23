@@ -103,4 +103,8 @@ public class Member extends BaseEntity {
 	public void setEncodedPassword(String password) {
 		this.password = password;
 	}
+
+	public Member(String email) {
+		this.email = email;
+	}
 }

@@ -1,5 +1,9 @@
 package com.example.mody.domain.member.service;
 
+import com.example.mody.domain.auth.dto.TokenDto;
+import com.example.mody.domain.auth.dto.response.LoginResponse;
+import com.example.mody.domain.auth.service.AuthCommandService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.mody.domain.auth.dto.request.MemberJoinRequest;
 import com.example.mody.domain.auth.dto.request.MemberRegistrationRequest;
 import com.example.mody.domain.exception.MemberException;
-import com.example.mody.domain.member.converter.MemberConverter;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
@@ -21,6 +24,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final AuthCommandService authCommandService;
 
 	@Override
 	public void completeRegistration(Long memberId, MemberRegistrationRequest request) {
@@ -38,7 +42,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 	//회원가입
 	@Override
-	public void joinMember(MemberJoinRequest request) {
+	public LoginResponse joinMember(MemberJoinRequest request, HttpServletResponse response) {
 		String email = request.getEmail();
 		Boolean isExist = memberRepository.existsByEmail(email);
 
@@ -47,8 +51,18 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 			throw new MemberException(MemberErrorStatus.EMAIL_ALREADY_EXISTS);
 		}
 
-		Member newMember = MemberConverter.toMember(request, email);
+		//회원 저장
+		Member newMember = new Member(request.getEmail());
 		newMember.setEncodedPassword(passwordEncoder.encode(request.getPassword()));
 		memberRepository.save(newMember);
+
+		//자동 로그인 처리
+		authCommandService.processLoginSuccess(newMember, response);
+
+		return LoginResponse.of(
+				newMember.getId(),
+				newMember.getNickname(),
+				true,
+				newMember.isRegistrationCompleted());
 	}
 }

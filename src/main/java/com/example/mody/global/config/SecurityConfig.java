@@ -6,6 +6,7 @@ import java.util.Collections;
 import com.example.mody.domain.auth.jwt.JwtLoginFilter;
 import com.example.mody.domain.auth.service.AuthCommandService;
 import com.example.mody.domain.auth.service.AuthCommandServiceImpl;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

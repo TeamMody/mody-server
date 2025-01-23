@@ -1,4 +1,4 @@
-package com.example.mody.domain.backupimage.entity;
+package com.example.mody.domain.file.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -15,7 +15,7 @@ import com.querydsl.core.types.Path;
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
 public class QBackupFile extends EntityPathBase<BackupFile> {
 
-    private static final long serialVersionUID = -1181831408L;
+    private static final long serialVersionUID = -1486765701L;
 
     public static final QBackupFile backupFile = new QBackupFile("backupFile");
 
