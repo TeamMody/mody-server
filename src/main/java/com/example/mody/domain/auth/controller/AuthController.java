@@ -47,8 +47,7 @@ public class AuthController {
 			- 카카오 로그인 시, 로그인 성공 후 신규 회원인 경우 호출해야하는 API입니다.
 			- 자체 회원 가입 시, /auth/signup 성공 후 /auth/login으로 로그인 후 호출해야하는 API입니다.
 			(자체 회원가입 API에서는 이메일, 비밀번호만 입력받고 현재 API를 호출하여 회원가입을 완료합니다.)
-			""",
-		tags = {"회원가입"}
+			"""
 	)
 	@ApiResponses({
 		@ApiResponse(
@@ -299,8 +298,7 @@ public class AuthController {
 
 	@Operation(
 		summary = "일반 회원가입 API",
-		description = "이메일과 비밀번호를 사용하여 새로운 회원을 등록합니다.",
-		tags = {"회원가입"}
+		description = "이메일과 비밀번호를 사용하여 새로운 회원을 등록합니다."
 	)
 	@ApiResponses({
 		@ApiResponse(
@@ -380,7 +378,8 @@ public class AuthController {
 	 */
 	@Operation(
 		summary = "로그인 API",
-		description = "이메일과 비밀번호를 사용하여 로그인합니다. 성공 시 Access Token과 Refresh Token이 발급됩니다."
+		description = "이메일과 비밀번호를 사용하여 로그인합니다. 성공 시 Access Token과 Refresh Token이 발급됩니다.",
+		tags = {"인증", "로그인"}
 	)
 	@ApiResponses({
 		@ApiResponse(
