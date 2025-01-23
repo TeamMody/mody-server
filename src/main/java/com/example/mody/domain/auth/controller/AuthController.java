@@ -137,8 +137,7 @@ public class AuthController {
 			Access Token이 만료되었을 때 Refresh Token을 사용하여 새로운 토큰을 발급받습니다.
 			Refresh Token은 쿠키에서 자동으로 추출되며, 새로운 Access Token과 Refresh Token이 발급됩니다.
 			발급된 Access Token은 응답 헤더의 Authorization에, Refresh Token은 쿠키에 포함됩니다.
-			""",
-		tags = {"인증", "토큰"}
+			"""
 	)
 	@ApiResponses({
 		@ApiResponse(
@@ -209,7 +208,6 @@ public class AuthController {
 			서버에서 Refresh Token을 삭제하고, 클라이언트의 쿠키에서도 Refresh Token을 제거합니다.
 			클라이언트에서는 저장된 Access Token도 함께 삭제해야 합니다.
 			""",
-		tags = {"인증"},
 		security = @SecurityRequirement(name = "Bearer Authentication")
 	)
 	@ApiResponses({
@@ -378,8 +376,7 @@ public class AuthController {
 	 */
 	@Operation(
 		summary = "로그인 API",
-		description = "이메일과 비밀번호를 사용하여 로그인합니다. 성공 시 Access Token과 Refresh Token이 발급됩니다.",
-		tags = {"인증", "로그인"}
+		description = "이메일과 비밀번호를 사용하여 로그인합니다. 성공 시 Access Token과 Refresh Token이 발급됩니다."
 	)
 	@ApiResponses({
 		@ApiResponse(
