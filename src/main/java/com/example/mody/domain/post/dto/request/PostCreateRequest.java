@@ -4,6 +4,7 @@ import com.example.mody.domain.file.dto.request.BackupFileRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
@@ -11,6 +12,7 @@ import org.hibernate.validator.constraints.Length;
 import java.util.List;
 
 import static com.example.mody.domain.post.constant.PostConstant.POST_CONTENT_LIMIT;
+import static com.example.mody.domain.post.constant.PostConstant.POST_IMAGE_COUNT_LIMIT;
 
 @Schema(description = "게시글 작성 DTO")
 @Getter
@@ -41,5 +43,6 @@ public class PostCreateRequest {
                     "https://mody-s3-bucket.s3.ap-northeast-2.amazonaws.com/fileb8500f7a-c902-4f64-b605-7bc6247b4e76\"" +
                     "]"
     )
+    @Size(max = POST_IMAGE_COUNT_LIMIT, message = "파일의 최대 개수는 {max}를 초과할 수 없습니다.")
     private List<String> files;
 }
