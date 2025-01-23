@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.post.entity.mapping.MemberPostLike;
-import com.example.mody.domain.style.entity.Style;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -101,7 +100,6 @@ public class Member extends BaseEntity {
 		this.height = height;
 		this.profileImageUrl = profileImageUrl;
 		this.isRegistrationCompleted = true;
-		this.reportCount = 0;
 	}
 
 	public void setEncodedPassword(String password) {
@@ -114,5 +112,6 @@ public class Member extends BaseEntity {
 
 	public Member(String email) {
 		this.email = email;
+		this.reportCount = 0;
 	}
 }
