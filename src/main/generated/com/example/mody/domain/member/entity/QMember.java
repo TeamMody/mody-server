@@ -56,6 +56,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath providerId = createString("providerId");
 
+    public final NumberPath<Integer> reportCount = createNumber("reportCount", Integer.class);
+
     public final EnumPath<com.example.mody.domain.member.enums.Role> role = createEnum("role", com.example.mody.domain.member.enums.Role.class);
 
     public final EnumPath<com.example.mody.domain.member.enums.Status> status = createEnum("status", com.example.mody.domain.member.enums.Status.class);

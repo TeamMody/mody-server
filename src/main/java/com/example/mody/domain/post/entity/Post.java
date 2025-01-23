@@ -81,4 +81,13 @@ public class Post extends BaseEntity {
 	public void increaseLikeCount() {
 		this.likeCount++;
 	}
+
+	public void increaseReportCount() {
+		this.reportCount++;
+	}
+
+	public void updatePost(String content, boolean isPublic) {
+		this.content = content;
+		this.isPublic = isPublic;
+	}
 }

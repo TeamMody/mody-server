@@ -1,5 +1,9 @@
 package com.example.mody.domain.post.controller;
 
+import com.example.mody.domain.member.repository.MemberRepository;
+import com.example.mody.domain.post.dto.request.PostUpdateRequest;
+import com.example.mody.domain.post.dto.response.PostResponse;
+import com.example.mody.domain.post.entity.Post;
 import io.swagger.v3.oas.annotations.Parameters;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -26,9 +30,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "POST API", description = "게시글 관련 API")
@@ -40,7 +42,8 @@ public class PostController {
 
     private final PostCommandService postCommandService;
     private final PostQueryService postQueryService;
-
+    private final MemberRepository memberRepository;
+	
     @GetMapping
     @Operation(summary = "게시글 목록 조회 API", description = "전체 게시글에 대한 목록 조회 API")
     @ApiResponses({
@@ -77,7 +80,7 @@ public class PostController {
 		return BaseResponse.onSuccessCreate(null);
 	}
   
-    @DeleteMapping("/{posts_id}")
+    @DeleteMapping("/{postsId}")
     @Operation(summary = "게시글 삭제 API", description = "인증된 유저의 게시글 삭제 API")
     @ApiResponses({
             @ApiResponse(responseCode = "202", description = "게시글 삭제 성공"),
@@ -100,11 +103,11 @@ public class PostController {
             )
     })
     @Parameters({
-            @Parameter(name = "posts_id", description = "게시글 아이디, path variable 입니다")
+            @Parameter(name = "postsId", description = "게시글 아이디, path variable 입니다")
     })
     public BaseResponse<Void> deletePost(
-            @PathVariable Long posts_id) {
-        postCommandService.deletePost(posts_id);
+            @PathVariable Long postsId) {
+        postCommandService.deletePost(postsId);
         return BaseResponse.onSuccessDelete(null);
     }
 
@@ -216,4 +219,104 @@ public class PostController {
         PostListResponse postListResponse =  postQueryService.getMyPosts(customUserDetails.getMember(), size, cursor);
         return BaseResponse.onSuccess(postListResponse);
     }
+
+	@PostMapping("/{postsId}/reports")
+	@Operation(summary = "게시글 신고 API", description = "인증된 유저의 게시글 신고 API")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "게시글 신고 성공"),
+			@ApiResponse(
+					responseCode = "POST409",
+					description = "이미 신고한 게시물 입니다.",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+						{
+						    "timestamp": "2024-01-13T10:00:00",
+						    "isSuccess": "false",
+						    "code": "POST409",
+						    "message": "이미 신고한 게시물 입니다."
+						}
+						"""
+							)
+					)
+			)
+	})
+	@Parameters({
+			@Parameter(name = "postsId", description = "게시글 아이디, path variable 입니다")
+	})
+	public BaseResponse<Void> reportPost(
+			@AuthenticationPrincipal CustomUserDetails customUserDetails,
+			@PathVariable Long postsId) {
+		postCommandService.reportPost(customUserDetails.getMember(), postsId);
+
+		return BaseResponse.onSuccess(null);
+	}
+
+	@GetMapping("/{postsId}")
+	@Operation(summary = "특정 게시글 조회 API", description = "특정 게시글 조회 API")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "게시글 조회 성공"),
+			@ApiResponse(
+					responseCode = "POST404",
+					description = "해당 게시물을 찾을 수 없습니다.",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+						{
+						    "timestamp": "2024-01-13T10:00:00",
+						    "isSuccess": "false",
+						    "code": "POST404",
+						    "message": "해당 게시물을 찾을 수 없습니다."
+						}
+						"""
+							)
+					)
+			)
+	})
+	@Parameters({
+			@Parameter(name = "postsId", description = "게시글 아이디, path variable 입니다")
+	})
+	public BaseResponse<PostResponse> getPost(
+			@AuthenticationPrincipal CustomUserDetails customUserDetails,
+			@PathVariable Long postsId) {
+		PostResponse postResponse=postQueryService.getPost(customUserDetails.getMember(), postsId);
+
+		return BaseResponse.onSuccess(postResponse);
+	}
+
+
+	@PatchMapping("/{postsId}")
+	@Operation(summary = "게시글 수정 API", description = "인증된 유저의 게시글 수정 API.\ncontent만 수정하더라도 항상 isPublic의 수정 정보까지 함께 받아오므로 이 점 주의해서 request body 작성해주시면 감사하겠습니다")
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", description = "게시글 수정 성공"),
+			@ApiResponse(
+					responseCode = "POST404",
+					description = "해당 게시물을 찾을 수 없습니다.",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+						{
+						    "timestamp": "2024-01-13T10:00:00",
+						    "isSuccess": "false",
+						    "code": "POST404",
+						    "message": "해당 게시물을 찾을 수 없습니다."
+						}
+						"""
+							)
+					)
+			)
+	})
+	@Parameters({
+			@Parameter(name = "postsId", description = "게시글 아이디, path variable 입니다")
+	})
+	public BaseResponse<Void> updatePost(
+			@Valid @RequestBody PostUpdateRequest request,
+			@PathVariable Long postsId) {
+		postCommandService.updatePost(request, postsId);
+
+		return BaseResponse.onSuccess(null);
+	}
 }

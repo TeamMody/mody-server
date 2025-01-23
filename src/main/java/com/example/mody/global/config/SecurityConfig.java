@@ -62,7 +62,6 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/auth/**", "/oauth2/**").permitAll()  // 인증 관련 엔드포인트는 모두에게 허용
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()  // API 문서 접근 허용
-                .requestMatchers("/body-analysis/{memberId}").permitAll() // 체형 분석 테스트용
                 .anyRequest().authenticated()  // 나머지 요청은 인증 필요
             )
             // OAuth2 로그인 설정
