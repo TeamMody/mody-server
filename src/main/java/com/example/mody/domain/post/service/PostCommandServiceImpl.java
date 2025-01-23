@@ -6,6 +6,12 @@ import static com.example.mody.global.common.exception.code.status.PostErrorStat
 import java.util.List;
 import java.util.Optional;
 
+
+import com.example.mody.domain.file.repository.BackupFileRepository;
+import com.example.mody.domain.post.dto.request.PostUpdateRequest;
+import com.example.mody.domain.post.dto.response.PostResponse;
+import com.example.mody.domain.post.entity.mapping.PostReport;
+import com.example.mody.domain.post.repository.PostReportRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -137,5 +143,13 @@ public class PostCommandServiceImpl implements PostCommandService {
 			postReportRepository.deleteAllByPost(post);
 			deletePost(post.getId());
 		}
+	}
+
+	@Override
+	public void updatePost(PostUpdateRequest request, Long postId){
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new PostException(POST_NOT_FOUND));
+
+		post.updatePost(request.getContent(), request.getIsPublic());
 	}
 }
