@@ -77,7 +77,6 @@ public class StyleController {
 	public BaseResponse<StyleRecommendResponse> getRecommendedStyle(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails
 	) {
-
 		return BaseResponse.onSuccess(styleQueryService.getRecommendedStyle(customUserDetails.getMember()));
 	}
 

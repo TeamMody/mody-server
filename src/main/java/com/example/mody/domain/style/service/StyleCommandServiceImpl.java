@@ -46,18 +46,21 @@ public class StyleCommandServiceImpl implements StyleCommandService{
         String bodyType = convertBodyTypeToJson(bodyTypeDTO);
 
         //ChatGptService를 호출하여 스타일 추천 데이터를 가져옴
-        StyleRecommendResponse response = chapGptService.recommendGptStyle(request, bodyType);
+        StyleRecommendResponse.StyleRecommendation recommendation = chapGptService.recommendGptStyle(request, bodyType);
+
+        //스타일 추천 결과 응답 생성
+        StyleRecommendResponse response = StyleRecommendResponse.of(member.getNickname(), recommendation);
 
         //데이터 저장
         Style style = new Style(
-                response.getStyleRecommendation().getRecommendedStyle(),
-                response.getStyleRecommendation().getIntroduction(),
-                response.getStyleRecommendation().getStyleDirection(),
-                response.getStyleRecommendation().getPracticalStylingTips(),
+                recommendation.getRecommendedStyle(),
+                recommendation.getIntroduction(),
+                recommendation.getStyleDirection(),
+                recommendation.getPracticalStylingTips(),
                 member
         );
         StyleImage styleImage = new StyleImage(
-                response.getStyleRecommendation().getImageUrl(),
+                recommendation.getImageUrl(),
                 style
         );
         style.setStyleImage(styleImage);
