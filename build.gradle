@@ -55,7 +55,7 @@ dependencies {
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
 	// AWS 서비스 의존성 추가
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 
 	//Webflux
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
