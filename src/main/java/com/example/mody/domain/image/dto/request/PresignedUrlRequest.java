@@ -1,4 +1,4 @@
-package com.example.mody.domain.image.dto.response;
+package com.example.mody.domain.image.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

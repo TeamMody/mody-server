@@ -6,11 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * S3 url 응답 DTO
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "S3 Url 응답 DTO")
+@Schema(description = "S3 url 응답 DTO")
 public class S3UrlResponse {
 
     @Schema(description = "S3 url", example = "https://{bucket-name}.s3.{region}.amazonaws.com/{object-key}")

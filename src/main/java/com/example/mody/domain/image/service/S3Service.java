@@ -3,10 +3,13 @@ package com.example.mody.domain.image.service;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.Headers;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.mody.domain.image.dto.response.PresignedUrlResponse;
 import com.example.mody.domain.image.dto.response.S3UrlResponse;
+import com.example.mody.global.common.exception.RestApiException;
+import com.example.mody.global.common.exception.code.status.S3ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +42,7 @@ public class S3Service {
         List<PresignedUrlResponse> presignedUrls = new ArrayList<>();
         for (String filename : filenames) {
             String key = String.format("deploy/%d/%s/%s", memberId, uuid, filename); // 테스트용 deploy 폴더, 추후 post 폴더로 변경 예정
-            Date expiration = getExpiration();
+            Date expiration = getExpiration(); // 유효 기간
             GeneratePresignedUrlRequest generatePresignedUrlRequest = generatePresignedUrl(key, expiration);
 
             URL url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
@@ -50,15 +53,20 @@ public class S3Service {
 
     // 업로드용(put) presigned url 생성하는 메서드
     private GeneratePresignedUrlRequest generatePresignedUrl(String key, Date expiration) {
-        GeneratePresignedUrlRequest generatePresignedUrlRequest
-                = new GeneratePresignedUrlRequest(bucket, key)
-                .withMethod(HttpMethod.PUT)
-                .withKey(key)
-                .withExpiration(expiration);
-        generatePresignedUrlRequest.addRequestParameter(
-                Headers.S3_CANNED_ACL,
-                CannedAccessControlList.PublicRead.toString());
-        return generatePresignedUrlRequest;
+        try {
+            GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, key)
+                    .withMethod(HttpMethod.PUT)
+                    .withKey(key)
+                    .withExpiration(expiration);
+            generatePresignedUrlRequest.addRequestParameter(
+                    Headers.S3_CANNED_ACL,
+                    CannedAccessControlList.PublicRead.toString());
+            return generatePresignedUrlRequest;
+        } catch (AmazonS3Exception e) {
+            throw new RestApiException(S3ErrorStatus.BUCKET_NOT_FOUND);
+        } catch (Exception e) {
+            throw new RestApiException(S3ErrorStatus.PRESIGNED_URL_GENERATION_FAILED);
+        }
     }
 
     // 유효 기간 설정

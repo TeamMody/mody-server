@@ -1,10 +1,11 @@
 package com.example.mody.domain.image.controller;
 
 import com.example.mody.domain.auth.security.CustomUserDetails;
-import com.example.mody.domain.image.dto.response.PresignedUrlRequest;
+import com.example.mody.domain.image.dto.request.PresignedUrlRequest;
 import com.example.mody.domain.image.dto.response.PresignedUrlResponse;
 import com.example.mody.domain.image.dto.response.S3UrlResponse;
 import com.example.mody.domain.image.service.S3Service;
+import com.example.mody.domain.post.service.PostQueryService;
 import com.example.mody.global.common.base.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -37,10 +38,9 @@ public class S3Controller {
         return BaseResponse.onSuccess(presignedUrlResponse);
     }
 
-
-    // 테스트용
+    // 테스트용(실제 사용 X)
     @GetMapping(value = "/getS3Url")
-    @Operation(summary = "S3 URL 조회 - 테스트용으로 API 연동 시 신경 안 써도 되는 API 입니다.",
+    @Operation(summary = "자체 S3 URL 조회 - 테스트용으로 API 연동 시 신경 안 써도 되는 API 입니다.",
             description = "프론트에서 S3에 파일 업로드 후 반환하는 S3 URL을 서버에서 생성해 확인해보는 테스트용 API 입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공")
