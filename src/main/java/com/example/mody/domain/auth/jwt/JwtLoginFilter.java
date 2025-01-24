@@ -77,7 +77,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("Strict")
-                .maxAge(7 * 24 * 60 * 60) // 7일
+                .maxAge(30)
                 .path("/")
                 .build();
 
