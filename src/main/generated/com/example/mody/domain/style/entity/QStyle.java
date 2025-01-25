@@ -32,6 +32,8 @@ public class QStyle extends EntityPathBase<Style> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final StringPath imageUrl = createString("imageUrl");
+
     public final StringPath introduction = createString("introduction");
 
     public final com.example.mody.domain.member.entity.QMember member;
@@ -41,8 +43,6 @@ public class QStyle extends EntityPathBase<Style> {
     public final StringPath recommendedStyle = createString("recommendedStyle");
 
     public final StringPath styleDirection = createString("styleDirection");
-
-    public final QStyleImage styleImage;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
@@ -66,7 +66,6 @@ public class QStyle extends EntityPathBase<Style> {
     public QStyle(Class<? extends Style> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.member = inits.isInitialized("member") ? new com.example.mody.domain.member.entity.QMember(forProperty("member")) : null;
-        this.styleImage = inits.isInitialized("styleImage") ? new QStyleImage(forProperty("styleImage"), inits.get("styleImage")) : null;
     }
 
 }

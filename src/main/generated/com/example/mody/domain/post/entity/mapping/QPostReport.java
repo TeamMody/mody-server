@@ -1,4 +1,4 @@
-package com.example.mody.domain.style.entity;
+package com.example.mody.domain.post.entity.mapping;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QStyleImage is a Querydsl query type for StyleImage
+ * QPostReport is a Querydsl query type for PostReport
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QStyleImage extends EntityPathBase<StyleImage> {
+public class QPostReport extends EntityPathBase<PostReport> {
 
-    private static final long serialVersionUID = -103454028L;
+    private static final long serialVersionUID = 902725461L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QStyleImage styleImage = new QStyleImage("styleImage");
+    public static final QPostReport postReport = new QPostReport("postReport");
 
     public final com.example.mody.global.common.base.QBaseEntity _super = new com.example.mody.global.common.base.QBaseEntity(this);
 
@@ -32,32 +32,33 @@ public class QStyleImage extends EntityPathBase<StyleImage> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final StringPath imageUrl = createString("imageUrl");
+    public final com.example.mody.domain.member.entity.QMember member;
 
-    public final QStyle style;
+    public final com.example.mody.domain.post.entity.QPost post;
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
-    public QStyleImage(String variable) {
-        this(StyleImage.class, forVariable(variable), INITS);
+    public QPostReport(String variable) {
+        this(PostReport.class, forVariable(variable), INITS);
     }
 
-    public QStyleImage(Path<? extends StyleImage> path) {
+    public QPostReport(Path<? extends PostReport> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QStyleImage(PathMetadata metadata) {
+    public QPostReport(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QStyleImage(PathMetadata metadata, PathInits inits) {
-        this(StyleImage.class, metadata, inits);
+    public QPostReport(PathMetadata metadata, PathInits inits) {
+        this(PostReport.class, metadata, inits);
     }
 
-    public QStyleImage(Class<? extends StyleImage> type, PathMetadata metadata, PathInits inits) {
+    public QPostReport(Class<? extends PostReport> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.style = inits.isInitialized("style") ? new QStyle(forProperty("style"), inits.get("style")) : null;
+        this.member = inits.isInitialized("member") ? new com.example.mody.domain.member.entity.QMember(forProperty("member")) : null;
+        this.post = inits.isInitialized("post") ? new com.example.mody.domain.post.entity.QPost(forProperty("post"), inits.get("post")) : null;
     }
 
 }
