@@ -24,5 +24,4 @@ logging:
   level:
     root: INFO
     org.springframework: INFO
-    org.springframework.web: DEBUG
   config: classpath:logback-spring.xml
