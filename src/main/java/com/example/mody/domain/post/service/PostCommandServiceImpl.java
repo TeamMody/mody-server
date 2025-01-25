@@ -8,6 +8,7 @@ import java.util.Optional;
 
 
 import com.example.mody.domain.file.repository.BackupFileRepository;
+import com.example.mody.domain.file.service.FileService;
 import com.example.mody.domain.post.dto.request.PostUpdateRequest;
 import com.example.mody.domain.post.entity.mapping.PostReport;
 import com.example.mody.domain.post.repository.PostReportRepository;
@@ -45,6 +46,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 	private final PostReportRepository postReportRepository;
 
 	private final BodyTypeService bodyTypeService;
+	private final FileService fileService;
 
 	/**
 	 * 게시글 작성 비즈니스 로직. BodyType은 요청 유저의 가장 마지막 BodyType을 적용함. 유저의 BodyType이 존재하지 않을 경우 예외 발생.
@@ -147,8 +149,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 	@Transactional
 	protected void delete(Post post) {
-		List<Long> postImageIdList = postImageRepository.findPostImageIdByPostId(post.getId());
-		backupFileRepository.deleteAllByIdIn(postImageIdList);
+		List<String> postImageUrls = postImageRepository.findPostImageUrlByPostId(post.getId());
+		fileService.deleteByS3Urls(postImageUrls);
 		postRepository.deleteById(post.getId());
 	}
 
