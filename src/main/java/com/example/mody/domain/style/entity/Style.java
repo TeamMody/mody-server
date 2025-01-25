@@ -7,7 +7,6 @@ import lombok.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Style extends BaseEntity {
@@ -28,23 +27,20 @@ public class Style extends BaseEntity {
     @Column(length = 1000, nullable = false)
     private String practicalStylingTips;
 
+    @Column(length = 300, nullable = false)
+    private String imageUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToOne(mappedBy = "style", cascade = CascadeType.ALL)
-    private StyleImage styleImage;
-
-    public Style(String recommendedStyle, String introduction, String styleDirection, String practicalStylingTips, Member member) {
+    public Style(String recommendedStyle, String introduction, String styleDirection, String practicalStylingTips, Member member, String imageUrl) {
 
         this.recommendedStyle = recommendedStyle;
         this.introduction = introduction;
         this.styleDirection = styleDirection;
         this.practicalStylingTips = practicalStylingTips;
         this.member = member;
-    }
-
-    public void setStyleImage(StyleImage styleImage) {
-        this.styleImage = styleImage;
+        this.imageUrl = imageUrl;
     }
 }

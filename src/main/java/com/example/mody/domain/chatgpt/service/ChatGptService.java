@@ -1,8 +1,6 @@
 package com.example.mody.domain.chatgpt.service;
 
-import com.example.mody.domain.bodytype.dto.BodyTypeAnalysisResponse;
-import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
-import com.example.mody.domain.member.entity.Member;
+import com.example.mody.domain.bodytype.dto.response.BodyTypeAnalysisResponse;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
 import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
@@ -94,7 +92,7 @@ public final class ChatGptService {
         }
     }
 
-    public StyleRecommendResponse recommendGptStyle(StyleRecommendRequest styleRecommendRequest, String bodyType){
+    public StyleRecommendResponse.StyleRecommendation recommendGptStyle(StyleRecommendRequest styleRecommendRequest, String bodyType){
 
         //스타일 추천 프롬프트 생성
         String prompt = promptManager.createRecommendStylePrompt(bodyType, styleRecommendRequest);
@@ -108,9 +106,11 @@ public final class ChatGptService {
                 maxTokens,
                 temperature);
         String content = response.getChoices().get(0).getMessage().getContent().trim();
+        System.out.println(content);
 
         try{
-            return objectMapper.readValue(content, StyleRecommendResponse.class);
+            return objectMapper.readValue(objectMapper.readTree(content).get("styleRecommendation").toString(),
+                    StyleRecommendResponse.StyleRecommendation.class);
         } catch (JsonMappingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         } catch (JsonProcessingException e) {
