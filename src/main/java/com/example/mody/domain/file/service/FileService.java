@@ -17,18 +17,13 @@ public class FileService {
 
     private final BackupFileRepository backupFileRepository;
 
-    public void saveBackupFiles(BackUpFileRequests backupFileRequests){
-        backupFileRequests.getFiles()
-                .forEach(this::saveBackupFile);
-    }
-
     @Transactional
-    public void saveBackupFile(BackupFileRequest backupFileRequest){
-        BackupFile backupFile = new BackupFile(backupFileRequest.getFileName(),
-                backupFileRequest.getFileSize(),
-                backupFileRequest.getS3Url());
-
-        backupFileRepository.save(backupFile);
+    public void saveBackupFiles(BackUpFileRequests backupFileRequests){
+        backupFileRepository.saveAll(backupFileRequests.getFiles().stream()
+                .map(file -> new BackupFile(file.getFileName(),
+                                file.getFileSize(),
+                                file.getS3Url()))
+                .toList());
     }
 
 }

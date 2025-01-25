@@ -9,8 +9,10 @@ import org.hibernate.validator.constraints.Length;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
 
 @Schema(description = "게시글 작성 DTO")
 @Getter
@@ -37,5 +39,7 @@ public class PostCreateRequest {
 		example = "[\"https://{bucket-name}.s3.{region}.amazonaws.com/{object-key1}\", " +
 				"\"https://{bucket-name}.s3.{region}.amazonaws.com/{object-key2}\"]"
 	)
+  @Size(max = POST_IMAGE_COUNT_LIMIT, message = "파일의 최대 개수는 {max}를 초과할 수 없습니다.")
 	private List<String> s3Urls;
+
 }
