@@ -80,7 +80,7 @@ public class StyleController {
 		return BaseResponse.onSuccess(styleQueryService.getRecommendedStyle(customUserDetails.getMember()));
 	}
 
-	@Operation(summary = "스타일 추천 결과 반환 API", description = "스타일 분석 후 그 결과를 반환합니다.")
+	@Operation(summary = "스타일 추천 API", description = "스타일 분석 후 그 결과를 반환합니다.")
 	@PostMapping("/result")
 	@ApiResponses({
 		@ApiResponse(
@@ -89,7 +89,7 @@ public class StyleController {
 			content = @Content(schema = @Schema(implementation = StyleRecommendResponse.class))
 		),
 		@ApiResponse(
-			responseCode = "400",
+			responseCode = "4002",
 			description = "사용자의 체형 정보를 찾을 수 없음",
 			content = @Content(
 				mediaType = "application/json",
@@ -99,6 +99,42 @@ public class StyleController {
 						  "timestamp": "2025-01-17T00:48:53.9237864",
 						  "code": "MEMBER_BODY_TYPE404",
 						  "message": "체형 분석 결과를 찾을 수 없습니다."
+						}
+						"""
+				)
+			)
+		),
+		@ApiResponse(
+			responseCode = "4001",
+				description = "카테고리 리스트가 비어있을 때 발생합니다. " +
+					"선호하는 스타일/ 선호하지 않는 스타일/ 보여주고 싶은 이미지 목록으로 표시됩니다.",
+				content = @Content(
+					mediaType = "application/json",
+					examples = @ExampleObject(
+						value = """
+							{
+								"timestamp": "2025-01-25T15:57:08.7901651",
+								"code": "COMMON402",
+								"message": "Validation Error입니다.",
+								"result": {
+									"preferredStyles": "선호하는 스타일 목록은 비어 있을 수 없습니다."
+								}
+							}
+							"""
+						)
+				)
+		),
+		@ApiResponse(
+			responseCode = "500",
+			description = "GPT 응답 형식이 적절하지 않을 때 발생합니다.",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(
+					value = """
+						{
+							"timestamp": "2025-01-25T16:02:42.4014717",
+							"code": "ANALYSIS108",
+							"message": "GPT가 올바르지 않은 답변을 했습니다. 관리자에게 문의하세요."
 						}
 						"""
 				)

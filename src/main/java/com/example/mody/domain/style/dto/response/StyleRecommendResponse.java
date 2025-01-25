@@ -92,7 +92,7 @@ public class StyleRecommendResponse {
 				.introduction(style.getIntroduction())
 				.styleDirection(style.getStyleDirection())
 				.practicalStylingTips(style.getPracticalStylingTips())
-				.imageUrl(style.getStyleImage().getImageUrl())
+				.imageUrl(style.getImageUrl())
 				.build();
 		}
 
