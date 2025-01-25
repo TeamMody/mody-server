@@ -9,7 +9,6 @@ import com.example.mody.domain.style.dto.BodyTypeDTO;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
 import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
 import com.example.mody.domain.style.entity.Style;
-import com.example.mody.domain.style.entity.StyleImage;
 import com.example.mody.domain.style.repository.StyleRepository;
 import com.example.mody.global.common.exception.code.status.BodyTypeErrorStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -57,13 +56,9 @@ public class StyleCommandServiceImpl implements StyleCommandService{
                 recommendation.getIntroduction(),
                 recommendation.getStyleDirection(),
                 recommendation.getPracticalStylingTips(),
-                member
+                member,
+                recommendation.getImageUrl()
         );
-        StyleImage styleImage = new StyleImage(
-                recommendation.getImageUrl(),
-                style
-        );
-        style.setStyleImage(styleImage);
 
         styleRepository.save(style);
 
