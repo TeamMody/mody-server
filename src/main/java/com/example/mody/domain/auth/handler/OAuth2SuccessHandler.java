@@ -2,6 +2,8 @@ package com.example.mody.domain.auth.handler;
 
 import java.io.IOException;
 
+import com.example.mody.domain.auth.dto.TokenDto;
+import lombok.extern.java.Log;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -56,39 +58,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		boolean isNewMember = member.getCreatedAt().equals(member.getUpdatedAt());
 
 		// Access Token, Refresh Token 발급
-		// 사용자의 ID를 기반으로 Access Token, Refresh Token 생성
-		String accessToken = jwtProvider.createAccessToken(member.getId().toString());
-		String refreshToken = jwtProvider.createRefreshToken(member.getId().toString());
-
-		// Refresh Token 저장
-		authCommandService.saveRefreshToken(member, refreshToken);
-
-		// Refresh Token을 쿠키에 설정
-		ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
-			.httpOnly(true)
-			.secure(true)
-			.sameSite("Strict")
-			.maxAge(7 * 24 * 60 * 60) // 7일
-			.path("/")
-			.build();
-
-		// Access Token을 Authorization 헤더에 설정
-		response.addHeader("Authorization", "Bearer " + accessToken);
-		response.setHeader("Set-Cookie", refreshTokenCookie.toString());
+		authCommandService.processLoginSuccess(member, response);
 
 		// 로그인 응답 데이터 설정
-		LoginResponse loginResponse = LoginResponse.builder()
-			.memberId(member.getId())
-			.nickname(member.getNickname())
-			.isNewMember(isNewMember)
-			.isRegistrationCompleted(member.isRegistrationCompleted())
-			.build();
+		LoginResponse loginResponse = LoginResponse.of(
+				member.getId(),
+				member.getNickname(),
+				isNewMember,
+				member.isRegistrationCompleted()
+		);
 
 		// 응답 바디 작성
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 		response.setCharacterEncoding("UTF-8");
 		response.getWriter().write(objectMapper.writeValueAsString(BaseResponse.onSuccess(loginResponse)));
-
 	}
 
 	private Member saveMember(CustomOAuth2User oAuth2User) {

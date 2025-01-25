@@ -3,6 +3,10 @@ package com.example.mody.global.config;
 import java.util.Arrays;
 import java.util.Collections;
 
+import com.example.mody.domain.auth.jwt.JwtLoginFilter;
+import com.example.mody.domain.auth.service.AuthCommandService;
+import com.example.mody.domain.auth.service.AuthCommandServiceImpl;
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,8 +33,12 @@ import com.example.mody.domain.member.service.MemberQueryService;
 import com.example.mody.global.util.CustomAuthenticationEntryPoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -48,6 +56,7 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        // 기본 보안 설정
 		http
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session

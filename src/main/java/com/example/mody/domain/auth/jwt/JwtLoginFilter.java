@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -66,30 +65,15 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
                 .orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ID_TOKEN));
 
         // Access Token, Refresh Token 발급
-        String accessToken = jwtProvider.createAccessToken(member.getId().toString());
-        String refreshToken = jwtProvider.createRefreshToken(member.getId().toString());
-
-        // Refresh Token 저장
-        authCommandService.saveRefreshToken(member, refreshToken);
-
-        // Refresh Token을 쿠키에 설정
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
-                .maxAge(30)
-                .path("/")
-                .build();
-
-        // Access Token을 Authorization 헤더에 설정
-        response.setHeader("Authorization", "Bearer " + accessToken);
-        response.setHeader("Set-Cookie", refreshTokenCookie.toString());
+        authCommandService.processLoginSuccess(member, response);
 
         // 로그인 응답 데이터 설정
-        LoginResponse loginResponse = LoginResponse.builder()
-                .memberId(member.getId())
-                .nickname(member.getNickname())
-                .build();
+        LoginResponse loginResponse = LoginResponse.of(
+                member.getId(),
+                member.getNickname(),
+                false,
+                member.isRegistrationCompleted()
+        );
 
         // 응답 바디 작성
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
