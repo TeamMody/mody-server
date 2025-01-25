@@ -1,8 +1,6 @@
 package com.example.mody.domain.chatgpt.service;
 
-import com.example.mody.domain.bodytype.dto.BodyTypeAnalysisResponse;
-import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
-import com.example.mody.domain.member.entity.Member;
+import com.example.mody.domain.bodytype.dto.response.BodyTypeAnalysisResponse;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
 import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
