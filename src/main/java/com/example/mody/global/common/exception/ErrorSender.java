@@ -16,6 +16,9 @@ public class ErrorSender {
 
     private final WebClient webClient;
 
+    @Value("${spring.profiles.active}")
+    private String activeProfile; // 현재 프로파일
+
     @Value("${discord.webhook.url}")
     private final String discordWebhookUrl;
 
@@ -40,6 +43,12 @@ public class ErrorSender {
 //    }
 //
     public void sendError(Exception e) {
+
+        // 로컬 프로파일인 경우 알림 생략
+        if ("local".equals(activeProfile)) {
+            return;
+        }
+
         String detailedMessage = buildDetailedErrorMessage(e);
 
         logger.error("An error occurred: {}", e.getMessage(), e);
