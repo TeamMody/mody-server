@@ -23,8 +23,8 @@ public class PostImage extends BaseEntity {
     @Column(nullable = false)
     private String url;
 
-    public PostImage(Post post, String url){
+    public PostImage(Post post, String s3Url){
         this.post = post;
-        this.url = url;
+        this.url = s3Url;
     }
 }

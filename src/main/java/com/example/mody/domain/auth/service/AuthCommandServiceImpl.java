@@ -1,7 +1,5 @@
 package com.example.mody.domain.auth.service;
 
-import com.example.mody.domain.auth.dto.TokenDto;
-import jakarta.servlet.ServletException;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +15,6 @@ import com.example.mody.global.common.exception.code.status.AuthErrorStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
 
 @Slf4j
 @Service
@@ -94,7 +90,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("Strict")
-                .maxAge(7 * 24 * 60 * 60) // 7일
+                .maxAge(30) // 7일(7 * 24 * 60 * 60)
                 .path("/")
                 .build();
 

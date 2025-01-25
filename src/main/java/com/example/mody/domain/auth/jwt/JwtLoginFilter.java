@@ -1,6 +1,5 @@
 package com.example.mody.domain.auth.jwt;
 
-import com.example.mody.domain.auth.dto.TokenDto;
 import com.example.mody.domain.auth.dto.request.MemberLoginReqeust;
 import com.example.mody.domain.auth.dto.response.LoginResponse;
 import com.example.mody.domain.auth.security.CustomUserDetails;
@@ -16,10 +15,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
-import org.antlr.v4.runtime.Token;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

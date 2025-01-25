@@ -44,9 +44,12 @@ public class StyleQueryServiceImpl implements StyleQueryService {
 
 	@Override
 	public StyleRecommendResponse getRecommendedStyle(Member member) {
-		Style style = styleRepository.findByMemberId(member.getId())
-			.orElseThrow(() -> new StyleException(StyleErrorStatus.STYLE_NOT_FOUND));
+		List<Style> styles = styleRepository.findByMemberId(member.getId());
 
-		return StyleRecommendResponse.of(member.getNickname(), StyleRecommendResponse.StyleRecommendation.from(style));
+		if (styles.isEmpty()) {
+			throw new StyleException(StyleErrorStatus.STYLE_NOT_FOUND);
+		}
+
+		return StyleRecommendResponse.of(member.getNickname(), styles);
 	}
 }

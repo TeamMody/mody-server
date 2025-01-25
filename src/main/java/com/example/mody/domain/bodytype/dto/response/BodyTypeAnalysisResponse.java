@@ -1,4 +1,4 @@
-package com.example.mody.domain.bodytype.dto;
+package com.example.mody.domain.bodytype.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

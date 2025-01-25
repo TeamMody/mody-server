@@ -1,11 +1,10 @@
 package com.example.mody.domain.bodytype.service.memberbodytype;
 
-import com.example.mody.domain.bodytype.dto.BodyTypeAnalysisResponse;
+import com.example.mody.domain.bodytype.dto.response.BodyTypeAnalysisResponse;
 import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.bodytype.repository.MemberBodyTypeRepository;
 import com.example.mody.domain.exception.BodyTypeException;
 import com.example.mody.domain.member.entity.Member;
-import com.example.mody.global.common.base.BaseResponse;
 import com.example.mody.global.common.exception.code.status.BodyTypeErrorStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

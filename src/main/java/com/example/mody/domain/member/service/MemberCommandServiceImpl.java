@@ -3,6 +3,9 @@ package com.example.mody.domain.member.service;
 import com.example.mody.domain.auth.dto.TokenDto;
 import com.example.mody.domain.auth.dto.response.LoginResponse;
 import com.example.mody.domain.auth.service.AuthCommandService;
+import com.example.mody.domain.member.enums.LoginType;
+import com.example.mody.domain.member.enums.Role;
+import com.example.mody.domain.member.enums.Status;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,7 +55,15 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 		}
 
 		//회원 저장
-		Member newMember = new Member(request.getEmail());
+		Member newMember = Member.builder()
+				.email(email)
+				.status(Status.ACTIVE)
+				.reportCount(0)
+				.role(Role.ROLE_USER)
+				.loginType(LoginType.GENERAL)
+				.isRegistrationCompleted(false)
+				.build();
+
 		newMember.setEncodedPassword(passwordEncoder.encode(request.getPassword()));
 		memberRepository.save(newMember);
 

@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Schema(description = "스타일 추천 응답 DTO")
 @Getter
 @Builder
@@ -17,19 +20,35 @@ import lombok.NoArgsConstructor;
 public class StyleRecommendResponse {
 
 	@Schema(
-		description = "회원 이름",
+		description = "회원 닉네임",
 		example = "영희"
 	)
-	private String name;
-	private StyleRecommendation styleRecommendation;
+	private String nickName;
 
-	public static StyleRecommendResponse of(String name, StyleRecommendation styleRecommendation) {
+	@Schema(
+			description = "추천 스타일 리스트"
+	)
+	private List<StyleRecommendation> styleRecommendations;
+
+	//단일 추천 결과 생성 메서드
+	public static StyleRecommendResponse of(String nickName, StyleRecommendation styleRecommendation) {
 		return StyleRecommendResponse.builder()
-			.name(name)
-			.styleRecommendation(styleRecommendation)
+			.nickName(nickName)
+			.styleRecommendations(List.of(styleRecommendation))
 			.build();
 	}
 
+	//여러 추천 결과 생성 메서드
+	public static StyleRecommendResponse of(String nickName, List<Style> styles) {
+		List<StyleRecommendation> recommendations = styles.stream()
+				.map(StyleRecommendation::from)
+				.collect(Collectors.toList());
+
+		return StyleRecommendResponse.builder()
+				.nickName(nickName)
+				.styleRecommendations(recommendations)
+				.build();
+	}
 	@Schema(description = "스타일 추천 정보")
 	@Getter
 	@Builder
@@ -73,7 +92,7 @@ public class StyleRecommendResponse {
 				.introduction(style.getIntroduction())
 				.styleDirection(style.getStyleDirection())
 				.practicalStylingTips(style.getPracticalStylingTips())
-				.imageUrl(style.getStyleImage().getImageUrl())
+				.imageUrl(style.getImageUrl())
 				.build();
 		}
 

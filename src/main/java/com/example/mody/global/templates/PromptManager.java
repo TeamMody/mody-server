@@ -66,7 +66,6 @@ public class PromptManager {
                 ,
                 """
                         {
-                            "name": <사용자 이름>,
                             "styleRecommendation": {
                                 "recommendedStyle": <추천하는 스타일>,
                                 "introduction": <스타일 추천 배경>,

@@ -109,9 +109,4 @@ public class Member extends BaseEntity {
 	public void increaseReportCount() {
 		this.reportCount++;
 	}
-
-	public Member(String email) {
-		this.email = email;
-		this.reportCount = 0;
-	}
 }

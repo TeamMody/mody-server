@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import com.example.mody.domain.file.repository.BackupFileRepository;
 import com.example.mody.domain.post.dto.request.PostUpdateRequest;
-import com.example.mody.domain.post.dto.response.PostResponse;
 import com.example.mody.domain.post.entity.mapping.PostReport;
 import com.example.mody.domain.post.repository.PostReportRepository;
 import org.springframework.stereotype.Service;
@@ -20,17 +19,14 @@ import com.example.mody.domain.bodytype.service.BodyTypeService;
 import com.example.mody.domain.exception.BodyTypeException;
 import com.example.mody.domain.exception.MemberException;
 import com.example.mody.domain.exception.PostException;
-import com.example.mody.domain.file.repository.BackupFileRepository;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.domain.post.dto.request.PostCreateRequest;
 import com.example.mody.domain.post.entity.Post;
 import com.example.mody.domain.post.entity.PostImage;
 import com.example.mody.domain.post.entity.mapping.MemberPostLike;
-import com.example.mody.domain.post.entity.mapping.PostReport;
 import com.example.mody.domain.post.repository.MemberPostLikeRepository;
 import com.example.mody.domain.post.repository.PostImageRepository;
-import com.example.mody.domain.post.repository.PostReportRepository;
 import com.example.mody.domain.post.repository.PostRepository;
 import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
 import com.example.mody.global.common.exception.code.status.PostErrorStatus;
@@ -66,8 +62,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 			postCreateRequest.getContent(),
 			postCreateRequest.getIsPublic());
 
-		postCreateRequest.getFiles().forEach(file -> {
-			PostImage postImage = new PostImage(post, file);
+		postCreateRequest.getS3Urls().forEach(s3Url -> {
+			PostImage postImage = new PostImage(post, s3Url);
 			post.getImages().add(postImage);
 		});
 
