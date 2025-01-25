@@ -106,7 +106,6 @@ public final class ChatGptService {
                 maxTokens,
                 temperature);
         String content = response.getChoices().get(0).getMessage().getContent().trim();
-        System.out.println(content);
 
         try{
             return objectMapper.readValue(objectMapper.readTree(content).get("styleRecommendation").toString(),

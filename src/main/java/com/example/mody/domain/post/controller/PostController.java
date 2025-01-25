@@ -121,8 +121,7 @@ public class PostController {
 
 	@Operation(
 		summary = "게시글 좋아요 API",
-		description = "특정 게시글에 좋아요를 등록합니다. 이미 좋아요가 눌러져 있다면 좋아요가 취소됩니다.",
-		tags = {"게시글", "좋아요"}
+		description = "특정 게시글에 좋아요를 등록합니다. 이미 좋아요가 눌러져 있다면 좋아요가 취소됩니다."
 	)
 	@ApiResponses({
 		@ApiResponse(

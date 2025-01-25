@@ -1,11 +1,6 @@
 package com.example.mody.domain.auth.service;
 
-import com.example.mody.domain.auth.dto.request.MemberJoinRequest;
-import com.example.mody.domain.exception.MemberException;
-import com.example.mody.domain.member.converter.MemberConverter;
-import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +9,6 @@ import com.example.mody.domain.auth.jwt.JwtProvider;
 import com.example.mody.domain.auth.repository.RefreshTokenRepository;
 import com.example.mody.domain.exception.RefreshTokenException;
 import com.example.mody.domain.member.entity.Member;
-import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.global.common.exception.RestApiException;
 import com.example.mody.global.common.exception.code.status.AuthErrorStatus;
 
@@ -78,4 +72,29 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
 		refreshTokenRepository.delete(refreshTokenEntity);
 	}
+
+    /**
+     * 로그인 성공 시, 엑세스 토큰과 리프레쉬 토큰을 발급하고 헤더에 넣는 코드를 공통으로 묶음.
+     */
+    @Override
+    public void processLoginSuccess(Member member, HttpServletResponse response) {
+        // Access Token, Refresh Token 발급
+        String accessToken = jwtProvider.createAccessToken(member.getId().toString());
+        String refreshToken = jwtProvider.createRefreshToken(member.getId().toString());
+
+        // Refresh Token 저장
+        saveRefreshToken(member, refreshToken);
+
+        // Refresh Token을 쿠키에 설정
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("Strict")
+                .maxAge(30) // 7일(7 * 24 * 60 * 60)
+                .path("/")
+                .build();
+
+		response.setHeader("Authorization", "Bearer " + accessToken);
+		response.setHeader("Set-Cookie", refreshTokenCookie.toString());
+    }
 }
