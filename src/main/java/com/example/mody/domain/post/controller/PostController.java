@@ -1,6 +1,7 @@
 package com.example.mody.domain.post.controller;
 
 
+import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.domain.post.dto.request.PostUpdateRequest;
 import com.example.mody.domain.post.dto.response.PostResponse;
@@ -77,17 +78,16 @@ public class PostController {
 	@PostMapping
 	@Operation(summary = "게시글 작성 API", description = "인증된 유저의 게시글 작성 API")
 	@ApiResponses({
-		@ApiResponse(
-			responseCode = "201",
-			description = "게시글 작성 성공"
-		)
+            @ApiResponse(responseCode = "201", description = "게시글 작성 성공"),
+			@ApiResponse(responseCode = "MEMBER_BODY_TYPE404", description = "게시글을 작성하려는 유저가 아직 체형 분석을 진행하지 않은 경우"),
+			@ApiResponse(responseCode = "COMMON402", description = "Validation 관련 예외 - 파일 개수 제한 초과, content 길이 제한 초과")
 	})
 	public BaseResponse<Void> registerPost(
 		@Valid @RequestBody PostCreateRequest request, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 		postCommandService.createPost(request, customUserDetails.getMember());
 		return BaseResponse.onSuccessCreate(null);
 	}
-  
+
     @DeleteMapping("/{postsId}")
     @Operation(summary = "게시글 삭제 API", description = "인증된 유저의 게시글 삭제 API")
     @ApiResponses({
@@ -114,8 +114,9 @@ public class PostController {
             @Parameter(name = "postsId", description = "게시글 아이디, path variable 입니다")
     })
     public BaseResponse<Void> deletePost(
-            @PathVariable Long postsId) {
-        postCommandService.deletePost(postsId);
+            @PathVariable Long postsId,
+			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        postCommandService.deletePost(postsId, customUserDetails.getMember());
         return BaseResponse.onSuccessDelete(null);
     }
 
@@ -265,6 +266,7 @@ public class PostController {
 	@Operation(summary = "특정 게시글 조회 API", description = "특정 게시글 조회 API")
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", description = "게시글 조회 성공"),
+			@ApiResponse(responseCode = "POST403", description = "작성자가 아닌 유저의 요청으로 권한이 없는 경우"),
 			@ApiResponse(
 					responseCode = "POST404",
 					description = "해당 게시물을 찾을 수 없습니다.",
@@ -299,6 +301,7 @@ public class PostController {
 	@Operation(summary = "게시글 수정 API", description = "인증된 유저의 게시글 수정 API.\ncontent만 수정하더라도 항상 isPublic의 수정 정보까지 함께 받아오므로 이 점 주의해서 request body 작성해주시면 감사하겠습니다")
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", description = "게시글 수정 성공"),
+			@ApiResponse(responseCode = "POST403", description = "작성자가 아닌 유저의 요청으로 권한이 없는 경우"),
 			@ApiResponse(
 					responseCode = "POST404",
 					description = "해당 게시물을 찾을 수 없습니다.",
@@ -322,8 +325,9 @@ public class PostController {
 	})
 	public BaseResponse<Void> updatePost(
 			@Valid @RequestBody PostUpdateRequest request,
-			@PathVariable Long postsId) {
-		postCommandService.updatePost(request, postsId);
+			@PathVariable Long postsId,
+			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+		postCommandService.updatePost(request, postsId, customUserDetails.getMember());
 
 		return BaseResponse.onSuccess(null);
 	}

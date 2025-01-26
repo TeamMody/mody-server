@@ -39,7 +39,7 @@ public class PostCreateRequest {
 		example = "[\"https://{bucket-name}.s3.{region}.amazonaws.com/{object-key1}\", " +
 				"\"https://{bucket-name}.s3.{region}.amazonaws.com/{object-key2}\"]"
 	)
-  @Size(max = POST_IMAGE_COUNT_LIMIT, message = "파일의 최대 개수는 {max}를 초과할 수 없습니다.")
+  	@Size(max = POST_IMAGE_COUNT_LIMIT, message = "파일의 최대 개수는 {max}를 초과할 수 없습니다.")
 	private List<String> s3Urls;
 
 }
