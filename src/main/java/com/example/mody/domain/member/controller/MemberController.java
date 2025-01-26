@@ -22,9 +22,9 @@ public class MemberController {
     private final MemberQueryService memberQueryService;
 
     @GetMapping("/me")
-    @Operation(summary = "자신의 정보 조회 API", description = "요청 클라이언트의 정보를 반환하는 API")
+    @Operation(summary = "자신의 프로필 조회 API", description = "요청 클라이언트의 정보를 반환하는 API")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = " 성공"),
+            @ApiResponse(responseCode = "COMMON200", description = "프로필 조회 성공"),
     })
     public BaseResponse<MemberProfileResponse> getMyProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails){
         MemberProfileResponse response = memberQueryService.getMyProfile(customUserDetails.getMember());
