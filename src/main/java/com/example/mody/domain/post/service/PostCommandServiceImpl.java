@@ -82,6 +82,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 		backupFileRepository.deleteAllByIdIn(postImageIdList);
 
+		postReportRepository.deleteAllByPost(post);
+
 		postRepository.deleteById(post.getId());
 	}
 
