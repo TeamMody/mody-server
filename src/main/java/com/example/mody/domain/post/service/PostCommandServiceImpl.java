@@ -8,6 +8,7 @@ import java.util.Optional;
 
 
 import com.example.mody.domain.file.repository.BackupFileRepository;
+import com.example.mody.domain.file.service.FileService;
 import com.example.mody.domain.post.dto.request.PostUpdateRequest;
 import com.example.mody.domain.post.entity.mapping.PostReport;
 import com.example.mody.domain.post.repository.PostReportRepository;
@@ -45,6 +46,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 	private final PostReportRepository postReportRepository;
 
 	private final BodyTypeService bodyTypeService;
+	private final FileService fileService;
 
 	/**
 	 * 게시글 작성 비즈니스 로직. BodyType은 요청 유저의 가장 마지막 BodyType을 적용함. 유저의 BodyType이 존재하지 않을 경우 예외 발생.
@@ -72,17 +74,13 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 	@Override
 	@Transactional
-	public void deletePost(Long postId) {
-
+	public void deletePost(Long postId, Member member) {
 		// 게시글 조회 및 존재 여부 확인
 		Post post = postRepository.findById(postId)
 			.orElseThrow(() -> new PostException(POST_NOT_FOUND));
 
-		List<Long> postImageIdList = postImageRepository.findPostImageIdByPostId(post.getId());
-
-		backupFileRepository.deleteAllByIdIn(postImageIdList);
-
-		postRepository.deleteById(post.getId());
+		checkAuthorization(member, post);
+		delete(post);
 	}
 
 	@Override
@@ -137,15 +135,28 @@ public class PostCommandServiceImpl implements PostCommandService {
 		// 신고 횟수가 10회 이상이면 게시글 삭제
 		if (post.getReportCount() >= 10) {
 			postReportRepository.deleteAllByPost(post);
-			deletePost(post.getId());
+			delete(post);
 		}
 	}
 
 	@Override
-	public void updatePost(PostUpdateRequest request, Long postId){
+	public void updatePost(PostUpdateRequest request, Long postId, Member member){
 		Post post = postRepository.findById(postId)
 				.orElseThrow(() -> new PostException(POST_NOT_FOUND));
-
+		checkAuthorization(member, post);
 		post.updatePost(request.getContent(), request.getIsPublic());
+	}
+
+	@Transactional
+	protected void delete(Post post) {
+		List<String> postImageUrls = postImageRepository.findPostImageUrlByPostId(post.getId());
+		fileService.deleteByS3Urls(postImageUrls);
+		postRepository.deleteById(post.getId());
+	}
+
+	private void checkAuthorization(Member member, Post post){
+		if(! member.equals(post.getMember())){
+			throw new PostException(POST_FORBIDDEN);
+		}
 	}
 }
