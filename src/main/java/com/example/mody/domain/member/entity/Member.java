@@ -73,6 +73,10 @@ public class Member extends BaseEntity {
 
 	private LocalDate birthDate;
 
+	@Builder.Default
+	@Column(nullable = false)
+	private Integer likeCount = 0;
+
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
@@ -109,6 +113,14 @@ public class Member extends BaseEntity {
 
 	public void increaseReportCount() {
 		this.reportCount++;
+	}
+
+	public void increaseLikeCount(){
+		this.likeCount++;
+	}
+
+	public void decreaseLikeCount(){
+		this.likeCount--;
 	}
 
 	@Override
