@@ -34,10 +34,18 @@ public class StyleQueryServiceImpl implements StyleQueryService {
 			.map(styleCategory -> styleCategory.getName())
 			.collect(Collectors.toList());
 
+		if (styleCategories.isEmpty()) {
+			throw new StyleException(StyleErrorStatus.STYLE_CATEGORY_EMPTY);
+		}
+
 		List<String> appealCategories = appealCategoryRepository.findAll()
 			.stream()
 			.map(appealCategory -> appealCategory.getName())
 			.collect(Collectors.toList());
+
+		if (appealCategories.isEmpty()) {
+			throw new StyleException(StyleErrorStatus.APPEAL_CATEGORY_EMPTY);
+		}
 
 		return new CategoryResponse(styleCategories, appealCategories);
 	}

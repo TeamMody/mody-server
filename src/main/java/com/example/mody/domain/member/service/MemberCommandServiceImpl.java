@@ -68,7 +68,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 		memberRepository.save(newMember);
 
 		//자동 로그인 처리
-		authCommandService.processLoginSuccess(newMember, response);
+		authCommandService.createAndSetTokens(newMember, response);
 
 		return LoginResponse.of(
 				newMember.getId(),

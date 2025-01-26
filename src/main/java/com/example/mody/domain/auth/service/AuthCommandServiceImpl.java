@@ -77,7 +77,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
      * 로그인 성공 시, 엑세스 토큰과 리프레쉬 토큰을 발급하고 헤더에 넣는 코드를 공통으로 묶음.
      */
     @Override
-    public void processLoginSuccess(Member member, HttpServletResponse response) {
+    public void createAndSetTokens(Member member, HttpServletResponse response) {
         // Access Token, Refresh Token 발급
         String accessToken = jwtProvider.createAccessToken(member.getId().toString());
         String refreshToken = jwtProvider.createRefreshToken(member.getId().toString());

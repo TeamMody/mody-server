@@ -65,7 +65,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
                 .orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ID_TOKEN));
 
         // Access Token, Refresh Token 발급
-        authCommandService.processLoginSuccess(member, response);
+        authCommandService.createAndSetTokens(member, response);
 
         // 로그인 응답 데이터 설정
         LoginResponse loginResponse = LoginResponse.of(

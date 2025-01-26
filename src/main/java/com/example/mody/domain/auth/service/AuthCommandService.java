@@ -14,5 +14,5 @@ public interface AuthCommandService {
 
 	void logout(String refreshToken);
 
-	void processLoginSuccess(Member member, HttpServletResponse response);
+	void createAndSetTokens(Member member, HttpServletResponse response);
 }
