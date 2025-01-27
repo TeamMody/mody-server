@@ -77,10 +77,25 @@ public class PostController {
 	@PostMapping
 	@Operation(summary = "게시글 작성 API", description = "인증된 유저의 게시글 작성 API")
 	@ApiResponses({
-		@ApiResponse(
-			responseCode = "201",
-			description = "게시글 작성 성공"
-		)
+			@ApiResponse(responseCode = "201", description = "게시글 작성 성공"),
+			@ApiResponse(responseCode = "MEMBER_BODY_TYPE404", description = "게시글을 작성하려는 유저가 아직 체형 분석을 진행하지 않은 경우"),
+			@ApiResponse(responseCode = "COMMON402", description = "Validation 관련 예외 - 파일 개수 제한 초과, content 길이 제한 초과"),
+			@ApiResponse(
+					responseCode = "400",
+					description = "presigned url이 만료되었습니다.",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+						{
+							"timestamp": "2025-01-26T15:15:54.334Z",
+							"code": "S3_400",
+							"message": "요청한 presigned url이 만료되었습니다."
+						}
+						"""
+							)
+					)
+			),
 	})
 	public BaseResponse<Void> registerPost(
 		@Valid @RequestBody PostCreateRequest request, @AuthenticationPrincipal CustomUserDetails customUserDetails) {

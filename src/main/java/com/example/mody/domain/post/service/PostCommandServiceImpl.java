@@ -11,6 +11,10 @@ import com.example.mody.domain.file.repository.BackupFileRepository;
 import com.example.mody.domain.post.dto.request.PostUpdateRequest;
 import com.example.mody.domain.post.entity.mapping.PostReport;
 import com.example.mody.domain.post.repository.PostReportRepository;
+import com.example.mody.global.common.exception.RestApiException;
+import com.example.mody.global.common.exception.code.status.S3ErrorStatus;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +36,8 @@ import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
 import com.example.mody.global.common.exception.code.status.PostErrorStatus;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @Transactional
@@ -43,8 +49,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 	private final PostImageRepository postImageRepository;
 	private final BackupFileRepository backupFileRepository;
 	private final PostReportRepository postReportRepository;
-
 	private final BodyTypeService bodyTypeService;
+	private final RestTemplate restTemplate;
 
 	/**
 	 * 게시글 작성 비즈니스 로직. BodyType은 요청 유저의 가장 마지막 BodyType을 적용함. 유저의 BodyType이 존재하지 않을 경우 예외 발생.
@@ -63,11 +69,22 @@ public class PostCommandServiceImpl implements PostCommandService {
 			postCreateRequest.getIsPublic());
 
 		postCreateRequest.getS3Urls().forEach(s3Url -> {
+			validatePresignedUrl(s3Url); // presigned url 유효 기간 검증
 			PostImage postImage = new PostImage(post, s3Url);
 			post.getImages().add(postImage);
 		});
 
 		postRepository.save(post);
+	}
+
+	private void validatePresignedUrl(String s3Url) {
+		try {
+			// S3 url에 GET 요청을 보내서 유효한지 확인
+			restTemplate.exchange(s3Url, HttpMethod.GET, null, Void.class);
+		} catch (HttpClientErrorException e) {
+			// url이 만료되었거나 오류가 발생했을 경우 에러
+			throw new RestApiException(S3ErrorStatus.PRESIGNED_URL_EXPIRED);
+		}
 	}
 
 	@Override
