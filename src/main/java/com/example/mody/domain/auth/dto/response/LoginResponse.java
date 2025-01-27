@@ -1,6 +1,5 @@
 package com.example.mody.domain.auth.dto.response;
 
-import com.example.mody.global.common.base.BaseResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Schema(description = "로그인 응답 DTO")
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class LoginResponse {
@@ -37,7 +37,19 @@ public class LoginResponse {
 	)
 	private boolean isRegistrationCompleted;
 
-	public static LoginResponse of(Long memberId, String nickname, boolean isNewMember, boolean isRegistrationCompleted){
-		return new LoginResponse(memberId, nickname, isNewMember, isRegistrationCompleted);
+	@Schema(
+		description = "access 토큰"
+	)
+	private String accessToken;
+
+	public static LoginResponse of(Long memberId, String nickname, boolean isNewMember,
+		boolean isRegistrationCompleted, String newAccessToken) {
+		return LoginResponse.builder()
+			.memberId(memberId)
+			.nickname(nickname)
+			.isNewMember(isNewMember)
+			.isRegistrationCompleted(isRegistrationCompleted)
+			.accessToken(newAccessToken)
+			.build();
 	}
 }
