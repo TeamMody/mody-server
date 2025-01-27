@@ -3,17 +3,17 @@ package com.example.mody.domain.member.entity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
-import com.example.mody.domain.post.entity.mapping.MemberPostLike;
+import java.util.Objects;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.member.enums.LoginType;
 import com.example.mody.domain.member.enums.Role;
 import com.example.mody.domain.member.enums.Status;
+import com.example.mody.domain.post.entity.mapping.MemberPostLike;
 import com.example.mody.global.common.base.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -49,9 +49,9 @@ public class Member extends BaseEntity {
 	private Long id;
 
 	@OneToMany(mappedBy = "member",
-			cascade = CascadeType.ALL,
-			orphanRemoval = true,
-			fetch = FetchType.LAZY)
+		cascade = CascadeType.ALL,
+		orphanRemoval = true,
+		fetch = FetchType.LAZY)
 	private List<MemberPostLike> likes = new ArrayList<>();
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "member", cascade = CascadeType.ALL)
@@ -72,6 +72,10 @@ public class Member extends BaseEntity {
 
 	private LocalDate birthDate;
 
+	@Builder.Default
+	@Column(nullable = false)
+	private Integer likeCount = 0;
+
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
@@ -81,7 +85,8 @@ public class Member extends BaseEntity {
 	private Status status;
 
 	@Column(nullable = false)
-	private Integer reportCount;
+	@Builder.Default
+	private Integer reportCount = 0;
 
 	@Enumerated(EnumType.STRING)
 	private Role role;
@@ -108,5 +113,29 @@ public class Member extends BaseEntity {
 
 	public void increaseReportCount() {
 		this.reportCount++;
+	}
+
+	public void increaseLikeCount() {
+		this.likeCount++;
+	}
+
+	public void decreaseLikeCount() {
+		this.likeCount--;
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof Member that)) {
+			return false;
+		}
+		return Objects.equals(that.getId(), this.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

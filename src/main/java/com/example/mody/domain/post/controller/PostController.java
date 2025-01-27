@@ -1,6 +1,7 @@
 package com.example.mody.domain.post.controller;
 
 
+import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.domain.post.dto.request.PostUpdateRequest;
 import com.example.mody.domain.post.dto.response.PostResponse;
@@ -77,17 +78,16 @@ public class PostController {
 	@PostMapping
 	@Operation(summary = "게시글 작성 API", description = "인증된 유저의 게시글 작성 API")
 	@ApiResponses({
-		@ApiResponse(
-			responseCode = "201",
-			description = "게시글 작성 성공"
-		)
+            @ApiResponse(responseCode = "201", description = "게시글 작성 성공"),
+			@ApiResponse(responseCode = "MEMBER_BODY_TYPE404", description = "게시글을 작성하려는 유저가 아직 체형 분석을 진행하지 않은 경우"),
+			@ApiResponse(responseCode = "COMMON402", description = "Validation 관련 예외 - 파일 개수 제한 초과, content 길이 제한 초과")
 	})
 	public BaseResponse<Void> registerPost(
 		@Valid @RequestBody PostCreateRequest request, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 		postCommandService.createPost(request, customUserDetails.getMember());
 		return BaseResponse.onSuccessCreate(null);
 	}
-  
+
     @DeleteMapping("/{postId}")
     @Operation(summary = "게시글 삭제 API", description = "인증된 유저의 게시글 삭제 API")
     @ApiResponses({
@@ -108,6 +108,22 @@ public class PostController {
 							)
 					)
 			),
+			@ApiResponse(
+					responseCode = "POST403",
+					description = "작성자가 아닌 유저의 요청으로 권한이 없는 경우",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+          {
+            "timestamp": "2025-01-27T20:56:55.7942672",
+            "code": "POST403",
+            "message": "해당 게시글에 대한 권한이 없습니다."
+          }
+					"""
+							)
+					)
+			),       
 			@ApiResponse(
 					responseCode = "POST404",
 					description = "해당 게시물을 찾을 수 없습니다.",
@@ -130,8 +146,9 @@ public class PostController {
             @Parameter(name = "postId", description = "게시글 아이디, path variable 입니다")
     })
     public BaseResponse<Void> deletePost(
-            @PathVariable Long postId) {
-        postCommandService.deletePost(postId);
+            @PathVariable Long postsId,
+			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        postCommandService.deletePost(postsId, customUserDetails.getMember());
         return BaseResponse.onSuccessDelete(null);
     }
 
@@ -316,7 +333,7 @@ public class PostController {
 			@ApiResponse(responseCode = "COMMON200", description = "게시글 조회 성공"),
 			@ApiResponse(
 					responseCode = "COMMON401",
-					description = "로그인이 필요합니다.",
+					description = "로그인을 하지 않았을 경우",
 					content = @Content(
 							mediaType = "application/json",
 							examples = @ExampleObject(
@@ -366,7 +383,7 @@ public class PostController {
 			@ApiResponse(responseCode = "COMMON200", description = "게시글 수정 성공"),
 			@ApiResponse(
 					responseCode = "COMMON401",
-					description = "로그인이 필요합니다.",
+					description = "로그인을 하지 않았을 경우",
 					content = @Content(
 							mediaType = "application/json",
 							examples = @ExampleObject(
@@ -380,6 +397,22 @@ public class PostController {
 							)
 					)
 			),
+			@ApiResponse(
+					responseCode = "POST403",
+					description = "작성자가 아닌 유저의 요청으로 권한이 없는 경우",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+          {
+            "timestamp": "2025-01-27T20:56:55.7942672",
+            "code": "POST403",
+            "message": "해당 게시글에 대한 권한이 없습니다."
+          }
+					"""
+							)
+					)
+			),      
 			@ApiResponse(
 					responseCode = "POST404",
 					description = "해당 게시물을 찾을 수 없습니다.",
@@ -403,8 +436,9 @@ public class PostController {
 	})
 	public BaseResponse<Void> updatePost(
 			@Valid @RequestBody PostUpdateRequest request,
-			@PathVariable Long postId) {
-		postCommandService.updatePost(request, postId);
+			@PathVariable Long postsId,
+			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+		postCommandService.updatePost(request, postsId, customUserDetails.getMember());
 
 		return BaseResponse.onSuccess(null);
 	}

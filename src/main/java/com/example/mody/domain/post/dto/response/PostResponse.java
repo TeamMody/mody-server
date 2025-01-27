@@ -1,8 +1,6 @@
 package com.example.mody.domain.post.dto.response;
 
-import com.example.mody.domain.bodytype.entity.BodyType;
 import com.example.mody.domain.post.entity.PostImage;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -40,7 +38,7 @@ public class PostResponse {
         this.isLiked = isLiked;
         this.bodyType = bodyType;
         this.files = files.stream()
-                .map(PostImageResponse::from)
+                .map(PostImageResponse::of)
                 .toList();
     }
 }

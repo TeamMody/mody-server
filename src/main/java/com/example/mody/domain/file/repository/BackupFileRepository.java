@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface BackupFileRepository extends JpaRepository<BackupFile, Long> {
     void deleteAllByIdIn(List<Long> backupImageIds);
+
+    void deleteAllByS3UrlIn(List<String> s3Urls);
 }
