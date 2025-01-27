@@ -39,4 +39,8 @@ out/
 
 application.yml
 
+## QClass ##
 !**/src/main/generated/
+
+## log
+logs/
