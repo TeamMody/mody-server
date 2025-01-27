@@ -26,9 +26,9 @@ public enum S3ErrorStatus implements BaseCodeInterface {
 	OBJECT_INVALID_KEY(HttpStatus.BAD_REQUEST, "S3_400", "S3 객체 키가 유효하지 않습니다."),
 
 	// presigned url 관련 오류
-	PRESIGNED_URL_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S3_500", "S3 Presigned URL 생성 중 오류가 발생했습니다."),
-	PRESIGNED_URL_EXPIRED(HttpStatus.BAD_REQUEST, "S3_400", "요청한 Presigned URL이 만료되었습니다."),
-	PRESIGNED_URL_INVALID(HttpStatus.BAD_REQUEST, "S3_400", "요청한 Presigned URL이 유효하지 않습니다."),
+	PRESIGNED_URL_GENERATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "S3_500", "S3 presigned url 생성 중 오류가 발생했습니다."),
+	PRESIGNED_URL_EXPIRED(HttpStatus.BAD_REQUEST, "S3_400", "요청한 presigned url이 만료되었습니다."),
+	PRESIGNED_URL_INVALID(HttpStatus.BAD_REQUEST, "S3_400", "요청한 presigned url이 유효하지 않습니다."),
 
 	// 인증 및 권한 관련 오류
 	CREDENTIALS_INVALID(HttpStatus.UNAUTHORIZED, "S3_401", "S3 접근을 위한 자격 증명이 유효하지 않습니다."),
