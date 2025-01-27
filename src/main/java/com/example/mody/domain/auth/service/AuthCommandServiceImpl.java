@@ -44,7 +44,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 		ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", newRefreshToken)
 			.httpOnly(true)
 			.secure(true)
-			.sameSite("Strict")
+			.sameSite("None")
 			.maxAge(7 * 24 * 60 * 60) // 7일
 			.path("/")
 			.build();
@@ -89,7 +89,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .maxAge(30) // 7일(7 * 24 * 60 * 60)
                 .path("/")
                 .build();

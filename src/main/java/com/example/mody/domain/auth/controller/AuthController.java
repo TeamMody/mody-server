@@ -285,7 +285,7 @@ public class AuthController {
 		ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", "")
 			.httpOnly(true)
 			.secure(true)
-			.sameSite("Strict")
+			.sameSite("None")
 			.maxAge(0)
 			.path("/")
 			.build();
