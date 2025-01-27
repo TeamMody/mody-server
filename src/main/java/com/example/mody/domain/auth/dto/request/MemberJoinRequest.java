@@ -25,5 +25,9 @@ public class MemberJoinRequest {
             example = "user1234!"
     )
     @NotNull(message = "비밀번호는 필수입니다")
+    @Pattern(
+            regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$",
+            message = "비밀번호는 8자 이상, 영어와 숫자, 그리고 특수문자(@$!%*?&#)를 포함해야 하며, 한글은 사용할 수 없습니다."
+    )
     private String password;
 }
