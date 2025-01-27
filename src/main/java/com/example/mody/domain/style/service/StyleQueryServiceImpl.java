@@ -34,19 +34,30 @@ public class StyleQueryServiceImpl implements StyleQueryService {
 			.map(styleCategory -> styleCategory.getName())
 			.collect(Collectors.toList());
 
+		if (styleCategories.isEmpty()) {
+			throw new StyleException(StyleErrorStatus.STYLE_CATEGORY_EMPTY);
+		}
+
 		List<String> appealCategories = appealCategoryRepository.findAll()
 			.stream()
 			.map(appealCategory -> appealCategory.getName())
 			.collect(Collectors.toList());
+
+		if (appealCategories.isEmpty()) {
+			throw new StyleException(StyleErrorStatus.APPEAL_CATEGORY_EMPTY);
+		}
 
 		return new CategoryResponse(styleCategories, appealCategories);
 	}
 
 	@Override
 	public StyleRecommendResponse getRecommendedStyle(Member member) {
-		Style style = styleRepository.findByMemberId(member.getId())
-			.orElseThrow(() -> new StyleException(StyleErrorStatus.STYLE_NOT_FOUND));
+		List<Style> styles = styleRepository.findByMemberId(member.getId());
 
-		return StyleRecommendResponse.of(member.getNickname(), StyleRecommendResponse.StyleRecommendation.from(style));
+		if (styles.isEmpty()) {
+			throw new StyleException(StyleErrorStatus.STYLE_NOT_FOUND);
+		}
+
+		return StyleRecommendResponse.of(member.getNickname(), styles);
 	}
 }

@@ -11,24 +11,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class FileService {
 
     private final BackupFileRepository backupFileRepository;
 
+    @Transactional
     public void saveBackupFiles(BackUpFileRequests backupFileRequests){
-        backupFileRequests.getFiles()
-                .forEach(this::saveBackupFile);
+        backupFileRepository.saveAll(backupFileRequests.getFiles().stream()
+                .map(file -> new BackupFile(file.getFileName(),
+                                file.getFileSize(),
+                                file.getS3Url()))
+                .toList());
     }
 
-    @Transactional
-    public void saveBackupFile(BackupFileRequest backupFileRequest){
-        BackupFile backupFile = new BackupFile(backupFileRequest.getFileName(),
-                backupFileRequest.getFileSize(),
-                backupFileRequest.getS3Url());
-
-        backupFileRepository.save(backupFile);
+    public void deleteByS3Urls(List<String> s3Urls){
+        backupFileRepository.deleteAllByS3UrlIn(s3Urls);
     }
 
 }

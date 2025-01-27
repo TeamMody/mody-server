@@ -1,5 +1,6 @@
 package com.example.mody.domain.auth.controller;
 
+import com.example.mody.domain.auth.dto.response.LoginResponse;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -40,10 +41,12 @@ public class AuthController {
 	private final MemberCommandService memberCommandService;
 
 	@Operation(
-		summary = "소셜 로그인 회원가입 완료",
+		summary = "회원가입 완료",
 		description = """
-			소셜 로그인 후 추가 정보를 입력받아 회원가입을 완료합니다.
-			카카오 로그인 성공 후 신규 회원인 경우 호출해야 하는 API입니다.
+			소셜 로그인 혹은 자체 회원가입 후 추가 정보를 입력받아 회원가입을 완료합니다.
+			- 카카오 로그인 시, 로그인 성공 후 신규 회원인 경우 호출해야하는 API입니다.
+			- 자체 회원 가입 시, /auth/signup 성공 후 /auth/login으로 로그인 후 호출해야하는 API입니다.
+			(자체 회원가입 API에서는 이메일, 비밀번호만 입력받고 현재 API를 호출하여 회원가입을 완료합니다.)
 			"""
 	)
 	@ApiResponses({
@@ -100,7 +103,7 @@ public class AuthController {
 			)
 		)
 	})
-	@PostMapping("/signup/oauth2")
+	@PostMapping("/signup/complete")
 	public BaseResponse<Void> completeRegistration(
 		@AuthenticationPrincipal CustomUserDetails userDetails,
 		@Valid @RequestBody
@@ -134,8 +137,7 @@ public class AuthController {
 			Access Token이 만료되었을 때 Refresh Token을 사용하여 새로운 토큰을 발급받습니다.
 			Refresh Token은 쿠키에서 자동으로 추출되며, 새로운 Access Token과 Refresh Token이 발급됩니다.
 			발급된 Access Token은 응답 헤더의 Authorization에, Refresh Token은 쿠키에 포함됩니다.
-			""",
-		tags = {"인증", "토큰"}
+			"""
 	)
 	@ApiResponses({
 		@ApiResponse(
@@ -206,7 +208,6 @@ public class AuthController {
 			서버에서 Refresh Token을 삭제하고, 클라이언트의 쿠키에서도 Refresh Token을 제거합니다.
 			클라이언트에서는 저장된 Access Token도 함께 삭제해야 합니다.
 			""",
-		tags = {"인증"},
 		security = @SecurityRequirement(name = "Bearer Authentication")
 	)
 	@ApiResponses({
@@ -284,7 +285,7 @@ public class AuthController {
 		ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", "")
 			.httpOnly(true)
 			.secure(true)
-			.sameSite("Strict")
+			.sameSite("None")
 			.maxAge(0)
 			.path("/")
 			.build();
@@ -301,13 +302,25 @@ public class AuthController {
 		@ApiResponse(
 			responseCode = "200",
 			description = "회원가입 성공",
+			headers = {
+				@io.swagger.v3.oas.annotations.headers.Header(
+					name = "Authorization",
+					description = "Access Token",
+					schema = @Schema(type = "string", example = "Bearer eyJhbGciOiJIUzI1...")
+				),
+				@io.swagger.v3.oas.annotations.headers.Header(
+					name = "Set-Cookie",
+					description = "Refresh Token (HttpOnly Cookie)",
+					schema = @Schema(type = "string")
+				)
+				},
 			content = @Content(
 				mediaType = "application/json",
 				schema = @Schema(implementation = BaseResponse.class)
 			)
 		),
 		@ApiResponse(
-			responseCode = "400",
+			responseCode = "COMMON400",
 			description = "잘못된 요청 데이터",
 			content = @Content(
 				mediaType = "application/json",
@@ -324,7 +337,7 @@ public class AuthController {
 			)
 		),
 		@ApiResponse(
-			responseCode = "409",
+			responseCode = "MEMBER409",
 			description = "이미 존재하는 이메일",
 			content = @Content(
 				mediaType = "application/json",
@@ -339,10 +352,29 @@ public class AuthController {
 						"""
 				)
 			)
+		),
+		@ApiResponse(
+			responseCode = "COMMON402",
+			description = "올바르지 않은 비밀번호 형식",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(
+					value = """
+						{
+							"timestamp": "2025-01-27T00:08:57.1421127",
+							"code": "COMMON402",
+							"message": "Validation Error입니다.",
+							"result": {
+								"password": "비밀번호는 8자 이상, 영어와 숫자, 그리고 특수문자(@$!%*?&#)를 포함해야 하며, 한글은 사용할 수 없습니다."
+							}
+						}
+					"""
+				)
+			)
 		)
 	})
 	@PostMapping("/signup")
-	public BaseResponse<Void> joinMember(
+	public BaseResponse<LoginResponse> joinMember(
 		@Valid @RequestBody
 		@Parameter(
 			description = "회원가입 요청 정보",
@@ -360,21 +392,22 @@ public class AuthController {
 						"""
 				)
 			)
-		) MemberJoinRequest request
+		) MemberJoinRequest request,
+		HttpServletResponse response
 	) {
-		memberCommandService.joinMember(request);
-		return BaseResponse.onSuccess(null);
+		LoginResponse loginResponse = memberCommandService.joinMember(request, response);
+		return BaseResponse.onSuccess(loginResponse);
 	}
 
 	/**
-	 * Swagger 명세를 위한 API
-	 * @param loginReqeust
+	 * Swagger 명세를 위한 테스트 controller
+	 * 실제 동작은 이 controller를 거치지 않고 JwtLoginFilter를 통해 이루어집니다.
+	 * @param loginRequest
 	 * @return
 	 */
 	@Operation(
 		summary = "로그인 API",
-		description = "이메일과 비밀번호를 사용하여 로그인합니다. 성공 시 Access Token과 Refresh Token이 발급됩니다.",
-		tags = {"인증", "로그인"}
+		description = "이메일과 비밀번호를 사용하여 로그인합니다. 성공 시 Access Token과 Refresh Token이 발급됩니다."
 	)
 	@ApiResponses({
 		@ApiResponse(
@@ -398,19 +431,34 @@ public class AuthController {
 			)
 		),
 		@ApiResponse(
-			responseCode = "401",
-			description = "로그인 실패",
+			responseCode = "AUTH_INVALID_PASSWORD",
+			description = "올바르지 않은 비밀번호를 입력함",
 			content = @Content(
 				mediaType = "application/json",
 				examples = @ExampleObject(
 					value = """
 						{
 						    "timestamp": "2024-01-13T10:00:00",
-						    "code": "AUTH401",
-						    "message": "이메일 또는 비밀번호가 일치하지 않습니다.",
-						    "result": null
+						    "code": "AUTH_INVALID_PASSWORD",
+						    "message": "비밀번호가 올바르지 않습니다."
 						}
 						"""
+				)
+			)
+		),
+		@ApiResponse(
+			responseCode = "MEMBER404",
+			description = "입력한 이메일을 가진 사용자가 없을 때 발생",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(
+					value = """
+						{
+							"timestamp": "2025-01-27T00:12:53.6087824",
+							"code": "MEMBER404",
+							"message": "해당 회원을 찾을 수 없습니다."
+						}
+					"""
 				)
 			)
 		)
@@ -433,7 +481,7 @@ public class AuthController {
 						"""
 				)
 			)
-		) MemberLoginReqeust loginReqeust
+		) MemberLoginReqeust loginRequest
 	) {
 
 		return BaseResponse.onSuccess(null);

@@ -13,6 +13,7 @@ import lombok.Getter;
 public enum PostErrorStatus implements BaseCodeInterface {
 	
 	POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST404", "해당 게시글을 찾을 수 없습니다."),
+	POST_FORBIDDEN(HttpStatus.FORBIDDEN, "POST403", "해당 게시글에 대한 권한이 없습니다."),
 	POST_ALREADY_REPORT(HttpStatus.BAD_REQUEST, "POST409", "이미 신고한 게시글 입니다."),
 	;
 

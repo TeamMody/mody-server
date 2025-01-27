@@ -36,4 +36,20 @@ public class LoginResponse {
 		example = "false"
 	)
 	private boolean isRegistrationCompleted;
+
+	@Schema(
+		description = "access 토큰"
+	)
+	private String accessToken;
+
+	public static LoginResponse of(Long memberId, String nickname, boolean isNewMember,
+		boolean isRegistrationCompleted, String newAccessToken) {
+		return LoginResponse.builder()
+			.memberId(memberId)
+			.nickname(nickname)
+			.isNewMember(isNewMember)
+			.isRegistrationCompleted(isRegistrationCompleted)
+			.accessToken(newAccessToken)
+			.build();
+	}
 }

@@ -12,7 +12,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum StyleErrorStatus implements BaseCodeInterface {
 
-	STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "STYLE404", "해당 스타일을 찾을 수 없습니다.");
+	STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "STYLE404", "해당 스타일을 찾을 수 없습니다."),
+	STYLE_CATEGORY_EMPTY(HttpStatus.BAD_REQUEST, "STYLE401", "데이터베이스에 스타일 카테고리가 입력되어 있지 않습니다."),
+	APPEAL_CATEGORY_EMPTY(HttpStatus.NOT_FOUND, "STYLE402", "테이터베이스에 어필 카테고리가 입력되어 있지 않습니다.");
+
 
 	private final HttpStatus httpStatus;
 	private final boolean isSuccess = false;
