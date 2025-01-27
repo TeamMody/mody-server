@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 			// 헤더에서 토큰 추출
 			String token = resolveToken(request);
-
+			
 			// 만약 토큰이 있다면
 			if (token != null) {
 
