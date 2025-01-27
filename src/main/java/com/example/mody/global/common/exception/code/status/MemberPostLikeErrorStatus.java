@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum MemberPostLikeErrorStatus implements BaseCodeInterface {
-    LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_POST_LIEK404", "해당 좋아요를 찾을 수 없습니다.")
+    LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_POST_LIKE404", "해당 좋아요를 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;

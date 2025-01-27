@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class FileService {
@@ -24,6 +26,10 @@ public class FileService {
                                 file.getFileSize(),
                                 file.getS3Url()))
                 .toList());
+    }
+
+    public void deleteByS3Urls(List<String> s3Urls){
+        backupFileRepository.deleteAllByS3UrlIn(s3Urls);
     }
 
 }

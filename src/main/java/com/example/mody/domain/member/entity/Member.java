@@ -3,6 +3,7 @@ package com.example.mody.domain.member.entity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.post.entity.mapping.MemberPostLike;
@@ -72,6 +73,10 @@ public class Member extends BaseEntity {
 
 	private LocalDate birthDate;
 
+	@Builder.Default
+	@Column(nullable = false)
+	private Integer likeCount = 0;
+
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
@@ -108,5 +113,29 @@ public class Member extends BaseEntity {
 
 	public void increaseReportCount() {
 		this.reportCount++;
+	}
+
+	public void increaseLikeCount(){
+		this.likeCount++;
+	}
+
+	public void decreaseLikeCount(){
+		this.likeCount--;
+	}
+
+	@Override
+	public boolean equals(final Object o){
+		if (this == o){
+			return true;
+		}
+		if (!(o instanceof Member that)){
+			return false;
+		}
+		return Objects.equals(that.getId(), this.id);
+	}
+
+	@Override
+	public int hashCode(){
+		return Objects.hash(id);
 	}
 }

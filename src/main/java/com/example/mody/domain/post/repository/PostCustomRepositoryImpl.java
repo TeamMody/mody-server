@@ -97,7 +97,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
 
         List<PostResponse> postResponses = new ArrayList<>(postResponseMap.values());
 
-        return PostListResponse.from(hasNext.apply(postResponses, size),
+        return PostListResponse.of(hasNext.apply(postResponses, size),
                 postResponses.subList(0, Math.min(size, postResponses.size())));
     }
 
@@ -194,7 +194,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
 
         List<PostResponse> postResponses = new ArrayList<>(postResponseMap.values());
 
-        return PostListResponse.from(hasNext.apply(postResponses, size),
+        return PostListResponse.of(hasNext.apply(postResponses, size),
                 postResponses.subList(0, Math.min(size, postResponses.size())));
     }
 

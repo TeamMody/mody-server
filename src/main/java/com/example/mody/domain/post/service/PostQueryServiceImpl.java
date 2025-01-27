@@ -60,7 +60,7 @@ public class PostQueryServiceImpl implements PostQueryService {
         PostResponse postResponse = likedPostsResponse.postResponses().getLast();
         MemberPostLike memberPostLike = findByMemberAndPostId(member, postResponse.getPostId());
 
-        return PostListResponse.from(likedPostsResponse.hasNext(), likedPostsResponse.postResponses(), memberPostLike.getId());
+        return PostListResponse.of(likedPostsResponse.hasNext(), likedPostsResponse.postResponses(), memberPostLike.getId());
     }
 
     @Override
