@@ -2,10 +2,7 @@ package com.example.mody.domain.auth.handler;
 
 import java.io.IOException;
 
-import com.example.mody.domain.auth.dto.TokenDto;
-import lombok.extern.java.Log;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -58,14 +55,15 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		boolean isNewMember = member.getCreatedAt().equals(member.getUpdatedAt());
 
 		// Access Token, Refresh Token 발급
-		authCommandService.createAndSetTokens(member, response);
+		String newAccessToken = authCommandService.processLoginSuccess(member, response);
 
 		// 로그인 응답 데이터 설정
 		LoginResponse loginResponse = LoginResponse.of(
-				member.getId(),
-				member.getNickname(),
-				isNewMember,
-				member.isRegistrationCompleted()
+			member.getId(),
+			member.getNickname(),
+			isNewMember,
+			member.isRegistrationCompleted(),
+			newAccessToken
 		);
 
 		// 응답 바디 작성
