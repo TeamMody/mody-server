@@ -1,23 +1,22 @@
 package com.example.mody.domain.member.service;
 
-import com.example.mody.domain.auth.dto.TokenDto;
-import com.example.mody.domain.auth.dto.response.LoginResponse;
-import com.example.mody.domain.auth.service.AuthCommandService;
-import com.example.mody.domain.member.enums.LoginType;
-import com.example.mody.domain.member.enums.Role;
-import com.example.mody.domain.member.enums.Status;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.mody.domain.auth.dto.request.MemberJoinRequest;
 import com.example.mody.domain.auth.dto.request.MemberRegistrationRequest;
+import com.example.mody.domain.auth.dto.response.LoginResponse;
+import com.example.mody.domain.auth.service.AuthCommandService;
 import com.example.mody.domain.exception.MemberException;
 import com.example.mody.domain.member.entity.Member;
+import com.example.mody.domain.member.enums.LoginType;
+import com.example.mody.domain.member.enums.Role;
+import com.example.mody.domain.member.enums.Status;
 import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -56,24 +55,25 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
 		//회원 저장
 		Member newMember = Member.builder()
-				.email(email)
-				.status(Status.ACTIVE)
-				.reportCount(0)
-				.role(Role.ROLE_USER)
-				.loginType(LoginType.GENERAL)
-				.isRegistrationCompleted(false)
-				.build();
+			.email(email)
+			.status(Status.ACTIVE)
+			.reportCount(0)
+			.role(Role.ROLE_USER)
+			.loginType(LoginType.GENERAL)
+			.isRegistrationCompleted(false)
+			.build();
 
 		newMember.setEncodedPassword(passwordEncoder.encode(request.getPassword()));
 		memberRepository.save(newMember);
 
 		//자동 로그인 처리
-		authCommandService.processLoginSuccess(newMember, response);
+		String newAccessToken = authCommandService.processLoginSuccess(newMember, response);
 
 		return LoginResponse.of(
-				newMember.getId(),
-				newMember.getNickname(),
-				true,
-				newMember.isRegistrationCompleted());
+			newMember.getId(),
+			newMember.getNickname(),
+			true,
+			newMember.isRegistrationCompleted(),
+			newAccessToken);
 	}
 }

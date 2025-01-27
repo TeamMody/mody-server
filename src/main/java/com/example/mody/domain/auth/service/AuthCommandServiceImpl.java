@@ -25,7 +25,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 	private final JwtProvider jwtProvider;
 	private final RefreshTokenRepository refreshTokenRepository;
 
-	public void reissueToken(String oldRefreshToken, HttpServletResponse response) {
+	public String reissueToken(String oldRefreshToken, HttpServletResponse response) {
 		// 기존 Refresh Token 검증
 		RefreshToken refreshTokenEntity = refreshTokenRepository.findByToken(oldRefreshToken)
 			.orElseThrow(() -> new RefreshTokenException(AuthErrorStatus.INVALID_REFRESH_TOKEN));
@@ -50,8 +50,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 			.build();
 
 		// Access Token을 Authorization 헤더에 설정
-		response.setHeader("Authorization", "Bearer " + newAccessToken);
+
 		response.setHeader("Set-Cookie", refreshTokenCookie.toString());
+
+		return newAccessToken;
 	}
 
 	public void saveRefreshToken(Member member, String refreshToken) {
@@ -73,28 +75,29 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 		refreshTokenRepository.delete(refreshTokenEntity);
 	}
 
-    /**
-     * 로그인 성공 시, 엑세스 토큰과 리프레쉬 토큰을 발급하고 헤더에 넣는 코드를 공통으로 묶음.
-     */
-    @Override
-    public void processLoginSuccess(Member member, HttpServletResponse response) {
-        // Access Token, Refresh Token 발급
-        String accessToken = jwtProvider.createAccessToken(member.getId().toString());
-        String refreshToken = jwtProvider.createRefreshToken(member.getId().toString());
+	/**
+	 * 로그인 성공 시, 엑세스 토큰과 리프레쉬 토큰을 발급하고 헤더에 넣는 코드를 공통으로 묶음.
+	 */
+	@Override
+	public String processLoginSuccess(Member member, HttpServletResponse response) {
+		// Access Token, Refresh Token 발급
+		String newAccessToken = jwtProvider.createAccessToken(member.getId().toString());
+		String newRefreshToken = jwtProvider.createRefreshToken(member.getId().toString());
 
-        // Refresh Token 저장
-        saveRefreshToken(member, refreshToken);
+		// Refresh Token 저장
+		saveRefreshToken(member, newRefreshToken);
 
-        // Refresh Token을 쿠키에 설정
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", refreshToken)
-                .httpOnly(true)
-                .secure(true)
-                .sameSite("Strict")
-                .maxAge(30) // 7일(7 * 24 * 60 * 60)
-                .path("/")
-                .build();
+		// Refresh Token을 쿠키에 설정
+		ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", newRefreshToken)
+			.httpOnly(true)
+			.secure(true)
+			.sameSite("Strict")
+			.maxAge(30) // 7일(7 * 24 * 60 * 60)
+			.path("/")
+			.build();
 
-		response.setHeader("Authorization", "Bearer " + accessToken);
 		response.setHeader("Set-Cookie", refreshTokenCookie.toString());
-    }
+
+		return newAccessToken;
+	}
 }
