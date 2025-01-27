@@ -95,7 +95,7 @@ public class SecurityConfig {
 		configuration.setAllowedOrigins(Arrays.asList(
 			"https://kollalla.app",        // 프론트엔드 도메인
 			"https://kollalla.app:5173",   // 개발 서버
-			"http://localhost:3000"        // 로컬 개발
+			"http://localhost:5173"        // 로컬 개발
 		));
 
 		// 허용할 HTTP 메서드 설정
