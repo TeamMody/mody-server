@@ -102,12 +102,14 @@ public class PostCommandServiceImpl implements PostCommandService {
 			postLikeRepository.delete(existingLike.get());
 			// 게시글의 좋아요 수를 감소시킵니다.
 			post.decreaseLikeCount();
+			post.getMember().decreaseLikeCount();
 		} else {
 			// 좋아요가 없다면 새로 생성합니다.
 			MemberPostLike postLike = MemberPostLike.createMemberPostLike(member, post);
 			postLikeRepository.save(postLike);
 			// 게시글의 좋아요 수를 증가시킵니다.
 			post.increaseLikeCount();
+			post.getMember().increaseLikeCount();
 		}
 
 		// 게시글 엔티티는 @Transactional에 의해 자동으로 저장됩니다.
