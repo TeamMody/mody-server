@@ -38,6 +38,7 @@ out/
 .vscode/
 
 application.yml
+application*.yml
 
 ## QClass ##
 !**/src/main/generated/
