@@ -41,7 +41,7 @@ public class PostCreateRequest {
 				"\"https://my-bucket.s3.amazonaws.com/path/to/file.jpg\"]"
 	)
 	@NotEmpty(message = "S3 url 목록은 비어 있을 수 없습니다.")
-    @Size(max = POST_IMAGE_COUNT_LIMIT, message = "파일의 최대 개수는 {max}를 초과할 수 없습니다.")
+  @Size(max = POST_IMAGE_COUNT_LIMIT, message = "파일의 최대 개수는 {max}를 초과할 수 없습니다.")
 	private List<String> s3Urls;
 
 }

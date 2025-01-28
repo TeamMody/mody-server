@@ -1,6 +1,7 @@
 package com.example.mody.domain.post.controller;
 
 
+import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.domain.post.dto.request.PostUpdateRequest;
 import com.example.mody.domain.post.dto.response.PostResponse;
@@ -121,18 +122,50 @@ public class PostController {
 		postCommandService.createPost(request, customUserDetails.getMember());
 		return BaseResponse.onSuccessCreate(null);
 	}
-  
-    @DeleteMapping("/{postsId}")
+
+    @DeleteMapping("/{postId}")
     @Operation(summary = "게시글 삭제 API", description = "인증된 유저의 게시글 삭제 API")
     @ApiResponses({
-            @ApiResponse(responseCode = "202", description = "게시글 삭제 성공"),
-            @ApiResponse(
-                    responseCode = "POST404",
-                    description = "해당 게시물을 찾을 수 없습니다.",
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    value = """
+            @ApiResponse(responseCode = "COMMON202", description = "게시글 삭제 성공"),
+			@ApiResponse(
+					responseCode = "COMMON401",
+					description = "로그인이 필요합니다.",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+					{
+					  "timestamp": "2025-01-26T21:23:51.4515304",
+					  "code": "COMMON401",
+					  "message": "인증이 필요합니다."
+					}
+					"""
+							)
+					)
+			),
+			@ApiResponse(
+					responseCode = "POST403",
+					description = "작성자가 아닌 유저의 요청으로 권한이 없는 경우",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+          {
+            "timestamp": "2025-01-27T20:56:55.7942672",
+            "code": "POST403",
+            "message": "해당 게시글에 대한 권한이 없습니다."
+          }
+					"""
+							)
+					)
+			),       
+			@ApiResponse(
+					responseCode = "POST404",
+					description = "해당 게시물을 찾을 수 없습니다.",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
 						{
 						    "timestamp": "2024-01-13T10:00:00",
 						    "isSuccess": "false",
@@ -140,16 +173,17 @@ public class PostController {
 						    "message": "해당 게시물을 찾을 수 없습니다."
 						}
 						"""
-                            )
-                    )
-            )
+							)
+					)
+			)
     })
     @Parameters({
-            @Parameter(name = "postsId", description = "게시글 아이디, path variable 입니다")
+            @Parameter(name = "postId", description = "게시글 아이디, path variable 입니다")
     })
     public BaseResponse<Void> deletePost(
-            @PathVariable Long postsId) {
-        postCommandService.deletePost(postsId);
+            @PathVariable Long postsId,
+			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        postCommandService.deletePost(postsId, customUserDetails.getMember());
         return BaseResponse.onSuccessDelete(null);
     }
 
@@ -262,10 +296,43 @@ public class PostController {
 		return BaseResponse.onSuccess(postListResponse);
 	}
 
-	@PostMapping("/{postsId}/reports")
+	@PostMapping("/{postId}/reports")
 	@Operation(summary = "게시글 신고 API", description = "인증된 유저의 게시글 신고 API")
 	@ApiResponses({
-		@ApiResponse(responseCode = "200", description = "게시글 신고 성공"),
+		@ApiResponse(responseCode = "COMMON200", description = "게시글 신고 성공"),
+		@ApiResponse(
+				responseCode = "COMMON401",
+				description = "로그인이 필요합니다.",
+				content = @Content(
+						mediaType = "application/json",
+						examples = @ExampleObject(
+								value = """
+					{
+					  "timestamp": "2025-01-26T21:23:51.4515304",
+					  "code": "COMMON401",
+					  "message": "인증이 필요합니다."
+					}
+					"""
+						)
+				)
+		),
+		@ApiResponse(
+				responseCode = "POST404",
+				description = "해당 게시물을 찾을 수 없습니다.",
+				content = @Content(
+						mediaType = "application/json",
+						examples = @ExampleObject(
+								value = """
+					{
+					    "timestamp": "2024-01-13T10:00:00",
+					    "isSuccess": "false",
+					    "code": "POST404",
+					    "message": "해당 게시물을 찾을 수 없습니다."
+					}
+					"""
+						)
+				)
+		),
 		@ApiResponse(
 			responseCode = "POST409",
 			description = "이미 신고한 게시물 입니다.",
@@ -285,20 +352,36 @@ public class PostController {
 		)
 	})
 	@Parameters({
-		@Parameter(name = "postsId", description = "게시글 아이디, path variable 입니다")
+		@Parameter(name = "postId", description = "게시글 아이디, path variable 입니다")
 	})
 	public BaseResponse<Void> reportPost(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
-		@PathVariable Long postsId) {
-		postCommandService.reportPost(customUserDetails.getMember(), postsId);
+		@PathVariable Long postId) {
+		postCommandService.reportPost(customUserDetails.getMember(), postId);
 
 		return BaseResponse.onSuccess(null);
 	}
 
-	@GetMapping("/{postsId}")
+	@GetMapping("/{postId}")
 	@Operation(summary = "특정 게시글 조회 API", description = "특정 게시글 조회 API")
 	@ApiResponses({
-			@ApiResponse(responseCode = "200", description = "게시글 조회 성공"),
+			@ApiResponse(responseCode = "COMMON200", description = "게시글 조회 성공"),
+			@ApiResponse(
+					responseCode = "COMMON401",
+					description = "로그인을 하지 않았을 경우",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+					{
+					  "timestamp": "2025-01-26T21:23:51.4515304",
+					  "code": "COMMON401",
+					  "message": "인증이 필요합니다."
+					}
+					"""
+							)
+					)
+			),
 			@ApiResponse(
 					responseCode = "POST404",
 					description = "해당 게시물을 찾을 수 없습니다.",
@@ -318,21 +401,53 @@ public class PostController {
 			)
 	})
 	@Parameters({
-			@Parameter(name = "postsId", description = "게시글 아이디, path variable 입니다")
+			@Parameter(name = "postId", description = "게시글 아이디, path variable 입니다")
 	})
 	public BaseResponse<PostResponse> getPost(
 			@AuthenticationPrincipal CustomUserDetails customUserDetails,
-			@PathVariable Long postsId) {
-		PostResponse postResponse=postQueryService.getPost(customUserDetails.getMember(), postsId);
+			@PathVariable Long postId) {
+		PostResponse postResponse=postQueryService.getPost(customUserDetails.getMember(), postId);
 
 		return BaseResponse.onSuccess(postResponse);
 	}
 
 
-	@PatchMapping("/{postsId}")
+	@PatchMapping("/{postId}")
 	@Operation(summary = "게시글 수정 API", description = "인증된 유저의 게시글 수정 API.\ncontent만 수정하더라도 항상 isPublic의 수정 정보까지 함께 받아오므로 이 점 주의해서 request body 작성해주시면 감사하겠습니다")
 	@ApiResponses({
-			@ApiResponse(responseCode = "200", description = "게시글 수정 성공"),
+			@ApiResponse(responseCode = "COMMON200", description = "게시글 수정 성공"),
+			@ApiResponse(
+					responseCode = "COMMON401",
+					description = "로그인을 하지 않았을 경우",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+					{
+					  "timestamp": "2025-01-26T21:23:51.4515304",
+					  "code": "COMMON401",
+					  "message": "인증이 필요합니다."
+					}
+					"""
+							)
+					)
+			),
+			@ApiResponse(
+					responseCode = "POST403",
+					description = "작성자가 아닌 유저의 요청으로 권한이 없는 경우",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+          {
+            "timestamp": "2025-01-27T20:56:55.7942672",
+            "code": "POST403",
+            "message": "해당 게시글에 대한 권한이 없습니다."
+          }
+					"""
+							)
+					)
+			),      
 			@ApiResponse(
 					responseCode = "POST404",
 					description = "해당 게시물을 찾을 수 없습니다.",
@@ -352,12 +467,13 @@ public class PostController {
 			)
 	})
 	@Parameters({
-			@Parameter(name = "postsId", description = "게시글 아이디, path variable 입니다")
+			@Parameter(name = "postId", description = "게시글 아이디, path variable 입니다")
 	})
 	public BaseResponse<Void> updatePost(
 			@Valid @RequestBody PostUpdateRequest request,
-			@PathVariable Long postsId) {
-		postCommandService.updatePost(request, postsId);
+			@PathVariable Long postsId,
+			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+		postCommandService.updatePost(request, postsId, customUserDetails.getMember());
 
 		return BaseResponse.onSuccess(null);
 	}

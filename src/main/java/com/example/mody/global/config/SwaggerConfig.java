@@ -1,5 +1,7 @@
 package com.example.mody.global.config;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,6 +12,13 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
 @Configuration
+@OpenAPIDefinition(
+		servers = {
+				@Server(url = "https://kkoalla.app:8443", description = "모디 https 개발 서버입니다."),
+				@Server(url = "http://3.37.4.11:8000", description = "모디 http 개발 서버입니다."),
+				@Server(url = "http://localhost:8080", description = "모디 local 서버입니다.")
+		}
+)
 public class SwaggerConfig {
 	@Bean
 	public OpenAPI openAPI() {

@@ -40,6 +40,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final BooleanPath isRegistrationCompleted = createBoolean("isRegistrationCompleted");
 
+    public final NumberPath<Integer> likeCount = createNumber("likeCount", Integer.class);
+
     public final ListPath<com.example.mody.domain.post.entity.mapping.MemberPostLike, com.example.mody.domain.post.entity.mapping.QMemberPostLike> likes = this.<com.example.mody.domain.post.entity.mapping.MemberPostLike, com.example.mody.domain.post.entity.mapping.QMemberPostLike>createList("likes", com.example.mody.domain.post.entity.mapping.MemberPostLike.class, com.example.mody.domain.post.entity.mapping.QMemberPostLike.class, PathInits.DIRECT2);
 
     public final EnumPath<com.example.mody.domain.member.enums.LoginType> loginType = createEnum("loginType", com.example.mody.domain.member.enums.LoginType.class);

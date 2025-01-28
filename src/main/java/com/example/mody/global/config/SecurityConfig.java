@@ -1,12 +1,7 @@
 package com.example.mody.global.config;
 
 import java.util.Arrays;
-import java.util.Collections;
 
-import com.example.mody.domain.auth.jwt.JwtLoginFilter;
-import com.example.mody.domain.auth.service.AuthCommandService;
-import com.example.mody.domain.auth.service.AuthCommandServiceImpl;
-import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,8 +28,6 @@ import com.example.mody.domain.member.service.MemberQueryService;
 import com.example.mody.global.util.CustomAuthenticationEntryPoint;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,7 +49,7 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // 기본 보안 설정
+		// 기본 보안 설정
 		http
 			.csrf(csrf -> csrf.disable())
 			.sessionManagement(session -> session
@@ -97,11 +90,33 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+
+		// 허용할 Origin 설정
+		configuration.setAllowedOrigins(Arrays.asList(
+			"https://kkoalla.app",        // 프론트엔드 도메인
+			"https://kkoalla.app:5173",   // 개발 서버
+			"http://localhost:5173",       // 로컬 개발
+			"https://kkoalla.app:8443"
+		));
+
+		// 허용할 HTTP 메서드 설정
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept"));
-		configuration.setExposedHeaders(Arrays.asList("Authorization", "Set-Cookie"));
+
+		// 허용할 헤더 설정
+		configuration.setAllowedHeaders(Arrays.asList(
+			"Authorization",
+			"Content-Type",
+			"X-Requested-With",
+			"Accept",
+			"Origin",
+			"Access-Control-Request-Method",
+			"Access-Control-Request-Headers"
+		));
+
+		// 인증 정보 포함 설정
 		configuration.setAllowCredentials(true);
+
+		// preflight 요청의 캐시 시간 설정
 		configuration.setMaxAge(3600L);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
