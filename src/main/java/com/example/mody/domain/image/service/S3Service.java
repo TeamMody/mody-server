@@ -46,7 +46,7 @@ public class S3Service {
             GeneratePresignedUrlRequest generatePresignedUrlRequest = generatePresignedUrl(key, expiration);
 
             URL url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
-            presignedUrls.add(PresignedUrlResponse.from(url.toExternalForm(), key));
+            presignedUrls.add(PresignedUrlResponse.of(url.toExternalForm(), key));
         }
         return presignedUrls;
     }

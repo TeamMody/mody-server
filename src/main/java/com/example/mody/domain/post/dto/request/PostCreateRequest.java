@@ -4,6 +4,7 @@ import static com.example.mody.domain.post.constant.PostConstant.*;
 
 import java.util.List;
 
+import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Length;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,11 +36,12 @@ public class PostCreateRequest {
 	private Boolean isPublic;
 
 	@Schema(
-		description = "S3 URL 목록",
+		description = "S3 url 목록",
 		example = "[\"https://{bucket-name}.s3.{region}.amazonaws.com/{object-key1}\", " +
-				"\"https://{bucket-name}.s3.{region}.amazonaws.com/{object-key2}\"]"
+				"\"https://my-bucket.s3.amazonaws.com/path/to/file.jpg\"]"
 	)
-  	@Size(max = POST_IMAGE_COUNT_LIMIT, message = "파일의 최대 개수는 {max}를 초과할 수 없습니다.")
+	@NotEmpty(message = "S3 url 목록은 비어 있을 수 없습니다.")
+  @Size(max = POST_IMAGE_COUNT_LIMIT, message = "파일의 최대 개수는 {max}를 초과할 수 없습니다.")
 	private List<String> s3Urls;
 
 }

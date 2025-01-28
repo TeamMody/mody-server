@@ -78,9 +78,44 @@ public class PostController {
 	@PostMapping
 	@Operation(summary = "게시글 작성 API", description = "인증된 유저의 게시글 작성 API")
 	@ApiResponses({
-            @ApiResponse(responseCode = "201", description = "게시글 작성 성공"),
+			@ApiResponse(responseCode = "201", description = "게시글 작성 성공"),
 			@ApiResponse(responseCode = "MEMBER_BODY_TYPE404", description = "게시글을 작성하려는 유저가 아직 체형 분석을 진행하지 않은 경우"),
-			@ApiResponse(responseCode = "COMMON402", description = "Validation 관련 예외 - 파일 개수 제한 초과, content 길이 제한 초과")
+			@ApiResponse(responseCode = "COMMON402", description = "Validation 관련 예외 - 파일 개수 제한 초과, content 길이 제한 초과"),
+			@ApiResponse(
+					responseCode = "400",
+					description = "S3 url 목록은 비어있을 수 없습니다. 파일을 선택하거나, presigned url 생성 api를 재요청해주세요.",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+						{
+							"timestamp": "2025-01-26T15:15:54.334Z",
+							"code": "COMMON402",
+							"message": "Validation Error입니다.",
+							"result": {
+								"s3Urls": "S3 url 목록은 비어 있을 수 없습니다."
+							}
+						}
+						"""
+							)
+					)
+			),
+			@ApiResponse(
+					responseCode = "404",
+					description = "올바르지 않은 S3 url입니다.",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+						{
+							"timestamp": "2025-01-26T15:15:54.334Z",
+							"code": "S3_404",
+							"message": "요청한 S3 객체를 찾을 수 없습니다."
+						}
+						"""
+							)
+					)
+			),
 	})
 	public BaseResponse<Void> registerPost(
 		@Valid @RequestBody PostCreateRequest request, @AuthenticationPrincipal CustomUserDetails customUserDetails) {

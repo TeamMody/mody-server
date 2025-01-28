@@ -11,8 +11,8 @@ import org.springframework.http.HttpStatus;
 public enum BodyTypeErrorStatus implements BaseCodeInterface {
 
     MEMBER_BODY_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_BODY_TYPE404", "체형 분석 결과를 찾을 수 없습니다."),
-    BODY_TYPE_NOT_FOUND(HttpStatus.BAD_REQUEST, "BODY_TYPE4001", "체형을 찾을 수 없습니다."),
-    JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "JSON_PARSING4001", "체형 분석 결과를 처리하는 중 JSON 파싱에 실패했습니다."),
+    BODY_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "BODY_TYPE404", "체형을 찾을 수 없습니다."),
+    JSON_PARSING_ERROR(HttpStatus.BAD_REQUEST, "JSON_PARSING400", "체형 분석 결과를 처리하는 중 JSON 파싱에 실패했습니다."),
     ;
 
     private final HttpStatus httpStatus;

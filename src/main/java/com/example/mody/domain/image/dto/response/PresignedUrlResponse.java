@@ -18,7 +18,7 @@ public class PresignedUrlResponse {
     @Schema(description = "S3 key 값", example = "{folder}/{memberId}/{uuid}/{filename}")
     private String key;
 
-    public static PresignedUrlResponse from(String preSignedUrl, String key){
+    public static PresignedUrlResponse of(String preSignedUrl, String key){
         PresignedUrlResponse response = new PresignedUrlResponse();
         response.setPresignedUrl(preSignedUrl);
         response.setKey(key);
