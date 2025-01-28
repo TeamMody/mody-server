@@ -82,15 +82,34 @@ public class PostController {
 			@ApiResponse(responseCode = "COMMON402", description = "Validation 관련 예외 - 파일 개수 제한 초과, content 길이 제한 초과"),
 			@ApiResponse(
 					responseCode = "400",
-					description = "presigned url이 만료되었습니다.",
+					description = "S3 url 목록은 비어있을 수 없습니다. 파일을 선택하거나, presigned url 생성 api를 재요청해주세요.",
 					content = @Content(
 							mediaType = "application/json",
 							examples = @ExampleObject(
 									value = """
 						{
 							"timestamp": "2025-01-26T15:15:54.334Z",
-							"code": "S3_400",
-							"message": "요청한 presigned url이 만료되었습니다."
+							"code": "COMMON402",
+							"message": "Validation Error입니다.",
+							"result": {
+								"s3Urls": "S3 url 목록은 비어 있을 수 없습니다."
+							}
+						}
+						"""
+							)
+					)
+			),
+			@ApiResponse(
+					responseCode = "404",
+					description = "올바르지 않은 S3 url입니다.",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+						{
+							"timestamp": "2025-01-26T15:15:54.334Z",
+							"code": "S3_404",
+							"message": "요청한 S3 객체를 찾을 수 없습니다."
 						}
 						"""
 							)

@@ -14,7 +14,6 @@ import com.example.mody.domain.post.repository.PostReportRepository;
 import com.example.mody.global.common.exception.RestApiException;
 import com.example.mody.global.common.exception.code.status.S3ErrorStatus;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,7 +68,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 			postCreateRequest.getIsPublic());
 
 		postCreateRequest.getS3Urls().forEach(s3Url -> {
-			validatePresignedUrl(s3Url); // presigned url 유효 기간 검증
+			validateS3Url(s3Url); // 유효한 S3 url인지 검증
 			PostImage postImage = new PostImage(post, s3Url);
 			post.getImages().add(postImage);
 		});
@@ -77,13 +76,12 @@ public class PostCommandServiceImpl implements PostCommandService {
 		postRepository.save(post);
 	}
 
-	private void validatePresignedUrl(String s3Url) {
+	private void validateS3Url(String s3Url) {
 		try {
 			// S3 url에 GET 요청을 보내서 유효한지 확인
 			restTemplate.exchange(s3Url, HttpMethod.GET, null, Void.class);
 		} catch (HttpClientErrorException e) {
-			// url이 만료되었거나 오류가 발생했을 경우 에러
-			throw new RestApiException(S3ErrorStatus.PRESIGNED_URL_EXPIRED);
+			throw new RestApiException(S3ErrorStatus.OBJECT_NOT_FOUND);
 		}
 	}
 
