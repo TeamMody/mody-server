@@ -122,7 +122,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .from(qPost)
                 .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost).and(qMemberPostLike.member.eq(member)))
                 .where(predicate)
-                .orderBy(qPost.createdAt.desc())
+                .orderBy(qMemberPostLike.createdAt.desc())
                 .limit(size+1) //하나 더 가져와서 다음 요소가 존재하는지 확인
                 .fetch();
 
@@ -131,7 +131,6 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .leftJoin(qPost.member, qMember)
                 .leftJoin(qPost.images, qPostImage)
                 .where(qPost.id.in(postIds))
-                .orderBy(qPost.createdAt.desc())
                 .transform(GroupBy.groupBy(qPost.id).as(
                         Projections.constructor(PostResponse.class,
                                 qPost.id,
@@ -145,7 +144,10 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                                 GroupBy.list(qPostImage)
                         )));
 
-        List<PostResponse> postResponses = new ArrayList<>(postResponseMap.values());
+        List<PostResponse> postResponses = postIds.stream()
+                .map(postResponseMap::get)
+                .filter(Objects::nonNull)
+                .toList();
 
         return new LikedPostsResponse(
                 hasNext.apply(postResponses, size),
