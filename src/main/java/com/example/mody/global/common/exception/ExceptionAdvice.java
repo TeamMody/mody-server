@@ -38,7 +38,6 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     public ResponseEntity<BaseResponse<String>> handleRestApiException(RestApiException e) {
         BaseCodeDto errorCode = e.getErrorCode();
         log.error("An error occurred: {}", e.getMessage(), e);
-        errorSender.sendError(e);
         return handleExceptionInternal(errorCode);
     }
 
