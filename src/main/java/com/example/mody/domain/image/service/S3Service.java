@@ -35,7 +35,7 @@ public class S3Service {
     @Value("${cloud.aws.region.static}")
     private String region;
 
-    public List<PresignedUrlResponse> getPresignedUrls(Long memberId, List<String> filenames) {
+    public List<PresignedUrlResponse> getPostPresignedUrls(Long memberId, List<String> filenames) {
         // 게시물당 하나의 UUID를 생성
         String uuid = UUID.randomUUID().toString();
 
@@ -49,6 +49,20 @@ public class S3Service {
             presignedUrls.add(PresignedUrlResponse.of(url.toExternalForm(), key));
         }
         return presignedUrls;
+    }
+
+    public PresignedUrlResponse getProfilePresignedUrl(Long memberId, String filename) {
+        // key값 설정(profile 경로 + 멤버ID + 랜덤 값 + filename)
+        String key = String.format("profile/%d/%s/%s", memberId, UUID.randomUUID(), filename);
+
+        // 유효 기간
+        Date expiration = getExpiration();
+
+        // presigned url 생성
+        GeneratePresignedUrlRequest generatePresignedUrlRequest = generatePresignedUrl(key, expiration);
+        URL url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
+
+        return PresignedUrlResponse.of(url.toExternalForm(), key);
     }
 
     // 업로드용(put) presigned url 생성하는 메서드
@@ -73,7 +87,7 @@ public class S3Service {
     private static Date getExpiration() {
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 60 * 60; // 1시간 설정
+        expTimeMillis += 2 * 1000 * 60 * 60; // 2시간 설정
         expiration.setTime(expTimeMillis);
         return expiration;
     }
