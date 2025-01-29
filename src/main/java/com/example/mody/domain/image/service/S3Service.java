@@ -1,5 +1,6 @@
 package com.example.mody.domain.image.service;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.Headers;
@@ -92,10 +93,30 @@ public class S3Service {
         return expiration;
     }
 
-    // 프론트에서 전달받은 key를 이용해 S3 URL 생성 및 반환(테스트용)
-    public S3UrlResponse getS3Url(String key) {
-        String s3Url = String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, key);
-        log.info("s3Url: {}", s3Url);
-        return S3UrlResponse.from(s3Url);
+    // S3 이미지 삭제
+    public void deleteFile(List<String> postImageUrls) { // 파일 삭제 실패해도 다음 파일 삭제를 수행하도록 예외를 터뜨리는 것이 아닌 로그만 찍음
+        for (String imageUrl : postImageUrls) {
+            try {
+                String key = extractKey(imageUrl);
+                amazonS3Client.deleteObject(bucket, key);
+                log.info("S3 파일 삭제 성공: {}", key);
+            } catch (AmazonServiceException e) {
+                log.error("S3 파일 삭제 실패 - AWS 서비스 오류: {}, Key: {}", e.getErrorMessage(), imageUrl, e);
+            } catch (Exception e) {
+                log.error("S3 파일 삭제 중 알 수 없는 오류 발생: {}, Key: {}", imageUrl, e.getMessage(), e);
+            }
+        }
     }
+
+    // S3 url에서 key 값 추출
+    private String extractKey(String imageUrl) {
+        return imageUrl.substring(imageUrl.indexOf(".com/") + 5); // 해당 index + 5 값이 key 값의 시작 인덱스 값
+    }
+
+//    // 프론트에서 전달받은 key를 이용해 S3 URL 생성 및 반환(테스트용)
+//    public S3UrlResponse getS3Url(String key) {
+//        String s3Url = String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, key);
+//        log.info("s3Url: {}", s3Url);
+//        return S3UrlResponse.from(s3Url);
+//    }
 }
