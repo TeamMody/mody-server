@@ -168,7 +168,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 	protected void delete(Post post) {
 		List<String> postImageUrls = postImageRepository.findPostImageUrlByPostId(post.getId());
 		fileService.deleteByS3Urls(postImageUrls);
-    postReportRepository.deleteAllByPost(post);
+    	postReportRepository.deleteAllByPost(post);
+		// @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)로 설정해놔서 postId에 해당하는 PostImage 전부 삭제됨
 		postRepository.deleteById(post.getId());
 	}
 
