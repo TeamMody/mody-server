@@ -59,7 +59,7 @@ public class MemberRegistrationRequest {
 
 	@Schema(
 		description = "프로필 이미지 URL",
-		example = "https://example.com/profile.jpg",
+		example = "https://my-bucket.s3.amazonaws.com/path/to/file.jpg",
 		required = false
 	)
 	private String profileImageUrl;

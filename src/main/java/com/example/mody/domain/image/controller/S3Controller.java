@@ -1,11 +1,10 @@
 package com.example.mody.domain.image.controller;
 
 import com.example.mody.domain.auth.security.CustomUserDetails;
-import com.example.mody.domain.image.dto.request.PresignedUrlRequest;
+import com.example.mody.domain.image.dto.request.PostPresignedUrlRequest;
+import com.example.mody.domain.image.dto.request.ProfilePresignedUrlRequest;
 import com.example.mody.domain.image.dto.response.PresignedUrlResponse;
-import com.example.mody.domain.image.dto.response.S3UrlResponse;
 import com.example.mody.domain.image.service.S3Service;
-import com.example.mody.domain.post.service.PostQueryService;
 import com.example.mody.global.common.base.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,8 +27,8 @@ public class S3Controller {
 
     private final S3Service s3Service;
 
-    @PostMapping(value = "/upload")
-    @Operation(summary = "presigned url 생성 API", description = "파일 업로드(put) presigned url을 생성하는 API 입니다.")
+    @PostMapping(value = "/upload/posts")
+    @Operation(summary = "게시글 presigned url 생성 API", description = "게시글 파일 업로드(put) presigned url을 생성하는 API 입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",description = "presigned url 생성을 성공하였습니다."),
             @ApiResponse(
@@ -81,11 +80,72 @@ public class S3Controller {
                     )
             ),
     })
-    public BaseResponse<List<PresignedUrlResponse>> getPresignedUrl(
+    public BaseResponse<List<PresignedUrlResponse>> getPostPresignedUrl(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @Valid @RequestBody PresignedUrlRequest request
+            @Valid @RequestBody PostPresignedUrlRequest request
     ) {
-        List<PresignedUrlResponse> presignedUrlResponse = s3Service.getPresignedUrls(customUserDetails.getMember().getId(), request.getFilenames());
+        List<PresignedUrlResponse> presignedUrlResponse = s3Service.getPostPresignedUrls(customUserDetails.getMember().getId(), request.getFilenames());
+        return BaseResponse.onSuccess(presignedUrlResponse);
+    }
+
+    @PostMapping(value = "/upload/profiles")
+    @Operation(summary = "프로필 사진 presigned url 생성 API", description = "프로필 사진 파일 업로드(put) presigned url을 생성하는 API 입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",description = "presigned url 생성을 성공하였습니다."),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Access Token이 필요합니다.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+						{
+							"timestamp": "2025-01-26T15:15:54.334Z",
+							"code": "COMMON401",
+							"message": "인증이 필요합니다."
+						}
+						"""
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "S3 버킷을 찾을 수 없습니다.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+						{
+							"timestamp": "2025-01-26T15:15:54.334Z",
+							"code": "S3_404",
+							"message": "지정된 S3 버킷을 찾을 수 없습니다."
+						}
+						"""
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "presigned url 생성을 실패하였습니다.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+						{
+							"timestamp": "2025-01-26T15:15:54.334Z",
+							"code": "S3_500",
+							"message": "S3 presigned url 생성 중 오류가 발생했습니다."
+						}
+						"""
+                            )
+                    )
+            ),
+    })
+    public BaseResponse<PresignedUrlResponse> getProfilePresignedUrl(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @Valid @RequestBody ProfilePresignedUrlRequest request
+    ) {
+        PresignedUrlResponse presignedUrlResponse = s3Service.getProfilePresignedUrl(customUserDetails.getMember().getId(), request.getFilename());
         return BaseResponse.onSuccess(presignedUrlResponse);
     }
 

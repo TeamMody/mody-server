@@ -181,9 +181,9 @@ public class PostController {
             @Parameter(name = "postId", description = "게시글 아이디, path variable 입니다")
     })
     public BaseResponse<Void> deletePost(
-            @PathVariable Long postsId,
+            @PathVariable Long postId,
 			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        postCommandService.deletePost(postsId, customUserDetails.getMember());
+        postCommandService.deletePost(postId, customUserDetails.getMember());
         return BaseResponse.onSuccessDelete(null);
     }
 
