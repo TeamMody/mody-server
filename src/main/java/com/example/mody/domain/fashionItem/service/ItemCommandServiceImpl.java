@@ -5,9 +5,11 @@ import com.example.mody.domain.bodytype.repository.MemberBodyTypeRepository;
 import com.example.mody.domain.chatgpt.service.ChatGptService;
 import com.example.mody.domain.exception.BodyTypeException;
 import com.example.mody.domain.fashionItem.dto.request.FashionItemRequest;
-import com.example.mody.domain.fashionItem.dto.response.FashionItemRecommendResponse;
+import com.example.mody.domain.fashionItem.dto.response.ItemGptResponse;
+import com.example.mody.domain.fashionItem.dto.response.ItemRecommendResponse;
+import com.example.mody.domain.fashionItem.dto.response.ItemsResponse;
 import com.example.mody.domain.fashionItem.entity.FashionItem;
-import com.example.mody.domain.fashionItem.repository.FashionItemRepository;
+import com.example.mody.domain.fashionItem.repository.ItemRepository;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.style.dto.BodyTypeDTO;
 import com.example.mody.global.common.exception.code.status.BodyTypeErrorStatus;
@@ -20,15 +22,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class FashionItemCommandServiceImpl implements FashionItemCommandService{
+public class ItemCommandServiceImpl implements ItemCommandService {
 
     private final MemberBodyTypeRepository memberBodyTypeRepository;
     private final ObjectMapper objectMapper;
     private final ChatGptService chatGptService;
-    private final FashionItemRepository fashionItemRepository;
+    private final ItemRepository itemRepository;
 
     @Override
-    public FashionItemRecommendResponse recommendItem(FashionItemRequest request, Member member) {
+    public ItemRecommendResponse recommendItem(FashionItemRequest request, Member member) {
 
         //현재 유저의 bodyType 정보를 받아오기
         MemberBodyType latestBodyType = memberBodyTypeRepository.findTopByMemberOrderByCreatedAt(member)
@@ -43,16 +45,21 @@ public class FashionItemCommandServiceImpl implements FashionItemCommandService{
         //bodyType 데이터를 String 형태로 변환 (gpt로 넘겨주기 위해서)
         String bodyType = convertBodyTypeToJson(bodyTypeDTO);
 
-        FashionItemRecommendResponse response = chatGptService.recommendGptItem(request, bodyType);
+        ItemGptResponse recommendation = chatGptService.recommendGptItem(request, bodyType);
 
         FashionItem fashionItem = FashionItem.builder()
-                .item(response.getItem())
-                .description(response.getDescription())
-                .imageUrl(response.getImageUrl())
+                .item(recommendation.getItem())
+                .description(recommendation.getDescription())
+                .imageUrl(recommendation.getImageUrl())
                 .member(member)
                 .build();
 
-        fashionItemRepository.save(fashionItem);
+        itemRepository.save(fashionItem);
+
+        ItemRecommendResponse response = ItemRecommendResponse.builder()
+                .nickName(member.getNickname())
+                .itemGptResponse(recommendation)
+                .build();
 
         return response;
     }

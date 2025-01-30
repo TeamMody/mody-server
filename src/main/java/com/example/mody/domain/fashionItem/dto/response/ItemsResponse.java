@@ -1,6 +1,7 @@
 package com.example.mody.domain.fashionItem.dto.response;
 
 import com.example.mody.domain.fashionItem.entity.FashionItem;
+import com.example.mody.global.dto.response.CursorPagination;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class FashionItemsResponse {
+public class ItemsResponse {
 
     @Schema(
             description = "회원 닉네임",
@@ -21,23 +22,15 @@ public class FashionItemsResponse {
     private String nickName;
 
     @Schema(description = "패션 아이템 추천 리스트")
-    private List<FashionItemRecommendation> fashionItemRecommendations;
-
-    //단일 추천 결과 생성 메서드
-    public static FashionItemsResponse of(String nickName, FashionItemRecommendation fashionItemRecommendation) {
-        return FashionItemsResponse.builder()
-                .nickName(nickName)
-                .fashionItemRecommendations(List.of(fashionItemRecommendation))
-                .build();
-    }
+    private List<ItemRecommendation> fashionItemRecommendations;
 
     //여러 추천 결과 생성 메서드
-    public static FashionItemsResponse of(String nickName, List<FashionItem> fashionItems) {
-        List<FashionItemRecommendation> recommendations = fashionItems.stream()
-                .map(FashionItemRecommendation::from)
+    public static ItemsResponse of(String nickName, List<FashionItem> fashionItems) {
+        List<ItemRecommendation> recommendations = fashionItems.stream()
+                .map(ItemRecommendation::from)
                 .collect(Collectors.toList());
 
-        return FashionItemsResponse.builder()
+        return ItemsResponse.builder()
                 .nickName(nickName)
                 .fashionItemRecommendations(recommendations)
                 .build();
@@ -48,7 +41,7 @@ public class FashionItemsResponse {
     @Builder
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
-    public static class FashionItemRecommendation {
+    public static class ItemRecommendation {
 
         @Schema(
                 description = "패션 아이템 아이디",
@@ -80,8 +73,9 @@ public class FashionItemsResponse {
         )
         private boolean isLiked;
 
-        public static FashionItemRecommendation from(FashionItem fashionItem) {
-            return FashionItemRecommendation.builder()
+        public static ItemRecommendation from(FashionItem fashionItem) {
+            return ItemRecommendation.builder()
+                    .id(fashionItem.getId())
                     .item(fashionItem.getItem())
                     .description(fashionItem.getDescription())
                     .imageUrl(fashionItem.getImageUrl())
@@ -89,5 +83,4 @@ public class FashionItemsResponse {
                     .build();
         }
     }
-
 }

@@ -2,7 +2,7 @@ package com.example.mody.domain.chatgpt.service;
 
 import com.example.mody.domain.bodytype.dto.response.BodyTypeAnalysisResponse;
 import com.example.mody.domain.fashionItem.dto.request.FashionItemRequest;
-import com.example.mody.domain.fashionItem.dto.response.FashionItemRecommendResponse;
+import com.example.mody.domain.fashionItem.dto.response.ItemGptResponse;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
 import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
@@ -119,7 +119,7 @@ public final class ChatGptService {
         }
     }
 
-    public FashionItemRecommendResponse recommendGptItem(FashionItemRequest fashionItemRequest, String bodyType){
+    public ItemGptResponse recommendGptItem(FashionItemRequest fashionItemRequest, String bodyType){
 
         //아이템 추천 프롬프트 생성
         String prompt = promptManager.createRecommendItemPrompt(bodyType, fashionItemRequest);
@@ -135,7 +135,7 @@ public final class ChatGptService {
         String content = response.getChoices().get(0).getMessage().getContent().trim();
 
         try{
-            return objectMapper.readValue(content, FashionItemRecommendResponse.class);
+            return objectMapper.readValue(content, ItemGptResponse.class);
         } catch (JsonMappingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         } catch (JsonProcessingException e) {

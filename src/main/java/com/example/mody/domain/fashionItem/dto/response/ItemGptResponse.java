@@ -3,18 +3,12 @@ package com.example.mody.domain.fashionItem.dto.response;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-@Schema(description = "아이템 추천 정보")
+@Schema(description = "패션 아이템 추천 Gpt 응답")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class FashionItemRecommendResponse {
-
-//    @Schema(
-//            description = "회원 닉네임",
-//            example = "영희"
-//    )
-//    private String name;
+public class ItemGptResponse {
 
     @Schema(
             description = "패션 아이템 이름",
