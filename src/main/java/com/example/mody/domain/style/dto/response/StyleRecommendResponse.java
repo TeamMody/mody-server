@@ -60,7 +60,7 @@ public class StyleRecommendResponse {
 			description = "추천하는 스타일",
 			example = "네추럴 스트릿 빈티지"
 		)
-		public String recommendedStyle;
+		private String recommendedStyle;
 
 		@Schema(
 			description = "스타일 추천 배경",
