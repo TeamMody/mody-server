@@ -3,6 +3,10 @@ package com.example.mody.domain.style.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.example.mody.domain.style.dto.response.StyleRecommendResponses;
+import com.example.mody.domain.style.entity.mapping.QMemberStyleLike;
+import com.example.mody.global.common.exception.RestApiException;
+import com.example.mody.global.common.exception.code.status.GlobalErrorStatus;
 import org.springframework.stereotype.Service;
 
 import com.example.mody.domain.member.entity.Member;
@@ -51,13 +55,11 @@ public class StyleQueryServiceImpl implements StyleQueryService {
 	}
 
 	@Override
-	public StyleRecommendResponse getRecommendedStyle(Member member) {
-		List<Style> styles = styleRepository.findByMemberId(member.getId());
+	public StyleRecommendResponses getRecommendedStyle(Member member, Long cursor, Integer size) {
 
-		if (styles.isEmpty()) {
-			throw new StyleException(StyleErrorStatus.STYLE_NOT_FOUND);
+		if(size<=0){
+			throw new RestApiException(GlobalErrorStatus.NEGATIVE_PAGE_SIZE_REQUEST);
 		}
-
-		return StyleRecommendResponse.of(member.getNickname(), styles);
+		return styleRepository.findMyStyleRecommends(member, size, cursor);
 	}
 }
