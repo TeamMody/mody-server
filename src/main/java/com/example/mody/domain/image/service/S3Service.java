@@ -42,7 +42,7 @@ public class S3Service {
 
         List<PresignedUrlResponse> presignedUrls = new ArrayList<>();
         for (String filename : filenames) {
-            String key = String.format("deploy/%d/%s/%s", memberId, uuid, filename); // 테스트용 deploy 폴더, 추후 post 폴더로 변경 예정
+            String key = String.format("deploy/%d/%s%s", memberId, uuid, filename); // 테스트용 deploy 폴더, 추후 post 폴더로 변경 예정
             Date expiration = getExpiration(); // 유효 기간
             GeneratePresignedUrlRequest generatePresignedUrlRequest = generatePresignedUrl(key, expiration);
 
@@ -54,7 +54,7 @@ public class S3Service {
 
     public PresignedUrlResponse getProfilePresignedUrl(Long memberId, String filename) {
         // key값 설정(profile 경로 + 멤버ID + 랜덤 값 + filename)
-        String key = String.format("profile/%d/%s/%s", memberId, UUID.randomUUID(), filename);
+        String key = String.format("profile/%d/%s%s", memberId, UUID.randomUUID(), filename);
 
         // 유효 기간
         Date expiration = getExpiration();
