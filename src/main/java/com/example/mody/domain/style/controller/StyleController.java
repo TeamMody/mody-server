@@ -148,4 +148,17 @@ public class StyleController {
 			request, customUserDetails.getMember());
 		return BaseResponse.onSuccess(response);
 	}
+
+	@Operation(summary = "스타일 추천 좋아요 API", description = "스타일 추천에 대한 좋아요 기능")
+	@PostMapping("/{styleId}/like")
+	@ApiResponses({
+			@ApiResponse(responseCode = "COMMON200", description = "스타일 추천에 좋아요 성공"),
+			@ApiResponse(responseCode = "STYLE404", description = "요청한 스타일 추천 결과물이 존재하지 않는 경우")
+	})
+	public BaseResponse<Void> toggleStyleLike(
+			@PathVariable(name = "styleId") Long styleId,
+			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+		styleCommandService.toggleLike(styleId, customUserDetails.getMember());
+		return BaseResponse.onSuccess(null);
+	}
 }
