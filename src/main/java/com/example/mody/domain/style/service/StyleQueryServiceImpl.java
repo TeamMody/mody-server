@@ -62,4 +62,10 @@ public class StyleQueryServiceImpl implements StyleQueryService {
 		}
 		return styleRepository.findMyStyleRecommends(member, size, cursor);
 	}
+
+	@Override
+	public Style findById(Long styleId) {
+		return styleRepository.findById(styleId).orElseThrow(()->
+				new StyleException(StyleErrorStatus.STYLE_NOT_FOUND));
+	}
 }
