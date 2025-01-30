@@ -35,6 +35,8 @@ public class StyleRecommendResponse {
 	@Schema(description = "좋아요 눌렀는지 여부")
 	private Boolean isLiked;
 
+	private Integer likedCount;
+
 	@Schema(
 			description = "추천하는 스타일",
 			example = "네추럴 스트릿 빈티지"

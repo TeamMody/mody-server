@@ -41,6 +41,7 @@ public class StyleCustomRepositoryImpl implements StyleCustomRepository {
                         qMember.id,
                         qMember.nickname,
                         qMemberStyleLike.isNotNull(),
+                        qStyle.likeCount,
                         qStyle.recommendedStyle,
                         qStyle.introduction,
                         qStyle.styleDirection,
