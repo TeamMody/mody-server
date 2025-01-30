@@ -168,8 +168,13 @@ public class PostCommandServiceImpl implements PostCommandService {
 	protected void delete(Post post) {
 		List<String> postImageUrls = postImageRepository.findPostImageUrlByPostId(post.getId());
 		fileService.deleteByS3Urls(postImageUrls);
-    postReportRepository.deleteAllByPost(post);
+		decreaseLikeCount(post);
 		postRepository.deleteById(post.getId());
+	}
+
+	private void decreaseLikeCount(Post post){
+		Integer postLikeCount = post.getLikeCount();
+		post.getMember().decreaseLikeCount(postLikeCount);
 	}
 
 	private void checkAuthorization(Member member, Post post){

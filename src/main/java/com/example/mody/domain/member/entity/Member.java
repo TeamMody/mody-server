@@ -123,6 +123,14 @@ public class Member extends BaseEntity {
 		this.likeCount--;
 	}
 
+	/**
+	 * 게시글 삭제 등으로 좋아요 수를 줄이는 경우
+	 * @param count
+	 */
+	public void decreaseLikeCount(int count){
+		this.likeCount -= count;
+	}
+
 	@Override
 	public boolean equals(final Object o) {
 		if (this == o) {
