@@ -8,6 +8,7 @@ import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.style.dto.BodyTypeDTO;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
 import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
+import com.example.mody.domain.style.dto.response.StyleRecommendation;
 import com.example.mody.domain.style.entity.Style;
 import com.example.mody.domain.style.repository.StyleRepository;
 import com.example.mody.global.common.exception.code.status.BodyTypeErrorStatus;
@@ -45,10 +46,8 @@ public class StyleCommandServiceImpl implements StyleCommandService{
         String bodyType = convertBodyTypeToJson(bodyTypeDTO);
 
         //ChatGptService를 호출하여 스타일 추천 데이터를 가져옴
-        StyleRecommendResponse.StyleRecommendation recommendation = chapGptService.recommendGptStyle(request, bodyType);
+        StyleRecommendation recommendation = chapGptService.recommendGptStyle(request, bodyType);
 
-        //스타일 추천 결과 응답 생성
-        StyleRecommendResponse response = StyleRecommendResponse.of(member.getNickname(), recommendation);
 
         //데이터 저장
         Style style = new Style(
@@ -61,6 +60,9 @@ public class StyleCommandServiceImpl implements StyleCommandService{
         );
 
         styleRepository.save(style);
+
+        //스타일 추천 결과 응답 생성
+        StyleRecommendResponse response = StyleRecommendResponse.of(member, style, false);
 
         return response;
     }
