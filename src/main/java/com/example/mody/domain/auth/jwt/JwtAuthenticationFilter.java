@@ -40,19 +40,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final MemberQueryService memberQueryService;
 
 	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) {
+		String path = request.getServletPath();
+		return path.startsWith("/auth/") ||
+			path.startsWith("/oauth2/") ||
+			path.startsWith("/email/") ||
+			path.startsWith("/swagger-ui/") ||
+			path.startsWith("/v3/api-docs/");
+	}
+
+	@Override
 	protected void doFilterInternal(
 		HttpServletRequest request,
 		HttpServletResponse response,
 		FilterChain filterChain
 	) throws ServletException, IOException {
 		try {
-
 			// 헤더에서 토큰 추출
 			String token = resolveToken(request);
-			
+
 			// 만약 토큰이 있다면
 			if (token != null) {
-
 				String memberId = jwtProvider.validateTokenAndGetSubject(token);
 				Member member = memberRepository.findById(Long.parseLong(memberId))
 					.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ACCESS_TOKEN));
@@ -77,11 +85,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 	}
 
-	/**
-	 * 헤더에서 토큰을 추출하는 메서드
-	 * @param request
-	 * @return
-	 */
 	private String resolveToken(HttpServletRequest request) {
 		String bearerToken = request.getHeader("Authorization");
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

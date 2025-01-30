@@ -9,13 +9,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.mody.domain.auth.dto.request.EmailRequest;
+import com.example.mody.domain.auth.dto.request.EmailVerificationRequest;
 import com.example.mody.domain.auth.dto.request.MemberJoinRequest;
 import com.example.mody.domain.auth.dto.request.MemberLoginReqeust;
 import com.example.mody.domain.auth.dto.request.MemberRegistrationRequest;
 import com.example.mody.domain.auth.security.CustomUserDetails;
 import com.example.mody.domain.auth.service.AuthCommandService;
+import com.example.mody.domain.auth.service.email.EmailService;
 import com.example.mody.domain.member.service.MemberCommandService;
 import com.example.mody.global.common.base.BaseResponse;
+import com.example.mody.global.common.exception.RestApiException;
+import com.example.mody.global.common.exception.code.status.AuthErrorStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -39,6 +44,7 @@ public class AuthController {
 
 	private final AuthCommandService authCommandService;
 	private final MemberCommandService memberCommandService;
+	private final EmailService emailService;
 
 	@Operation(
 		summary = "회원가입 완료",
@@ -190,11 +196,7 @@ public class AuthController {
 	})
 	@PostMapping("/reissue")
 	public BaseResponse<Void> reissueToken(
-		@CookieValue(name = "refresh_token")
-		@Parameter(
-			description = "리프레시 토큰 (쿠키에서 자동 추출)",
-			required = true
-		) String refreshToken,
+		@CookieValue(name = "refresh_token") String refreshToken,
 		HttpServletResponse response
 	) {
 		authCommandService.reissueToken(refreshToken, response);
@@ -486,4 +488,21 @@ public class AuthController {
 
 		return BaseResponse.onSuccess(null);
 	}
+
+	@Operation(summary = "인증 메일 발송", description = "입력된 이메일로 인증번호를 발송합니다.")
+	@PostMapping("/email/verify/send")
+	public BaseResponse<Void> sendVerificationEmail(@Valid @RequestBody EmailRequest request) {
+		emailService.sendVerificationEmail(request.getEmail());
+		return BaseResponse.onSuccess(null);
+	}
+
+	@Operation(summary = "이메일 인증", description = "발송된 인증번호를 확인합니다.")
+	@PostMapping("/email/verify")
+	public BaseResponse<Void> verifyEmail(@Valid @RequestBody EmailVerificationRequest request) {
+		if (!emailService.verifyEmail(request.getEmail(), request.getVerificationCode())) {
+			throw new RestApiException(AuthErrorStatus.INVALID_VERIFICATION_CODE);
+		}
+		return BaseResponse.onSuccess(null);
+	}
+
 }
