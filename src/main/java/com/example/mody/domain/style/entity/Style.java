@@ -30,6 +30,9 @@ public class Style extends BaseEntity {
     @Column(length = 300, nullable = false)
     private String imageUrl;
 
+    @Column(nullable = false)
+    private Integer likeCount = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -42,5 +45,6 @@ public class Style extends BaseEntity {
         this.practicalStylingTips = practicalStylingTips;
         this.member = member;
         this.imageUrl = imageUrl;
+        this.likeCount = 0;
     }
 }
