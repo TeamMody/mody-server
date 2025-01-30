@@ -37,6 +37,14 @@ public class Style extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public void decreaseLikeCount(){
+        this.likeCount--;
+    }
+
+    public void increaseLikeCount(){
+        this.likeCount++;
+    }
+
     public Style(String recommendedStyle, String introduction, String styleDirection, String practicalStylingTips, Member member, String imageUrl) {
 
         this.recommendedStyle = recommendedStyle;
