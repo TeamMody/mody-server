@@ -8,12 +8,12 @@ import lombok.Setter;
 import java.util.List;
 
 /**
- * S3 presigned url 요청 DTO
+ * 프로필 사진 S3 presigned url 요청 DTO
  */
 @Getter
 @Setter
 @NoArgsConstructor
-public class PresignedUrlRequest {
-    @Schema(description = "업로드할 파일 목록", example = "[\"a.png\", \"b.jpg\"]")
-    private List<String> filenames;
+public class ProfilePresignedUrlRequest {
+    @Schema(description = "업로드할 파일", example = "a.png")
+    private String filename;
 }
