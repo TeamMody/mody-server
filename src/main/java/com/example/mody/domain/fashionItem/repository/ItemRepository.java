@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<FashionItem ,Long> {
 
@@ -19,4 +20,6 @@ public interface ItemRepository extends JpaRepository<FashionItem ,Long> {
     List<FashionItem> findRecommendedItems(@Param("memberId") Long memberId,
                                            @Param("cursor") Long cursor,
                                            @Param("size") int size);
+
+    Optional<FashionItem> findByIdAndMemberId(Long fashionItemId, Long memberId);
 }

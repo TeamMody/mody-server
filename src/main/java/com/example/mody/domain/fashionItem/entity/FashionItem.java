@@ -31,4 +31,8 @@ public class FashionItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public void toggleLike() {
+        this.isLiked = !this.isLiked;
+    }
 }

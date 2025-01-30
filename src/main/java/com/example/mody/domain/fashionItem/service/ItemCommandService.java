@@ -8,4 +8,6 @@ import com.example.mody.domain.member.entity.Member;
 public interface ItemCommandService {
 
     public ItemRecommendResponse recommendItem(FashionItemRequest request, Member member);
+
+    public void toggleLike(Long fashionItemId, Long memberId);
 }

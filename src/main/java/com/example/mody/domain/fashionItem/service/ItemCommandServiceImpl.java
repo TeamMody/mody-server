@@ -12,7 +12,9 @@ import com.example.mody.domain.fashionItem.entity.FashionItem;
 import com.example.mody.domain.fashionItem.repository.ItemRepository;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.style.dto.BodyTypeDTO;
+import com.example.mody.global.common.exception.RestApiException;
 import com.example.mody.global.common.exception.code.status.BodyTypeErrorStatus;
+import com.example.mody.global.common.exception.code.status.FashionItemErrorStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +64,14 @@ public class ItemCommandServiceImpl implements ItemCommandService {
                 .build();
 
         return response;
+    }
+
+    @Override
+    public void toggleLike(Long fashionItemId, Long memberId) {
+        FashionItem fashionItem = itemRepository.findByIdAndMemberId(fashionItemId, memberId)
+                .orElseThrow(() -> new RestApiException(FashionItemErrorStatus.ITEM_NOT_FOUND));
+
+        fashionItem.toggleLike();
     }
 
     private String convertBodyTypeToJson(BodyTypeDTO bodyType) {

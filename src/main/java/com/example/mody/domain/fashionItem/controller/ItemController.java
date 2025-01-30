@@ -9,6 +9,7 @@ import com.example.mody.domain.fashionItem.service.ItemQueryService;
 import com.example.mody.global.common.base.BaseResponse;
 import com.example.mody.global.dto.response.CursorResult;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -59,5 +60,27 @@ public class ItemController {
     ) {
         CursorResult<ItemsResponse> response = itemQueryService.getRecommendedItems(customUserDetails.getMember(), cursor, size);
         return BaseResponse.onSuccess(response);
+    }
+
+    @Operation(summary = "패션 아이템 좋아요 API", description = "패션 아이템 추천 결과에 좋아요를 누르거나 삭제합니다.")
+    @PostMapping("/{fashionItemId}/like")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "좋아요 기능 성공"
+            )
+    })
+    public BaseResponse<Void> toggleLike(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable("fashionItemId")
+            @Parameter(
+                    description = "좋아요를 누를 패션 아이템 ID",
+                    required = true,
+                    example = "1"
+            )
+            Long fashionItemId) {
+
+        itemCommandService.toggleLike(fashionItemId, customUserDetails.getMember().getId());
+        return BaseResponse.onSuccess(null);
     }
 }
