@@ -63,7 +63,7 @@ public class Member extends BaseEntity {
 	private List<Style> styles = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<FashionItem> FashionItems = new ArrayList<>();
+	private List<FashionItem> fashionItems = new ArrayList<>();
 
 	private String providerId;  // OAuth2 제공자의 고유 ID
 
