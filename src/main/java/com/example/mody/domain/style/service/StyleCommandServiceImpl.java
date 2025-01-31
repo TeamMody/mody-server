@@ -5,7 +5,7 @@ import com.example.mody.domain.bodytype.repository.MemberBodyTypeRepository;
 import com.example.mody.domain.chatgpt.service.ChatGptService;
 import com.example.mody.domain.exception.BodyTypeException;
 import com.example.mody.domain.member.entity.Member;
-import com.example.mody.domain.style.dto.BodyTypeDTO;
+import com.example.mody.domain.style.dto.BodyTypeDto;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
 import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
 import com.example.mody.domain.style.dto.response.StyleRecommendation;
@@ -28,7 +28,7 @@ import java.util.Optional;
 public class StyleCommandServiceImpl implements StyleCommandService{
 
     private final StyleRepository styleRepository;
-    private final ChatGptService chapGptService;
+    private final ChatGptService chatGptService;
     private final MemberBodyTypeRepository memberBodyTypeRepository;
     private final ObjectMapper objectMapper;
     private final StyleQueryService styleQueryService;
@@ -43,16 +43,16 @@ public class StyleCommandServiceImpl implements StyleCommandService{
                 .orElseThrow(() -> new BodyTypeException(BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND));
 
         //style 추천을 위한 gpt 프롬프트에 넘길 체형분석 데이터 구성
-        BodyTypeDTO bodyTypeDTO = new BodyTypeDTO(
+        BodyTypeDto bodyTypeDto = BodyTypeDto.of(
                 latestBodyType.getBody(),
                 latestBodyType.getBodyType().getName()
         );
 
         //bodyType 데이터를 String 형태로 변환 (gpt로 넘겨주기 위해서)
-        String bodyType = convertBodyTypeToJson(bodyTypeDTO);
+        String bodyType = convertBodyTypeToJson(bodyTypeDto);
 
         //ChatGptService를 호출하여 스타일 추천 데이터를 가져옴
-        StyleRecommendation recommendation = chapGptService.recommendGptStyle(request, bodyType);
+        StyleRecommendation recommendation = chatGptService.recommendGptStyle(request, bodyType);
 
 
         //데이터 저장
@@ -110,7 +110,7 @@ public class StyleCommandServiceImpl implements StyleCommandService{
 
 
     //bodyType 데이터 String으로 바꾸기
-    private String convertBodyTypeToJson(BodyTypeDTO bodyType) {
+    private String convertBodyTypeToJson(BodyTypeDto bodyType) {
         try {
             return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(bodyType);
         } catch (JsonProcessingException e) {

@@ -2,6 +2,7 @@ package com.example.mody.domain.fashionItem.controller;
 
 import com.example.mody.domain.auth.security.CustomUserDetails;
 import com.example.mody.domain.fashionItem.dto.request.FashionItemRequest;
+import com.example.mody.domain.fashionItem.dto.response.ItemLikeResponse;
 import com.example.mody.domain.fashionItem.dto.response.ItemRecommendResponse;
 import com.example.mody.domain.fashionItem.dto.response.ItemsResponse;
 import com.example.mody.domain.fashionItem.service.ItemCommandService;
@@ -140,7 +141,7 @@ public class ItemController {
                     )
             )
     })
-    public BaseResponse<Void> toggleLike(
+    public BaseResponse<ItemLikeResponse> toggleLike(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable("fashionItemId")
             @Parameter(
@@ -150,7 +151,7 @@ public class ItemController {
             )
             Long fashionItemId) {
 
-        itemCommandService.toggleLike(fashionItemId, customUserDetails.getMember().getId());
-        return BaseResponse.onSuccess(null);
+        ItemLikeResponse response = itemCommandService.toggleLike(fashionItemId, customUserDetails.getMember().getId());
+        return BaseResponse.onSuccess(response);
     }
 }

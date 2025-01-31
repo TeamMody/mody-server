@@ -36,7 +36,7 @@ public class ItemQueryServiceImpl implements ItemQueryService{
         List<FashionItem> resultList = hasNext ? fashionItems.subList(0, size) : fashionItems;
 
         //마지막 아이템 id 계산
-        Long nextCursor = fashionItems.isEmpty() ? null : fashionItems.get(fashionItems.size() - 1).getId();
+        Long nextCursor = hasNext ? fashionItems.get(fashionItems.size() - 1).getId() : null;
 
         ItemsResponse response = ItemsResponse.of(member.getNickname(), resultList);
 
