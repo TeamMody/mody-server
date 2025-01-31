@@ -6,6 +6,7 @@ import com.example.mody.domain.fashionItem.dto.response.ItemGptResponse;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
 import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
+import com.example.mody.domain.style.dto.response.StyleRecommendation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import com.example.mody.global.common.exception.RestApiException;
@@ -94,7 +95,7 @@ public final class ChatGptService {
         }
     }
 
-    public StyleRecommendResponse.StyleRecommendation recommendGptStyle(StyleRecommendRequest styleRecommendRequest, String bodyType){
+    public StyleRecommendation recommendGptStyle(StyleRecommendRequest styleRecommendRequest, String bodyType){
 
         //스타일 추천 프롬프트 생성
         String prompt = promptManager.createRecommendStylePrompt(bodyType, styleRecommendRequest);
@@ -111,7 +112,7 @@ public final class ChatGptService {
 
         try{
             return objectMapper.readValue(objectMapper.readTree(content).get("styleRecommendation").toString(),
-                    StyleRecommendResponse.StyleRecommendation.class);
+                    StyleRecommendation.class);
         } catch (JsonMappingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         } catch (JsonProcessingException e) {

@@ -7,4 +7,5 @@ import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
 public interface StyleCommandService {
 
     StyleRecommendResponse recommendStyle(StyleRecommendRequest request, Member member);
+    void toggleLike(Long styleId, Member member);
 }

@@ -1,11 +1,8 @@
 package com.example.mody.domain.style.controller;
 
+import com.example.mody.domain.style.dto.response.StyleRecommendResponses;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.mody.domain.auth.security.CustomUserDetails;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
@@ -74,10 +71,12 @@ public class StyleController {
 			)
 		)
 	})
-	public BaseResponse<StyleRecommendResponse> getRecommendedStyle(
-		@AuthenticationPrincipal CustomUserDetails customUserDetails
+	public BaseResponse<StyleRecommendResponses> getRecommendedStyle(
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
+		@RequestParam(name = "cursor", required = false) Long cursor,
+		@RequestParam(name = "size", defaultValue = "15") Integer size
 	) {
-		return BaseResponse.onSuccess(styleQueryService.getRecommendedStyle(customUserDetails.getMember()));
+		return BaseResponse.onSuccess(styleQueryService.getRecommendedStyle(customUserDetails.getMember(), cursor, size));
 	}
 
 	@Operation(summary = "스타일 추천 API", description = "스타일 분석 후 그 결과를 반환합니다.")
@@ -148,5 +147,18 @@ public class StyleController {
 		StyleRecommendResponse response = styleCommandService.recommendStyle(
 			request, customUserDetails.getMember());
 		return BaseResponse.onSuccess(response);
+	}
+
+	@Operation(summary = "스타일 추천 좋아요 API", description = "스타일 추천에 대한 좋아요 기능")
+	@PostMapping("/{styleId}/like")
+	@ApiResponses({
+			@ApiResponse(responseCode = "COMMON200", description = "스타일 추천에 좋아요 성공"),
+			@ApiResponse(responseCode = "STYLE404", description = "요청한 스타일 추천 결과물이 존재하지 않는 경우")
+	})
+	public BaseResponse<Void> toggleStyleLike(
+			@PathVariable(name = "styleId") Long styleId,
+			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+		styleCommandService.toggleLike(styleId, customUserDetails.getMember());
+		return BaseResponse.onSuccess(null);
 	}
 }
