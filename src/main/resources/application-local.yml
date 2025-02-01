@@ -20,6 +20,4 @@ spring:
         jdbc:
           time_zone: Asia/Seoul
 
-logging:
-  level:
-    org.springframework.web: ERROR
+
