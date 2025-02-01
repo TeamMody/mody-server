@@ -1,5 +1,6 @@
 package com.example.mody.domain.style.controller;
 
+import com.example.mody.domain.fashionItem.dto.response.ItemLikeResponse;
 import com.example.mody.domain.style.dto.response.StyleRecommendResponses;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -155,10 +156,10 @@ public class StyleController {
 			@ApiResponse(responseCode = "COMMON200", description = "스타일 추천에 좋아요 성공"),
 			@ApiResponse(responseCode = "STYLE404", description = "요청한 스타일 추천 결과물이 존재하지 않는 경우")
 	})
-	public BaseResponse<Void> toggleStyleLike(
+	public BaseResponse<ItemLikeResponse> toggleStyleLike(
 			@PathVariable(name = "styleId") Long styleId,
 			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-		styleCommandService.toggleLike(styleId, customUserDetails.getMember());
+		ItemLikeResponse response = styleCommandService.toggleLike(styleId, customUserDetails.getMember());
 		return BaseResponse.onSuccess(null);
 	}
 }

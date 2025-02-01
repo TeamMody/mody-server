@@ -4,6 +4,7 @@ import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.bodytype.repository.MemberBodyTypeRepository;
 import com.example.mody.domain.chatgpt.service.ChatGptService;
 import com.example.mody.domain.exception.BodyTypeException;
+import com.example.mody.domain.fashionItem.dto.response.ItemLikeResponse;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.style.dto.BodyTypeDto;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
@@ -74,7 +75,7 @@ public class StyleCommandServiceImpl implements StyleCommandService{
     }
 
     @Override
-    public void toggleLike(Long styleId, Member member) {
+    public ItemLikeResponse toggleLike(Long styleId, Member member) {
         Style style = styleQueryService.findById(styleId);
         Optional<MemberStyleLike> existingLike = memberStyleLikeRepository.findTopByMemberAndStyle(member, style);
 
@@ -83,6 +84,11 @@ public class StyleCommandServiceImpl implements StyleCommandService{
         }else{
             addLike(member, style);
         }
+
+        return ItemLikeResponse.builder()
+                .isLiked(!existingLike.isPresent())
+                .itemId(styleId)
+                .build();
     }
 
     private void addLike(Member member, Style style){
