@@ -67,23 +67,12 @@ public class StyleRecommendResponse {
 	)
 	private String imageUrl;
 
-	public static StyleRecommendResponse from(Style style) {
-		return StyleRecommendResponse.builder()
-				.memberId(style.getMember().getId()) //n+1 문제 발생
-				.nickname(style.getMember().getNickname())
-				.recommendedStyle(style.getRecommendedStyle())
-				.introduction(style.getIntroduction())
-				.styleDirection(style.getStyleDirection())
-				.practicalStylingTips(style.getPracticalStylingTips())
-				.imageUrl(style.getImageUrl())
-				.build();
-	}
-
 	public static StyleRecommendResponse of(Member member, Style style, Boolean isLiked) {
 		return StyleRecommendResponse.builder()
 				.styleId(style.getId())
-				.memberId(member.getId()) //n+1 문제 발생
+				.memberId(member.getId())
 				.nickname(member.getNickname())
+				.likedCount(style.getLikeCount())
 				.isLiked(isLiked)
 				.recommendedStyle(style.getRecommendedStyle())
 				.introduction(style.getIntroduction())

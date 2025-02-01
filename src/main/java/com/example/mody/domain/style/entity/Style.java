@@ -30,7 +30,7 @@ public class Style extends BaseEntity {
     @Column(length = 300, nullable = false)
     private String imageUrl;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 0")
     private Integer likeCount = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
