@@ -175,6 +175,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 		// DB에서 Post 관련 데이터 삭제
 		fileService.deleteByS3Urls(postImageUrls);
+		postReportRepository.deleteAllByPost(post);
 		decreaseLikeCount(post);
 		postRepository.deleteById(post.getId()); // (cascade = CascadeType.ALL, orphanRemoval = true) -> postId에 해당하는 PostImage 전부 삭제됨
 	}
