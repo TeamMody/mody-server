@@ -13,6 +13,7 @@ import com.example.mody.domain.post.entity.mapping.QMemberPostLike;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.ConstantImpl;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.dsl.StringTemplate;
@@ -52,8 +53,6 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     public PostListResponse getPostList(Optional<Post> cursorPost, Integer size, Member member, Optional<BodyType> bodyType) {
         BooleanBuilder predicate = new BooleanBuilder();
 
-        NumberExpression<Integer> caseExpression = orderedBodyType(bodyType);
-
         predicate.and(qPost.isPublic.eq(true)); // 공개여부 == true
 
         if(cursorPost.isPresent()){
@@ -67,11 +66,18 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
             isLiked = isLikedResult(member);
         }
 
+        //동적 정렬
+        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
+        if (bodyType.isPresent()) {
+            orderSpecifiers.add(matchedBodyTypeAsInteger(bodyType).desc()); // bodyType이 존재할 때만 정렬 조건 추가
+        }
+        orderSpecifiers.add(qPost.createdAt.desc()); // 항상 createdAt으로 정렬
+
         List<Long> postIds = jpaQueryFactory
                 .select(qPost.id)
                 .from(qPost)
                 .where(predicate)
-                .orderBy(caseExpression.asc(), qPost.createdAt.desc())
+                .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
                 .limit(size+1) //하나 더 가져와서 다음 요소가 존재하는지 확인
                 .fetch();
 
@@ -81,7 +87,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .leftJoin(qPost.images, qPostImage)
                 .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost))
                 .where(qPost.id.in(postIds))
-                .orderBy(caseExpression.asc(), qPost.createdAt.desc())
+                .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
                 .transform(GroupBy.groupBy(qPost.id).as(
                         Projections.constructor(PostResponse.class,
                                 qPost.id,
@@ -207,16 +213,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
      * @param bodyType
      * @return
      */
-    private NumberExpression<Integer> orderedBodyType(Optional<BodyType> bodyType){
+    private NumberExpression<Integer> matchedBodyTypeAsInteger(Optional<BodyType> bodyType){
         if(bodyType.isPresent()){
             return new CaseBuilder()
-                    .when(qPost.bodyType.eq(bodyType.get())).then(0)
-                    .otherwise(1);
+                    .when(qPost.bodyType.eq(bodyType.get())).then(1)
+                    .otherwise(0);
         }
-        return  Expressions.asNumber(1);
+        return  Expressions.asNumber(0);
     }
 
-    private StringExpression isMatchedBodyType(Optional<BodyType> bodyType){
+    private StringExpression matchedBodyTypeAsString(Optional<BodyType> bodyType){
         if(bodyType.isPresent()){
             return new CaseBuilder()
                     .when(qPost.bodyType.eq(bodyType.get())).then("1")
@@ -270,7 +276,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
         }
 
         // bodyType 순서 계산
-        StringExpression isMatchedBodyType = isMatchedBodyType(bodyType); // bodyType 일치 여부
+        StringExpression isMatchedBodyType = matchedBodyTypeAsString(bodyType); // bodyType 일치 여부
         StringTemplate postCreatedAtTemplate = mySqlDateFormat(); //DATE_FORMAT으로 날짜 형태 변경
         StringExpression formattedCreatedAt = formatCreatedAt(postCreatedAtTemplate); // 날짜 형태 변경을 포맷
 
