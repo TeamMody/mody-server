@@ -69,7 +69,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
         //동적 정렬
         List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
         if (bodyType.isPresent()) {
-            orderSpecifiers.add(orderedBodyTypeAsInteger(bodyType).desc()); // bodyType이 존재할 때만 정렬 조건 추가
+            orderSpecifiers.add(matchedBodyTypeAsInteger(bodyType).desc()); // bodyType이 존재할 때만 정렬 조건 추가
         }
         orderSpecifiers.add(qPost.createdAt.desc()); // 항상 createdAt으로 정렬
 
@@ -213,16 +213,16 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
      * @param bodyType
      * @return
      */
-    private NumberExpression<Integer> orderedBodyType(Optional<BodyType> bodyType){
+    private NumberExpression<Integer> matchedBodyTypeAsInteger(Optional<BodyType> bodyType){
         if(bodyType.isPresent()){
             return new CaseBuilder()
-                    .when(qPost.bodyType.eq(bodyType.get())).then(0)
-                    .otherwise(1);
+                    .when(qPost.bodyType.eq(bodyType.get())).then(1)
+                    .otherwise(0);
         }
-        return  Expressions.asNumber(1);
+        return  Expressions.asNumber(0);
     }
 
-    private StringExpression isMatchedBodyType(Optional<BodyType> bodyType){
+    private StringExpression matchedBodyTypeAsString(Optional<BodyType> bodyType){
         if(bodyType.isPresent()){
             return new CaseBuilder()
                     .when(qPost.bodyType.eq(bodyType.get())).then("1")
@@ -276,7 +276,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
         }
 
         // bodyType 순서 계산
-        StringExpression isMatchedBodyType = isMatchedBodyType(bodyType); // bodyType 일치 여부
+        StringExpression isMatchedBodyType = matchedBodyTypeAsString(bodyType); // bodyType 일치 여부
         StringTemplate postCreatedAtTemplate = mySqlDateFormat(); //DATE_FORMAT으로 날짜 형태 변경
         StringExpression formattedCreatedAt = formatCreatedAt(postCreatedAtTemplate); // 날짜 형태 변경을 포맷
 
