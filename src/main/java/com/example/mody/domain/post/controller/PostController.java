@@ -181,9 +181,9 @@ public class PostController {
             @Parameter(name = "postId", description = "게시글 아이디, path variable 입니다")
     })
     public BaseResponse<Void> deletePost(
-            @PathVariable Long postsId,
+            @PathVariable(name = "postId") Long postId,
 			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        postCommandService.deletePost(postsId, customUserDetails.getMember());
+        postCommandService.deletePost(postId, customUserDetails.getMember());
         return BaseResponse.onSuccessDelete(null);
     }
 
@@ -471,9 +471,9 @@ public class PostController {
 	})
 	public BaseResponse<Void> updatePost(
 			@Valid @RequestBody PostUpdateRequest request,
-			@PathVariable Long postsId,
+			@PathVariable(name = "postId") Long postId,
 			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-		postCommandService.updatePost(request, postsId, customUserDetails.getMember());
+		postCommandService.updatePost(request, postId, customUserDetails.getMember());
 
 		return BaseResponse.onSuccess(null);
 	}

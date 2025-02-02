@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import com.example.mody.domain.file.repository.BackupFileRepository;
 import com.example.mody.domain.file.service.FileService;
+import com.example.mody.domain.image.service.S3Service;
 import com.example.mody.domain.post.dto.request.PostUpdateRequest;
 import com.example.mody.domain.post.entity.mapping.PostReport;
 import com.example.mody.domain.post.repository.PostReportRepository;
@@ -51,7 +52,8 @@ public class PostCommandServiceImpl implements PostCommandService {
 	private final PostReportRepository postReportRepository;
 	private final BodyTypeService bodyTypeService;
 	private final FileService fileService;
-  private final RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
+	private final S3Service s3Service;
 
 	/**
 	 * 게시글 작성 비즈니스 로직. BodyType은 요청 유저의 가장 마지막 BodyType을 적용함. 유저의 BodyType이 존재하지 않을 경우 예외 발생.
@@ -167,9 +169,19 @@ public class PostCommandServiceImpl implements PostCommandService {
 	@Transactional
 	protected void delete(Post post) {
 		List<String> postImageUrls = postImageRepository.findPostImageUrlByPostId(post.getId());
+
+		// S3 파일 삭제
+		s3Service.deleteFile(postImageUrls);
+
+		// DB에서 Post 관련 데이터 삭제
 		fileService.deleteByS3Urls(postImageUrls);
-    postReportRepository.deleteAllByPost(post);
-		postRepository.deleteById(post.getId());
+		decreaseLikeCount(post);
+		postRepository.deleteById(post.getId()); // (cascade = CascadeType.ALL, orphanRemoval = true) -> postId에 해당하는 PostImage 전부 삭제됨
+	}
+
+	private void decreaseLikeCount(Post post){
+		Integer postLikeCount = post.getLikeCount();
+		post.getMember().decreaseLikeCount(postLikeCount);
 	}
 
 	private void checkAuthorization(Member member, Post post){

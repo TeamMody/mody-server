@@ -82,6 +82,7 @@ public class ErrorSender {
     }
 
     private String escapeMarkdown(String text) {
+        if (text == null) return "메세지가 존재하지 않음";
         return text.replaceAll("`", "\\\\`")
                 .replaceAll("\\*", "\\\\*")
                 .replaceAll("_", "\\\\_")

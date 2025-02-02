@@ -33,6 +33,14 @@ services: # 컨테이너 설정
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; certbot certonly --manual --preferred-challenges dns --email shimseawon1510@gmail.com -d kkoalla.app -d *.kkoalla.app --agree-tos --no-eff-email; exit;'"
 
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - mody-network
+  
 networks:
   mody-network:
     driver: bridge

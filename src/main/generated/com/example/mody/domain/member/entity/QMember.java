@@ -32,6 +32,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath email = createString("email");
 
+    public final ListPath<com.example.mody.domain.fashionItem.entity.FashionItem, com.example.mody.domain.fashionItem.entity.QFashionItem> FashionItems = this.<com.example.mody.domain.fashionItem.entity.FashionItem, com.example.mody.domain.fashionItem.entity.QFashionItem>createList("FashionItems", com.example.mody.domain.fashionItem.entity.FashionItem.class, com.example.mody.domain.fashionItem.entity.QFashionItem.class, PathInits.DIRECT2);
+
     public final EnumPath<com.example.mody.domain.member.enums.Gender> gender = createEnum("gender", com.example.mody.domain.member.enums.Gender.class);
 
     public final NumberPath<Integer> height = createNumber("height", Integer.class);
@@ -63,6 +65,8 @@ public class QMember extends EntityPathBase<Member> {
     public final EnumPath<com.example.mody.domain.member.enums.Role> role = createEnum("role", com.example.mody.domain.member.enums.Role.class);
 
     public final EnumPath<com.example.mody.domain.member.enums.Status> status = createEnum("status", com.example.mody.domain.member.enums.Status.class);
+
+    public final ListPath<com.example.mody.domain.style.entity.Style, com.example.mody.domain.style.entity.QStyle> styles = this.<com.example.mody.domain.style.entity.Style, com.example.mody.domain.style.entity.QStyle>createList("styles", com.example.mody.domain.style.entity.Style.class, com.example.mody.domain.style.entity.QStyle.class, PathInits.DIRECT2);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;

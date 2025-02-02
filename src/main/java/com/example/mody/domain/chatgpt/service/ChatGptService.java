@@ -1,9 +1,12 @@
 package com.example.mody.domain.chatgpt.service;
 
 import com.example.mody.domain.bodytype.dto.response.BodyTypeAnalysisResponse;
+import com.example.mody.domain.fashionItem.dto.request.FashionItemRequest;
+import com.example.mody.domain.fashionItem.dto.response.ItemGptResponse;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
 import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
+import com.example.mody.domain.style.dto.response.StyleRecommendation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import com.example.mody.global.common.exception.RestApiException;
@@ -92,7 +95,7 @@ public final class ChatGptService {
         }
     }
 
-    public StyleRecommendResponse.StyleRecommendation recommendGptStyle(StyleRecommendRequest styleRecommendRequest, String bodyType){
+    public StyleRecommendation recommendGptStyle(StyleRecommendRequest styleRecommendRequest, String bodyType){
 
         //스타일 추천 프롬프트 생성
         String prompt = promptManager.createRecommendStylePrompt(bodyType, styleRecommendRequest);
@@ -109,7 +112,31 @@ public final class ChatGptService {
 
         try{
             return objectMapper.readValue(objectMapper.readTree(content).get("styleRecommendation").toString(),
-                    StyleRecommendResponse.StyleRecommendation.class);
+                    StyleRecommendation.class);
+        } catch (JsonMappingException e) {
+            throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
+        } catch (JsonProcessingException e) {
+            throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
+        }
+    }
+
+    public ItemGptResponse recommendGptItem(FashionItemRequest fashionItemRequest, String bodyType){
+
+        //아이템 추천 프롬프트 생성
+        String prompt = promptManager.createRecommendItemPrompt(bodyType, fashionItemRequest);
+
+        //openAiApiClient로 gpt 답변 생성
+        ChatGPTResponse response = openAiApiClient.sendRequestToModel(
+                model,
+                List.of(
+                        new Message(systemRole, prompt)
+                ),
+                maxTokens,
+                temperature);
+        String content = response.getChoices().get(0).getMessage().getContent().trim();
+
+        try{
+            return objectMapper.readValue(content, ItemGptResponse.class);
         } catch (JsonMappingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         } catch (JsonProcessingException e) {

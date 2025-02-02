@@ -1,5 +1,6 @@
 package com.example.mody.global.templates;
 
+import com.example.mody.domain.fashionItem.dto.request.FashionItemRequest;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
 import org.springframework.stereotype.Component;
@@ -73,6 +74,37 @@ public class PromptManager {
                                 "practicalStylingTips": <실질적인 스타일 팁>,
                                 "imageUrl": <이미지 url>
                             }
+                        }
+                        """
+        );
+    }
+
+    public String createRecommendItemPrompt(String bodyType, FashionItemRequest fashionItemRequest) {
+        PromptTemplate template = new PromptTemplate();
+        return template.fillTemplate(
+                """
+                        ##명령
+                        사용자의 체형 타입과 원하는 스타일, 선호하지 않는 스타일, 보여주고 싶은 이미지를 고려해 패션 아이템을 추천해줘.
+                        imageUrl은 웹에서 검색 후 존재하는 사진을 jpg 형식으로 가져와줘.
+                  
+                        ## 사용자의 체형 타입
+                        \'%s\'
+                        ## 사용자의 취향에 해당하는 스타일
+                        \'%s\'
+                        ## 사용자가 선호하지 않는 스타일
+                        \'%s\'
+                        ## 사용자가 보여주고 싶은 이미지
+                        \'%s\'
+                        
+                        패션 아이템 추천해줘
+                        """
+                        .formatted(bodyType, fashionItemRequest.getPreferredStyles(), fashionItemRequest.getDislikedStyles(), fashionItemRequest.getAppealedImage())
+                ,
+                """
+                        {
+                            "item": <추천하는 아이템>,
+                            "description": <골격 특징과 체형적 특징(마름, 중간, 체격)에 맞는 아이템 및 실루엣 설명>,
+                            "imageUrl": <이미지 url>
                         }
                         """
         );

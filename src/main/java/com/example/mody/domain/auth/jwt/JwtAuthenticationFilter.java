@@ -54,6 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			uri.startsWith("/v3/api-docs/");
 		log.info("JwtAuthenticationFilter - shouldNotFilter returns: {}", skip);
 		return skip;
+
 	}
 
 	@Override
