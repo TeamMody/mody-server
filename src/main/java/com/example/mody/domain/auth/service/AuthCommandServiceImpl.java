@@ -4,6 +4,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.mody.domain.auth.dto.response.AccessTokenResponse;
 import com.example.mody.domain.auth.entity.RefreshToken;
 import com.example.mody.domain.auth.jwt.JwtProvider;
 import com.example.mody.domain.auth.repository.RefreshTokenRepository;
@@ -25,11 +26,16 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 	private final JwtProvider jwtProvider;
 	private final RefreshTokenRepository refreshTokenRepository;
 
-	public String reissueToken(String oldRefreshToken, HttpServletResponse response) {
-		// 기존 Refresh Token 검증
+	public AccessTokenResponse reissueToken(String oldRefreshToken, HttpServletResponse response) {
+		log.info("Client refresh token: {}", oldRefreshToken);
 		RefreshToken refreshTokenEntity = refreshTokenRepository.findByToken(oldRefreshToken)
-			.orElseThrow(() -> new RefreshTokenException(AuthErrorStatus.INVALID_REFRESH_TOKEN));
-
+			.orElseThrow(() -> {
+				log.warn("DB에 저장된 refresh token과 일치하는 값이 없습니다.");
+				return new RefreshTokenException(AuthErrorStatus.INVALID_REFRESH_TOKEN);
+			});
+		log.info("DB refresh token for member {}: {}", refreshTokenEntity.getMember().getId(),
+			refreshTokenEntity.getToken());
+		
 		// Refresh Token에 해당하는 회원 조회
 		Member member = refreshTokenEntity.getMember();
 
@@ -43,8 +49,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 		// Refresh Token을 쿠키에 설정
 		ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", newRefreshToken)
 			.httpOnly(true)
-			.secure(true)
-			.sameSite("None")
+			.secure(false)
 			.maxAge(7 * 24 * 60 * 60) // 7일
 			.path("/")
 			.build();
@@ -53,7 +58,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
 		response.setHeader("Set-Cookie", refreshTokenCookie.toString());
 
-		return newAccessToken;
+		return AccessTokenResponse.builder()
+			.accessToken(newAccessToken)
+			.build();
 	}
 
 	public void saveRefreshToken(Member member, String refreshToken) {
@@ -65,7 +72,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 				.build());
 
 		refreshTokenEntity.updateToken(refreshToken);
-		refreshTokenRepository.save(refreshTokenEntity);
+
 	}
 
 	public void logout(String refreshToken) {
@@ -93,6 +100,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 			.secure(true)
 			.sameSite("None")
 			.maxAge(7 * 24 * 60 * 60) // 7일(7 * 24 * 60 * 60)
+
 			.path("/")
 			.build();
 
