@@ -76,4 +76,14 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 			newMember.isRegistrationCompleted(),
 			newAccessToken);
 	}
+
+	@Override
+	public void withdrawMember(Long memberId) {
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new MemberException(MemberErrorStatus.MEMBER_NOT_FOUND));
+
+		// 회원의 상태를 '삭제'로 변경 (soft delete)
+		member.softDelete();
+		// 별도의 memberRepository.save(member) 호출은 @Transactional 및 변경 감지로 반영됩니다.
+	}
 }
