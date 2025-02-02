@@ -36,7 +36,7 @@ public class MemberBodyTypeQueryServiceImpl implements MemberBodyTypeQueryServic
 
     // Member로 MemberBodyType 조회
     private MemberBodyType getMemberBodyType(Member member) {
-        Optional<MemberBodyType> optionalMemberBodyType = memberBodyTypeRepository.findMemberBodyTypeByMember(member);
+        Optional<MemberBodyType> optionalMemberBodyType =  memberBodyTypeRepository.findTopByMemberOrderByCreatedAtDesc(member);
         return optionalMemberBodyType.orElseThrow(() -> new BodyTypeException(BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND));
     }
 }

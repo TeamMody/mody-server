@@ -12,5 +12,5 @@ public interface MemberBodyTypeRepository extends JpaRepository<MemberBodyType, 
     Optional<MemberBodyType> findTopByMemberOrderByCreatedAt(Member member);
     Optional<MemberBodyType> findMemberBodyTypeByMember(Member member);
     Long countAllByMember(Member member);
-
+    Optional<MemberBodyType> findTopByMemberOrderByCreatedAtDesc(Member member);
 }
