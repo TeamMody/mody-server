@@ -40,13 +40,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final MemberQueryService memberQueryService;
 
 	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) {
-		String path = request.getServletPath();
-		return path.startsWith("/auth/") ||
-			path.startsWith("/oauth2/") ||
-			path.startsWith("/email/") ||
-			path.startsWith("/swagger-ui/") ||
-			path.startsWith("/v3/api-docs/");
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		String uri = request.getRequestURI();
+		String contextPath = request.getContextPath();
+		if (contextPath != null && !contextPath.isEmpty()) {
+			uri = uri.substring(contextPath.length());
+		}
+		log.info("JwtAuthenticationFilter - Request URI after context removal: {}", uri);
+		boolean skip = uri.startsWith("/auth/") ||
+			uri.startsWith("/oauth2/") ||
+			uri.startsWith("/email/") ||
+			uri.startsWith("/swagger-ui/") ||
+			uri.startsWith("/v3/api-docs/");
+		log.info("JwtAuthenticationFilter - shouldNotFilter returns: {}", skip);
+		return skip;
 	}
 
 	@Override
