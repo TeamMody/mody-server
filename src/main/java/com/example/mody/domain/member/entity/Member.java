@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import com.example.mody.domain.fashionItem.entity.FashionItem;
-import com.example.mody.domain.style.entity.Style;
+import com.example.mody.domain.recommendation.entity.Recommendation;
+import com.example.mody.domain.recommendation.entity.mapping.MemberRecommendationLike;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -60,10 +60,13 @@ public class Member extends BaseEntity {
 	private List<MemberBodyType> memberBodyType = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<Style> styles = new ArrayList<>();
+	private List<Recommendation> recommendations = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<FashionItem> fashionItems = new ArrayList<>();
+	@OneToMany(mappedBy = "member",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true,
+			fetch = FetchType.LAZY)
+	private List<MemberRecommendationLike> RecommendLikes = new ArrayList<>();
 
 	private String providerId;  // OAuth2 제공자의 고유 ID
 
