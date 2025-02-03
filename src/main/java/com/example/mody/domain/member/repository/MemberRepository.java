@@ -1,5 +1,7 @@
 package com.example.mody.domain.member.repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.enums.LoginType;
+import com.example.mody.domain.member.enums.Status;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -22,4 +25,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	Boolean existsByEmailAndLoginType(String email, LoginType loginType);
 
+	List<Member> findByStatusAndDeletedAtBefore(Status status, LocalDateTime deletedAt);
 }

@@ -1,6 +1,7 @@
 package com.example.mody.domain.auth.controller;
 
-import com.example.mody.domain.auth.dto.response.LoginResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -14,6 +15,8 @@ import com.example.mody.domain.auth.dto.request.EmailVerificationRequest;
 import com.example.mody.domain.auth.dto.request.MemberJoinRequest;
 import com.example.mody.domain.auth.dto.request.MemberLoginReqeust;
 import com.example.mody.domain.auth.dto.request.MemberRegistrationRequest;
+import com.example.mody.domain.auth.dto.response.AccessTokenResponse;
+import com.example.mody.domain.auth.dto.response.LoginResponse;
 import com.example.mody.domain.auth.security.CustomUserDetails;
 import com.example.mody.domain.auth.service.AuthCommandService;
 import com.example.mody.domain.auth.service.email.EmailService;
@@ -42,6 +45,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 public class AuthController {
 
+	private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 	private final AuthCommandService authCommandService;
 	private final MemberCommandService memberCommandService;
 	private final EmailService emailService;
@@ -195,12 +199,12 @@ public class AuthController {
 		)
 	})
 	@PostMapping("/reissue")
-	public BaseResponse<Void> reissueToken(
+	public BaseResponse<AccessTokenResponse> reissueToken(
 		@CookieValue(name = "refresh_token") String refreshToken,
 		HttpServletResponse response
 	) {
-		authCommandService.reissueToken(refreshToken, response);
-		return BaseResponse.onSuccess(null);
+		log.info("refreshToken: {}", refreshToken);
+		return BaseResponse.onSuccess(authCommandService.reissueToken(refreshToken, response));
 	}
 
 	@Operation(
@@ -315,7 +319,7 @@ public class AuthController {
 					description = "Refresh Token (HttpOnly Cookie)",
 					schema = @Schema(type = "string")
 				)
-				},
+			},
 			content = @Content(
 				mediaType = "application/json",
 				schema = @Schema(implementation = BaseResponse.class)
@@ -362,15 +366,15 @@ public class AuthController {
 				mediaType = "application/json",
 				examples = @ExampleObject(
 					value = """
-						{
-							"timestamp": "2025-01-27T00:08:57.1421127",
-							"code": "COMMON402",
-							"message": "Validation Error입니다.",
-							"result": {
-								"password": "비밀번호는 8자 이상, 영어와 숫자, 그리고 특수문자(@$!%*?&#)를 포함해야 하며, 한글은 사용할 수 없습니다."
+							{
+								"timestamp": "2025-01-27T00:08:57.1421127",
+								"code": "COMMON402",
+								"message": "Validation Error입니다.",
+								"result": {
+									"password": "비밀번호는 8자 이상, 영어와 숫자, 그리고 특수문자(@$!%*?&#)를 포함해야 하며, 한글은 사용할 수 없습니다."
+								}
 							}
-						}
-					"""
+						"""
 				)
 			)
 		)
@@ -455,12 +459,12 @@ public class AuthController {
 				mediaType = "application/json",
 				examples = @ExampleObject(
 					value = """
-						{
-							"timestamp": "2025-01-27T00:12:53.6087824",
-							"code": "MEMBER404",
-							"message": "해당 회원을 찾을 수 없습니다."
-						}
-					"""
+							{
+								"timestamp": "2025-01-27T00:12:53.6087824",
+								"code": "MEMBER404",
+								"message": "해당 회원을 찾을 수 없습니다."
+							}
+						"""
 				)
 			)
 		)
