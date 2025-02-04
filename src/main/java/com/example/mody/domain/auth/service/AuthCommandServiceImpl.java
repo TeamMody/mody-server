@@ -49,7 +49,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 		// Refresh Token을 쿠키에 설정
 		ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", newRefreshToken)
 			.httpOnly(true)
-			.secure(false)
+			.secure(true)
 			.maxAge(7 * 24 * 60 * 60) // 7일
 			.path("/")
 			.build();
