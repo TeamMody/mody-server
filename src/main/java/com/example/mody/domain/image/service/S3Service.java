@@ -42,7 +42,7 @@ public class S3Service {
 
         List<PresignedUrlResponse> presignedUrls = new ArrayList<>();
         for (String filename : filenames) {
-            String sanitizedFilename = filename.replaceAll("blob:http://localhost:\\d+/", "");
+            String sanitizedFilename = filename.replaceAll("[^/]+://[^/]+/", "");
             String key = String.format("post/%d/%s/%s", memberId, uuid, sanitizedFilename);
             Date expiration = getExpiration(); // 유효 기간
             GeneratePresignedUrlRequest generatePresignedUrlRequest = generatePresignedUrl(key, expiration);
@@ -55,7 +55,7 @@ public class S3Service {
 
     public PresignedUrlResponse getProfilePresignedUrl(Long memberId, String filename) {
         // key값 설정(profile 경로 + 멤버ID + 랜덤 값 + filename)
-        String sanitizedFilename = filename.replaceAll("blob:http://localhost:\\d+/", "");
+        String sanitizedFilename = filename.replaceAll("[^/]+://[^/]+/", "");
         String key = String.format("profile/%d/%s/%s", memberId, UUID.randomUUID(), sanitizedFilename);
 
         // 유효 기간
