@@ -2,6 +2,7 @@ package com.example.mody.domain.recommendation.service;
 
 import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.bodytype.repository.MemberBodyTypeRepository;
+import com.example.mody.domain.bodytype.service.memberbodytype.MemberBodyTypeQueryService;
 import com.example.mody.domain.chatgpt.service.ChatGptService;
 import com.example.mody.domain.exception.BodyTypeException;
 import com.example.mody.domain.member.entity.Member;
@@ -36,13 +37,13 @@ public class RecommendationCommendServiceImpl implements RecommendationCommendSe
     private final RecommendationRepository recommendationRepository;
     private final RecommendationQueryService recommendationQueryService;
     private final MemberRecommendationLikeRepository memberRecommendationLikeRepository;
+    private final MemberBodyTypeQueryService memberBodyTypeQueryService;
 
     @Override
     public RecommendResponse recommendStyle(Member member, RecommendRequest request) {
 
         //현재 유저의 bodyType 정보를 받아오기
-        MemberBodyType latestBodyType = memberBodyTypeRepository.findTopByMemberOrderByCreatedAtDesc(member)
-                .orElseThrow(() -> new BodyTypeException(BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND));
+        MemberBodyType latestBodyType = memberBodyTypeQueryService.getMemberBodyType(member);
 
         //gpt 추천 요청을 위한 사용자 정보 구성
         MemberInfoRequest memberInfoRequest = MemberInfoRequest.of(
@@ -80,8 +81,7 @@ public class RecommendationCommendServiceImpl implements RecommendationCommendSe
     public RecommendResponse recommendFashionItem(Member member, RecommendRequest request) {
 
         //현재 유저의 bodyType 정보를 받아오기
-        MemberBodyType latestBodyType = memberBodyTypeRepository.findTopByMemberOrderByCreatedAtDesc(member)
-                .orElseThrow(() -> new BodyTypeException(BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND));
+        MemberBodyType latestBodyType = memberBodyTypeQueryService.getMemberBodyType(member);
 
         //gpt 추천 요청을 위한 사용자 정보 구성
         MemberInfoRequest memberInfoRequest = MemberInfoRequest.of(
