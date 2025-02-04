@@ -52,6 +52,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath password = createString("password");
 
+    public final ListPath<com.example.mody.domain.post.entity.Post, com.example.mody.domain.post.entity.QPost> posts = this.<com.example.mody.domain.post.entity.Post, com.example.mody.domain.post.entity.QPost>createList("posts", com.example.mody.domain.post.entity.Post.class, com.example.mody.domain.post.entity.QPost.class, PathInits.DIRECT2);
+
     public final StringPath profileImageUrl = createString("profileImageUrl");
 
     public final StringPath provider = createString("provider");

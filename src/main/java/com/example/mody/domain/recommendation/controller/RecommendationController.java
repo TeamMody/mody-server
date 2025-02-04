@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/recommendations")
-public class recommendationController {
+public class RecommendationController {
 
     private final RecommendationQueryService recommendationQueryService;
     private final RecommendationCommendService recommendationCommendService;

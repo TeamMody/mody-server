@@ -41,7 +41,7 @@ public class RecommendationCommendServiceImpl implements RecommendationCommendSe
     public RecommendResponse recommendStyle(Member member, RecommendRequest request) {
 
         //현재 유저의 bodyType 정보를 받아오기
-        MemberBodyType latestBodyType = memberBodyTypeRepository.findTopByMemberOrderByCreatedAt(member)
+        MemberBodyType latestBodyType = memberBodyTypeRepository.findTopByMemberOrderByCreatedAtDesc(member)
                 .orElseThrow(() -> new BodyTypeException(BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND));
 
         //gpt 추천 요청을 위한 사용자 정보 구성
@@ -80,7 +80,7 @@ public class RecommendationCommendServiceImpl implements RecommendationCommendSe
     public RecommendResponse recommendFashionItem(Member member, RecommendRequest request) {
 
         //현재 유저의 bodyType 정보를 받아오기
-        MemberBodyType latestBodyType = memberBodyTypeRepository.findTopByMemberOrderByCreatedAt(member)
+        MemberBodyType latestBodyType = memberBodyTypeRepository.findTopByMemberOrderByCreatedAtDesc(member)
                 .orElseThrow(() -> new BodyTypeException(BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND));
 
         //gpt 추천 요청을 위한 사용자 정보 구성
