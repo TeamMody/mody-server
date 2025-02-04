@@ -55,7 +55,8 @@ public class S3Service {
 
     public PresignedUrlResponse getProfilePresignedUrl(Long memberId, String filename) {
         // key값 설정(profile 경로 + 멤버ID + 랜덤 값 + filename)
-        String key = String.format("profile/%d/%s%s", memberId, UUID.randomUUID(), filename);
+        String sanitizedFilename = filename.replaceAll("blob:http://localhost:\\d+/", "");
+        String key = String.format("profile/%d/%s/%s", memberId, UUID.randomUUID(), sanitizedFilename);
 
         // 유효 기간
         Date expiration = getExpiration();
