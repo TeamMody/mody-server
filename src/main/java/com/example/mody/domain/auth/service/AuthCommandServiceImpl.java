@@ -34,8 +34,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 		Member member = refreshTokenEntity.getMember();
 
 		// 새로운 토큰 발급
-		String newAccessToken = jwtProvider.createAccessToken(member.getProviderId());
-		String newRefreshToken = jwtProvider.createRefreshToken(member.getProviderId());
+		String newAccessToken = jwtProvider.createAccessToken(member.getId().toString());
+		String newRefreshToken = jwtProvider.createRefreshToken(member.getId().toString());
 
 		// Refresh Token 교체 (Rotation)
 		refreshTokenEntity.updateToken(newRefreshToken);
