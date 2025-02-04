@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import com.example.mody.domain.bodytype.entity.BodyType;
 import com.example.mody.domain.member.entity.Member;
+import com.example.mody.domain.post.entity.mapping.MemberPostLike;
 import com.example.mody.global.common.base.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -43,6 +44,11 @@ public class Post extends BaseEntity {
 		orphanRemoval = true,
 		fetch = FetchType.LAZY)
 	private List<PostImage> images = new ArrayList<>();
+
+	@OneToMany(mappedBy = "post",
+		cascade = CascadeType.ALL,
+		orphanRemoval = true)
+	private List<MemberPostLike> likes = new ArrayList<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "member_id", nullable = false)
