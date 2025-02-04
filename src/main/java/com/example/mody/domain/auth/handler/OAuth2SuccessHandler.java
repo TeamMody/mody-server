@@ -1,13 +1,14 @@
 package com.example.mody.domain.auth.handler;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.example.mody.domain.auth.dto.response.LoginResponse;
 import com.example.mody.domain.auth.jwt.JwtProvider;
 import com.example.mody.domain.auth.security.CustomOAuth2User;
 import com.example.mody.domain.auth.service.AuthCommandService;
@@ -15,7 +16,6 @@ import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.enums.Role;
 import com.example.mody.domain.member.enums.Status;
 import com.example.mody.domain.member.repository.MemberRepository;
-import com.example.mody.global.common.base.BaseResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
@@ -23,6 +23,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
@@ -30,9 +31,12 @@ import lombok.extern.slf4j.Slf4j;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 	private final JwtProvider jwtProvider;
-	private final ObjectMapper objectMapper;
 	private final MemberRepository memberRepository;
 	private final AuthCommandService authCommandService;
+
+	// 프론트 엔드 주소, 환경변수에서 주입
+	@Value("${front.redirect-url}")
+	private String FRONT_REDIRECT_URL;
 
 	/**
 	 * OAuth2 로그인 성공 시 처리
@@ -57,19 +61,17 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		// Access Token, Refresh Token 발급
 		String newAccessToken = authCommandService.processLoginSuccess(member, response);
 
-		// 로그인 응답 데이터 설정
-		LoginResponse loginResponse = LoginResponse.of(
-			member.getId(),
-			member.getNickname(),
-			isNewMember,
-			member.isRegistrationCompleted(),
-			newAccessToken
-		);
+		// 리다이렉션 URL 생성
+		String targetUrl = UriComponentsBuilder.fromUriString(FRONT_REDIRECT_URL)
+				.queryParam("memberId", member.getId())
+				.queryParam("nickname", URLEncoder.encode(member.getNickname(), StandardCharsets.UTF_8))
+				.queryParam("newMember", isNewMember)
+				.queryParam("isRegistrationCompleted", member.isRegistrationCompleted())
+				.build().toUriString();
 
-		// 응답 바디 작성
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		response.setCharacterEncoding("UTF-8");
-		response.getWriter().write(objectMapper.writeValueAsString(BaseResponse.onSuccess(loginResponse)));
+		// 리다이렉션 수행
+		response.sendRedirect(targetUrl);
+
 	}
 
 	private Member saveMember(CustomOAuth2User oAuth2User) {
