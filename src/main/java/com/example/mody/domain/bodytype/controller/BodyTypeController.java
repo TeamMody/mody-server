@@ -5,7 +5,6 @@ import com.example.mody.domain.bodytype.dto.request.BodyTypeAnalysisRequest;
 import com.example.mody.domain.bodytype.dto.response.BodyTypeAnalysisResponse;
 import com.example.mody.domain.bodytype.service.memberbodytype.MemberBodyTypeCommandService;
 import com.example.mody.domain.bodytype.service.memberbodytype.MemberBodyTypeQueryService;
-import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
 import com.example.mody.global.common.base.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

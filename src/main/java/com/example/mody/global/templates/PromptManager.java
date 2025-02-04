@@ -1,8 +1,8 @@
 package com.example.mody.global.templates;
 
-import com.example.mody.domain.fashionItem.dto.request.FashionItemRequest;
 import com.example.mody.domain.member.enums.Gender;
-import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
+import com.example.mody.domain.recommendation.dto.request.MemberInfoRequest;
+import com.example.mody.domain.recommendation.dto.request.RecommendRequest;
 import org.springframework.stereotype.Component;
 
 /**
@@ -43,70 +43,74 @@ public class PromptManager {
         );
     }
 
-    //스타일 추천을 위한 프롬프트 생성
-    public String createRecommendStylePrompt(String bodyType, StyleRecommendRequest styleRecommendRequest) {
+    public String createRecommendStylePrompt(MemberInfoRequest memberInfoRequest, RecommendRequest recommendRequest) {
         PromptTemplate template = new PromptTemplate();
+        String recommendRequestContent = createRecommendRequestContent("패션 스타일 추천해줘", memberInfoRequest, recommendRequest);
         return template.fillTemplate(
-                """
-                        ##명령
-                        사용자의 체형 타입과 원하는 스타일, 선호하지 않는 스타일, 보여주고 싶은 이미지를 고려해 스타일을 추천해줘.
-                        imageUrl은 웹에서 검색 후 존재하는 사진을 jpg 형식으로 가져와줘.
-                  
-                        ## 사용자의 체형 타입
-                        \'%s\'
-                        ## 사용자의 취향에 해당하는 스타일
-                        \'%s\'
-                        ## 사용자가 선호하지 않는 스타일
-                        \'%s\'
-                        ## 사용자가 보여주고 싶은 이미지
-                        \'%s\'
-                        
-                        패션 스타일 추천해줘
-                        """
-                        .formatted(bodyType, styleRecommendRequest.getPreferredStyles(), styleRecommendRequest.getDislikedStyles(), styleRecommendRequest.getAppealedImage())
-                ,
+                recommendRequestContent,
                 """
                         {
-                            "styleRecommendation": {
-                                "recommendedStyle": <추천하는 스타일>,
-                                "introduction": <스타일 추천 배경>,
-                                "styleDirection": <스타일 조언>,
-                                "practicalStylingTips": <실질적인 스타일 팁>,
-                                "imageUrl": <이미지 url>
+                            "nickName": string,
+                            "recommendedStyle": string,
+                            "introduction": string,
+                            "styleDirection": string,
+                            "practicalStylingTips": string,
+                            "imageUrl": string
                             }
                         }
                         """
         );
     }
 
-    public String createRecommendItemPrompt(String bodyType, FashionItemRequest fashionItemRequest) {
+    public String createRecommendItemPrompt(MemberInfoRequest memberInfoRequest, RecommendRequest recommendRequest) {
         PromptTemplate template = new PromptTemplate();
+        String recommendRequestContent = createRecommendRequestContent("패션 아이템 추천해줘", memberInfoRequest, recommendRequest);
         return template.fillTemplate(
+                recommendRequestContent,
                 """
-                        ##명령
-                        사용자의 체형 타입과 원하는 스타일, 선호하지 않는 스타일, 보여주고 싶은 이미지를 고려해 패션 아이템을 추천해줘.
+                        {
+                            "nickName": string,
+                            "item": string,
+                            "description": string,
+                            "imageUrl": string,
+                        }
+                        """
+                );
+    }
+
+    private String createRecommendRequestContent(String additionalText, MemberInfoRequest memberInfoRequest, RecommendRequest recommendRequest) {
+        return """
+                         ##명령
+                        사용자의 체형 타입과 원하는 스타일, 선호하지 않는 스타일, 보여주고 싶은 이미지를 고려해 스타일을 추천해줘.
                         imageUrl은 웹에서 검색 후 존재하는 사진을 jpg 형식으로 가져와줘.
-                  
-                        ## 사용자의 체형 타입
+                                                
+                        ## 사용자 정보
+                        닉네임: %s
+                        성별: %s
+                                                
+                        ## 사용자 체형 타입
                         \'%s\'
+                        ## 사용자 체형 정보
+                        \'%s\'
+                                                
                         ## 사용자의 취향에 해당하는 스타일
                         \'%s\'
                         ## 사용자가 선호하지 않는 스타일
                         \'%s\'
                         ## 사용자가 보여주고 싶은 이미지
                         \'%s\'
-                        
-                        패션 아이템 추천해줘
+                                                
+                        %s
                         """
-                        .formatted(bodyType, fashionItemRequest.getPreferredStyles(), fashionItemRequest.getDislikedStyles(), fashionItemRequest.getAppealedImage())
-                ,
-                """
-                        {
-                            "item": <추천하는 아이템>,
-                            "description": <골격 특징과 체형적 특징(마름, 중간, 체격)에 맞는 아이템 및 실루엣 설명>,
-                            "imageUrl": <이미지 url>
-                        }
-                        """
-        );
+                        .formatted(memberInfoRequest.getNickName(),
+                                memberInfoRequest.getGender(),
+                                memberInfoRequest.getBodyTypeName(),
+                                memberInfoRequest.getBody(),
+                                recommendRequest.getPreferredStyles(),
+                                recommendRequest.getDislikedStyles(),
+                                recommendRequest.getAppealedImage(),
+                                additionalText
+                        );
     }
+
 }

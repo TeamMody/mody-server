@@ -5,18 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.example.mody.domain.recommendation.entity.Recommendation;
+import com.example.mody.domain.recommendation.entity.mapping.MemberRecommendationLike;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
-import com.example.mody.domain.fashionItem.entity.FashionItem;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.member.enums.LoginType;
 import com.example.mody.domain.member.enums.Role;
 import com.example.mody.domain.member.enums.Status;
 import com.example.mody.domain.post.entity.Post;
 import com.example.mody.domain.post.entity.mapping.MemberPostLike;
-import com.example.mody.domain.style.entity.Style;
 import com.example.mody.global.common.base.BaseEntity;
 
 import jakarta.persistence.CascadeType;
@@ -60,10 +60,13 @@ public class Member extends BaseEntity {
 	private List<MemberBodyType> memberBodyType = new ArrayList<>();
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<Style> styles = new ArrayList<>();
+	private List<Recommendation> recommendations = new ArrayList<>();
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private List<FashionItem> fashionItems = new ArrayList<>();
+	@OneToMany(mappedBy = "member",
+			cascade = CascadeType.ALL,
+			orphanRemoval = true,
+			fetch = FetchType.LAZY)
+	private List<MemberRecommendationLike> RecommendLikes = new ArrayList<>();
 
 	/**
 	 * 회원이 작성한 게시글 목록

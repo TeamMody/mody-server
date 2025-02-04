@@ -1,12 +1,11 @@
 package com.example.mody.domain.chatgpt.service;
 
 import com.example.mody.domain.bodytype.dto.response.BodyTypeAnalysisResponse;
-import com.example.mody.domain.fashionItem.dto.request.FashionItemRequest;
-import com.example.mody.domain.fashionItem.dto.response.ItemGptResponse;
+import com.example.mody.domain.recommendation.dto.request.MemberInfoRequest;
+import com.example.mody.domain.recommendation.dto.response.analysis.ItemAnalysisResponse;
 import com.example.mody.domain.member.enums.Gender;
-import com.example.mody.domain.style.dto.request.StyleRecommendRequest;
-import com.example.mody.domain.style.dto.response.StyleRecommendResponse;
-import com.example.mody.domain.style.dto.response.StyleRecommendation;
+import com.example.mody.domain.recommendation.dto.request.RecommendRequest;
+import com.example.mody.domain.recommendation.dto.response.analysis.StyleAnalysisResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import com.example.mody.global.common.exception.RestApiException;
@@ -95,10 +94,10 @@ public final class ChatGptService {
         }
     }
 
-    public StyleRecommendation recommendGptStyle(StyleRecommendRequest styleRecommendRequest, String bodyType){
+    public StyleAnalysisResponse recommendGptStyle(MemberInfoRequest memberInfoRequest, RecommendRequest recommendRequest){
 
         //스타일 추천 프롬프트 생성
-        String prompt = promptManager.createRecommendStylePrompt(bodyType, styleRecommendRequest);
+        String prompt = promptManager.createRecommendStylePrompt(memberInfoRequest, recommendRequest);
 
         //openAiApiClient로 gpt 답변 생성
         ChatGPTResponse response = openAiApiClient.sendRequestToModel(
@@ -111,8 +110,7 @@ public final class ChatGptService {
         String content = response.getChoices().get(0).getMessage().getContent().trim();
 
         try{
-            return objectMapper.readValue(objectMapper.readTree(content).get("styleRecommendation").toString(),
-                    StyleRecommendation.class);
+            return objectMapper.readValue(content, StyleAnalysisResponse.class);
         } catch (JsonMappingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         } catch (JsonProcessingException e) {
@@ -120,10 +118,10 @@ public final class ChatGptService {
         }
     }
 
-    public ItemGptResponse recommendGptItem(FashionItemRequest fashionItemRequest, String bodyType){
+    public ItemAnalysisResponse recommendGptItem(MemberInfoRequest memberInfoRequest, RecommendRequest recommendRequest){
 
         //아이템 추천 프롬프트 생성
-        String prompt = promptManager.createRecommendItemPrompt(bodyType, fashionItemRequest);
+        String prompt = promptManager.createRecommendItemPrompt(memberInfoRequest, recommendRequest);
 
         //openAiApiClient로 gpt 답변 생성
         ChatGPTResponse response = openAiApiClient.sendRequestToModel(
@@ -136,12 +134,11 @@ public final class ChatGptService {
         String content = response.getChoices().get(0).getMessage().getContent().trim();
 
         try{
-            return objectMapper.readValue(content, ItemGptResponse.class);
+            return objectMapper.readValue(content, ItemAnalysisResponse.class);
         } catch (JsonMappingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         } catch (JsonProcessingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         }
     }
-
 }

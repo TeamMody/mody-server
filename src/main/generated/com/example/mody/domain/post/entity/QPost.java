@@ -42,6 +42,8 @@ public class QPost extends EntityPathBase<Post> {
 
     public final NumberPath<Integer> likeCount = createNumber("likeCount", Integer.class);
 
+    public final ListPath<com.example.mody.domain.post.entity.mapping.MemberPostLike, com.example.mody.domain.post.entity.mapping.QMemberPostLike> likes = this.<com.example.mody.domain.post.entity.mapping.MemberPostLike, com.example.mody.domain.post.entity.mapping.QMemberPostLike>createList("likes", com.example.mody.domain.post.entity.mapping.MemberPostLike.class, com.example.mody.domain.post.entity.mapping.QMemberPostLike.class, PathInits.DIRECT2);
+
     public final com.example.mody.domain.member.entity.QMember member;
 
     public final NumberPath<Integer> reportCount = createNumber("reportCount", Integer.class);

@@ -32,8 +32,6 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath email = createString("email");
 
-    public final ListPath<com.example.mody.domain.fashionItem.entity.FashionItem, com.example.mody.domain.fashionItem.entity.QFashionItem> FashionItems = this.<com.example.mody.domain.fashionItem.entity.FashionItem, com.example.mody.domain.fashionItem.entity.QFashionItem>createList("FashionItems", com.example.mody.domain.fashionItem.entity.FashionItem.class, com.example.mody.domain.fashionItem.entity.QFashionItem.class, PathInits.DIRECT2);
-
     public final EnumPath<com.example.mody.domain.member.enums.Gender> gender = createEnum("gender", com.example.mody.domain.member.enums.Gender.class);
 
     public final NumberPath<Integer> height = createNumber("height", Integer.class);
@@ -54,19 +52,23 @@ public class QMember extends EntityPathBase<Member> {
 
     public final StringPath password = createString("password");
 
+    public final ListPath<com.example.mody.domain.post.entity.Post, com.example.mody.domain.post.entity.QPost> posts = this.<com.example.mody.domain.post.entity.Post, com.example.mody.domain.post.entity.QPost>createList("posts", com.example.mody.domain.post.entity.Post.class, com.example.mody.domain.post.entity.QPost.class, PathInits.DIRECT2);
+
     public final StringPath profileImageUrl = createString("profileImageUrl");
 
     public final StringPath provider = createString("provider");
 
     public final StringPath providerId = createString("providerId");
 
+    public final ListPath<com.example.mody.domain.recommendation.entity.Recommendation, com.example.mody.domain.recommendation.entity.QRecommendation> recommendations = this.<com.example.mody.domain.recommendation.entity.Recommendation, com.example.mody.domain.recommendation.entity.QRecommendation>createList("recommendations", com.example.mody.domain.recommendation.entity.Recommendation.class, com.example.mody.domain.recommendation.entity.QRecommendation.class, PathInits.DIRECT2);
+
+    public final ListPath<com.example.mody.domain.recommendation.entity.mapping.MemberRecommendationLike, com.example.mody.domain.recommendation.entity.mapping.QMemberRecommendationLike> RecommendLikes = this.<com.example.mody.domain.recommendation.entity.mapping.MemberRecommendationLike, com.example.mody.domain.recommendation.entity.mapping.QMemberRecommendationLike>createList("RecommendLikes", com.example.mody.domain.recommendation.entity.mapping.MemberRecommendationLike.class, com.example.mody.domain.recommendation.entity.mapping.QMemberRecommendationLike.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> reportCount = createNumber("reportCount", Integer.class);
 
     public final EnumPath<com.example.mody.domain.member.enums.Role> role = createEnum("role", com.example.mody.domain.member.enums.Role.class);
 
     public final EnumPath<com.example.mody.domain.member.enums.Status> status = createEnum("status", com.example.mody.domain.member.enums.Status.class);
-
-    public final ListPath<com.example.mody.domain.style.entity.Style, com.example.mody.domain.style.entity.QStyle> styles = this.<com.example.mody.domain.style.entity.Style, com.example.mody.domain.style.entity.QStyle>createList("styles", com.example.mody.domain.style.entity.Style.class, com.example.mody.domain.style.entity.QStyle.class, PathInits.DIRECT2);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
