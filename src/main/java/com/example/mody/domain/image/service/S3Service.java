@@ -43,7 +43,7 @@ public class S3Service {
         List<PresignedUrlResponse> presignedUrls = new ArrayList<>();
         for (String filename : filenames) {
             String sanitizedFilename = filename.replaceAll("blob:http://localhost:\\d+/", "");
-            String key = String.format("deploy/%d/%s/%s", memberId, uuid, sanitizedFilename); // 테스트용 deploy 폴더, 추후 post 폴더로 변경 예정
+            String key = String.format("post/%d/%s/%s", memberId, uuid, sanitizedFilename);
             Date expiration = getExpiration(); // 유효 기간
             GeneratePresignedUrlRequest generatePresignedUrlRequest = generatePresignedUrl(key, expiration);
 
