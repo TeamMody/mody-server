@@ -20,4 +20,5 @@ spring:
         jdbc:
           time_zone: Asia/Seoul
 
-
+sentry:
+  enabled: false

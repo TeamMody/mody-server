@@ -25,3 +25,6 @@ logging:
     root: INFO
     org.springframework: INFO
   config: classpath:logback-spring-mody.xml
+
+sentry:
+  enabled: true
