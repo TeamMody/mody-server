@@ -5,7 +5,7 @@ import lombok.*;
 
 @Schema(description = "스타일 추천 정보")
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class StyleAnalysisResponse {
@@ -38,7 +38,13 @@ public class StyleAnalysisResponse {
 
     @Schema(
             description = "이미지 url",
-            example = "https://example.com/street-vintage-style.jpg"
+            example = "https://i.pinimg.com/236x/ad/c4/4f/adc44f56293a18fdb15f8b5fa5067dab.jpg"
     )
     private String imageUrl;
+
+    public StyleAnalysisResponse from(String imageUrl) {
+        return this.toBuilder()
+                .imageUrl(imageUrl)
+                .build();
+    }
 }
