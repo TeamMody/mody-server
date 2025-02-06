@@ -5,7 +5,7 @@ import lombok.*;
 
 @Schema(description = "패션 아이템 추천 Gpt 응답")
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class ItemAnalysisResponse {
@@ -26,7 +26,13 @@ public class ItemAnalysisResponse {
 
     @Schema(
             description = "이미지 url",
-            example = "https://i.pinimg.com/736x/72/ea/9e/72ea9eb6a5c7610b90a37aef9a022e12.jpg"
+            example = "https://i.pinimg.com/236x/32/87/f8/3287f86756200b3c8d9d28181aaddeae.jpg"
     )
     private String imageUrl;
+
+    public ItemAnalysisResponse from(String imageUrl) {
+        return this.toBuilder()
+                .imageUrl(imageUrl)
+                .build();
+    }
 }

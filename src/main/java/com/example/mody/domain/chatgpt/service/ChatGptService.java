@@ -113,8 +113,7 @@ public final class ChatGptService {
 
         try{
             StyleAnalysisResponse styleAnalysisResponse = objectMapper.readValue(content, StyleAnalysisResponse.class);
-            String imageUrl = searchImageFromPinterest(memberInfoRequest.getGender(), styleAnalysisResponse.getRecommendedStyle());
-            return styleAnalysisResponse.from(imageUrl);
+            return styleAnalysisResponse.from(searchImageFromPinterest(memberInfoRequest.getGender(), styleAnalysisResponse.getRecommendedStyle()));
         } catch (JsonMappingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         } catch (JsonProcessingException e) {
@@ -133,6 +132,7 @@ public final class ChatGptService {
         return imageUrl;
     }
 
+    // 패션 아이템 추천 메서드
     public ItemAnalysisResponse recommendGptItem(MemberInfoRequest memberInfoRequest, RecommendRequest recommendRequest){
 
         //아이템 추천 프롬프트 생성
@@ -149,7 +149,8 @@ public final class ChatGptService {
         String content = response.getChoices().get(0).getMessage().getContent().trim();
 
         try{
-            return objectMapper.readValue(content, ItemAnalysisResponse.class);
+            ItemAnalysisResponse itemAnalysisResponse = objectMapper.readValue(content, ItemAnalysisResponse.class);
+            return itemAnalysisResponse.from(searchImageFromPinterest(memberInfoRequest.getGender(), itemAnalysisResponse.getItem()));
         } catch (JsonMappingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         } catch (JsonProcessingException e) {
