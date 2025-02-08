@@ -88,10 +88,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     // Selenium
-    implementation 'org.seleniumhq.selenium:selenium-java:4.19.1'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.8.0'
 
     // WebDriver Manager
-    implementation 'io.github.bonigarcia:webdrivermanager:5.9.0'
+//    implementation 'io.github.bonigarcia:webdrivermanager:5.9.0'
 }
 
 tasks.named('test') {
