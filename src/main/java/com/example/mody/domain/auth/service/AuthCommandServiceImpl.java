@@ -73,7 +73,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 				.build());
 
 		refreshTokenEntity.updateToken(refreshToken);
-
+		refreshTokenRepository.save(refreshTokenEntity);
 	}
 
 	public void logout(String refreshToken) {
