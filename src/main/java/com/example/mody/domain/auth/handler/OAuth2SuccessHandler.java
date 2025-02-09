@@ -35,8 +35,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 	private final AuthCommandService authCommandService;
 
 	// 프론트 엔드 주소, 환경변수에서 주입
-	@Value("${front.redirect-url}")
-	private String FRONT_REDIRECT_URL;
+	@Value("${front.redirect-url.home}")
+	private String FRONT_HOME_URL;
+
+	@Value("${front.redirect-url.signup}")
+	private String FRONT_SIGNUP_URL;
 
 	/**
 	 * OAuth2 로그인 성공 시 처리
@@ -61,8 +64,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		// Access Token, Refresh Token 발급
 		String newAccessToken = authCommandService.processLoginSuccess(member, response);
 
-		// 리다이렉션 URL 생성
-		String targetUrl = UriComponentsBuilder.fromUriString(FRONT_REDIRECT_URL)
+		String tempUrl = (isNewMember || !member.isRegistrationCompleted()) ? FRONT_SIGNUP_URL : FRONT_HOME_URL;
+
+		String targetUrl = UriComponentsBuilder.fromUriString(tempUrl)
 				.queryParam("memberId", member.getId())
 				.queryParam("nickname", URLEncoder.encode(member.getNickname(), StandardCharsets.UTF_8))
 				.queryParam("newMember", isNewMember)
