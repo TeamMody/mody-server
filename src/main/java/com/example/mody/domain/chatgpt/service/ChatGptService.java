@@ -6,6 +6,7 @@ import com.example.mody.domain.recommendation.dto.response.analysis.ItemAnalysis
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.recommendation.dto.request.RecommendRequest;
 import com.example.mody.domain.recommendation.dto.response.analysis.StyleAnalysisResponse;
+import com.example.mody.domain.recommendation.service.CrawlerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import com.example.mody.global.common.exception.RestApiException;
@@ -18,7 +19,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +34,7 @@ public final class ChatGptService {
     private final OpenAiApiClient openAiApiClient; // ChatGPT API와의 통신을 담당
     private final PromptManager promptManager; // 프롬프트 생성
     private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 응답 변환
+    private final CrawlerService crawlerService;
 
     @Value("${openai.model}")
     private String model; // OpenAI 모델
@@ -94,6 +95,7 @@ public final class ChatGptService {
         }
     }
 
+    // 스타일 추천 메서드
     public StyleAnalysisResponse recommendGptStyle(MemberInfoRequest memberInfoRequest, RecommendRequest recommendRequest){
 
         //스타일 추천 프롬프트 생성
@@ -110,7 +112,8 @@ public final class ChatGptService {
         String content = response.getChoices().get(0).getMessage().getContent().trim();
 
         try{
-            return objectMapper.readValue(content, StyleAnalysisResponse.class);
+            StyleAnalysisResponse styleAnalysisResponse = objectMapper.readValue(content, StyleAnalysisResponse.class);
+            return styleAnalysisResponse.from(searchImageFromPinterest(memberInfoRequest.getGender(), styleAnalysisResponse.getRecommendedStyle()));
         } catch (JsonMappingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         } catch (JsonProcessingException e) {
@@ -118,6 +121,18 @@ public final class ChatGptService {
         }
     }
 
+    private String searchImageFromPinterest(Gender gender, String recommendedStyle) {
+        String strGender = (gender == Gender.MALE) ? "남성 " : "여성 ";
+        String keyword = strGender + recommendedStyle;
+        log.info("keyword: {}", keyword);
+
+        String imageUrl = crawlerService.getRandomImageUrl(keyword);
+        log.info("Pinterest 이미지 URL: {}", imageUrl);
+
+        return imageUrl;
+    }
+
+    // 패션 아이템 추천 메서드
     public ItemAnalysisResponse recommendGptItem(MemberInfoRequest memberInfoRequest, RecommendRequest recommendRequest){
 
         //아이템 추천 프롬프트 생성
@@ -134,7 +149,8 @@ public final class ChatGptService {
         String content = response.getChoices().get(0).getMessage().getContent().trim();
 
         try{
-            return objectMapper.readValue(content, ItemAnalysisResponse.class);
+            ItemAnalysisResponse itemAnalysisResponse = objectMapper.readValue(content, ItemAnalysisResponse.class);
+            return itemAnalysisResponse.from(searchImageFromPinterest(memberInfoRequest.getGender(), itemAnalysisResponse.getItem()));
         } catch (JsonMappingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         } catch (JsonProcessingException e) {
