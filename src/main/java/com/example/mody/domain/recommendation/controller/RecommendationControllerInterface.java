@@ -48,15 +48,15 @@ public interface RecommendationControllerInterface {
             ),
             @ApiResponse(
                     responseCode = "RECOMMENDATION404",
-                    description = "사용자의 체형 정보를 찾을 수 없음",
+                    description = "사용자가 추천받은 결과가 없을 때 발생합니다.",
                     content = @Content(
                             mediaType = "application/json",
                             examples = @ExampleObject(
                                     value = """
                                             {
                                               "timestamp": "2025-01-17T00:48:53.9237864",
-                                              "code": "MEMBER_BODY_TYPE404",
-                                              "message": "체형 분석 결과를 찾을 수 없습니다."
+                                              "code": "RECOMMENDATION404",
+                                              "message": "해당 추천 결과를 찾을 수 없습니다."
                                             }
                                             """
                             )

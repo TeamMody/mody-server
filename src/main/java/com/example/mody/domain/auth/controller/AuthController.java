@@ -181,16 +181,16 @@ public class AuthController {
 			)
 		),
 		@ApiResponse(
-			responseCode = "401",
-			description = "유효하지 않거나 만료된 Refresh Token",
+			responseCode = "REFRESH_TOKEN404",
+			description = "유효하지 않은 리프레쉬 토큰일 때 발생합니다. (디비에 동일한 리프레쉬 토큰이 없을 때 발생)",
 			content = @Content(
 				mediaType = "application/json",
 				examples = @ExampleObject(
 					value = """
 						{
 						    "timestamp": "2024-01-13T10:00:00",
-						    "code": "AUTH006",
-						    "message": "유효하지 않은 REFRESH TOKEN입니다.",
+						    "code": "REFRESH_TOKEN404",
+						    "message": "REFRESH TOKEN이 유효하지 않습니다.",
 						    "result": null
 						}
 						"""
@@ -243,7 +243,7 @@ public class AuthController {
 			)
 		),
 		@ApiResponse(
-			responseCode = "401",
+			responseCode = "AUTH401",
 			description = "인증되지 않은 사용자",
 			content = @Content(
 				mediaType = "application/json",
@@ -260,7 +260,7 @@ public class AuthController {
 			)
 		),
 		@ApiResponse(
-			responseCode = "400",
+			responseCode = "REFRESH_TOKEN404",
 			description = "유효하지 않은 Refresh Token",
 			content = @Content(
 				mediaType = "application/json",
@@ -268,8 +268,8 @@ public class AuthController {
 					value = """
 						{
 						    "timestamp": "2024-01-13T10:00:00",
-						    "code": "AUTH006",
-						    "message": "유효하지 않은 REFRESH TOKEN입니다.",
+						    "code": "REFRESH_TOKEN404",
+						    "message": "REFRESH TOKEN이 유효하지 않습니다.",
 						    "result": null
 						}
 						"""
