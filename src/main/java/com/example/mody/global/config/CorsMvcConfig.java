@@ -17,7 +17,7 @@ public class CorsMvcConfig implements WebMvcConfigurer {
 						"https://kkoalla.app:5173",
 						"https://kkoalla.app:8443"
 				)
-				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+				.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
 				.allowedHeaders("*")
 				.allowCredentials(true);
 	}
