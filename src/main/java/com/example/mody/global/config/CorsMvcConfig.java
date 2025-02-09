@@ -9,9 +9,11 @@ public class CorsMvcConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addCorsMappings(CorsRegistry corsRegistry) {
-
 		corsRegistry.addMapping("/**")
-				.exposedHeaders("Set-Cookie")
-				.allowedOrigins("http://localhost:3000");
+				.allowedOrigins("*") // 프론트 URL 추가
+				.allowedMethods("*") // 모든 HTTP 메서드 허용 (GET, POST, PATCH, DELETE, OPTIONS 등)
+				.allowedHeaders("*") // 모든 헤더 허용
+				.exposedHeaders("Authorization", "Set-Cookie") // JWT 토큰 등 노출
+				.allowCredentials(true); // 인증 포함 허용 (JWT 사용 시 필수)
 	}
 }
