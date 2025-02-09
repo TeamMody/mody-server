@@ -189,7 +189,7 @@ public class AuthController {
 					value = """
 						{
 						    "timestamp": "2024-01-13T10:00:00",
-						    "code": "AUTH006",
+						    "code": "REFRESH_TOKEN404",
 						    "message": "REFRESH TOKEN이 유효하지 않습니다.",
 						    "result": null
 						}
@@ -268,7 +268,7 @@ public class AuthController {
 					value = """
 						{
 						    "timestamp": "2024-01-13T10:00:00",
-						    "code": "AUTH006",
+						    "code": "REFRESH_TOKEN404",
 						    "message": "REFRESH TOKEN이 유효하지 않습니다.",
 						    "result": null
 						}
