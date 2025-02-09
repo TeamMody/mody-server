@@ -67,10 +67,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		String tempUrl = (isNewMember || !member.isRegistrationCompleted()) ? FRONT_SIGNUP_URL : FRONT_HOME_URL;
 
 		String targetUrl = UriComponentsBuilder.fromUriString(tempUrl)
-				.queryParam("memberId", member.getId())
-				.queryParam("nickname", URLEncoder.encode(member.getNickname(), StandardCharsets.UTF_8))
-				.queryParam("newMember", isNewMember)
-				.queryParam("isRegistrationCompleted", member.isRegistrationCompleted())
 				.build().toUriString();
 
 		// 리다이렉션 수행
