@@ -13,16 +13,12 @@
 
 | Backend                                   | Backend                                          |
 |:-----------------------------------------:|:-----------------------------------------------:|
-| <img width="173" alt="image" src="https://github.com/user-attachments/assets/488fec06-d15c-444b-a7ac-9b6f0c633839" />
-[박동규](https://github.com) | <img width="172" alt="image" src="https://github.com/user-attachments/assets/021ca13c-4e3c-4db8-aebb-5f920c3a6338" />
- [김재헌](https://github.com/jher235) |
+[박동규](https://github.com) | <img width="173" alt="image" src="https://github.com/user-attachments/assets/488fec06-d15c-444b-a7ac-9b6f0c633839" />
+[김재헌](https://github.com/jher235) | <img width="172" alt="image" src="https://github.com/user-attachments/assets/021ca13c-4e3c-4db8-aebb-5f920c3a6338" />
+[서상효](https://github.com/seoshinehyo) | <img width="164" alt="image" src="https://github.com/user-attachments/assets/6422ab4d-c39f-43e0-bb8c-e065dd2f4635" />
+[김성욱](https://github.com/) | <img width="164" alt="image" src="https://github.com/user-attachments/assets/180c4941-1370-482e-a626-21324fcf1ef9" />
+[최윤서](https://github.com/yunseo02) | <img width="213" alt="image" src="https://github.com/user-attachments/assets/6ae5daf0-5ca5-4581-82c4-1cbc3eb78336" />
 
-| Backend                                   | Backend                                          | Backend                    |
-|:-----------------------------------------:|:-----------------------------------------------:|---------------------------|
-| <img width="164" alt="image" src="https://github.com/user-attachments/assets/6422ab4d-c39f-43e0-bb8c-e065dd2f4635" />
-[서상효](https://github.com/seoshinehyo) | <img width="164" alt="image" src="https://github.com/user-attachments/assets/180c4941-1370-482e-a626-21324fcf1ef9" />
- [김성욱](https://github.com/) | <img width="213" alt="image" src="https://github.com/user-attachments/assets/6ae5daf0-5ca5-4581-82c4-1cbc3eb78336" />
-[최윤서](https://github.com/yunseo02) |
 
 </div>
 
@@ -161,9 +157,18 @@ Github 협업 규칙은 아래와 같습니다.
 <p>패션 아이템 추천</p>
 
 ![image](https://github.com/user-attachments/assets/9a072370-c9b2-4c8e-bfa2-77b7a0bac644)
+
 <p>마이페이지</p>
+<img width="986" alt="Image" src="https://github.com/user-attachments/assets/bdd28c2d-bd05-4e38-b8fd-c1b25a443d2e" />
+<img width="1192" alt="Image" src="https://github.com/user-attachments/assets/e248157a-cee7-4d5f-8bde-ccf882a2a3e6" />
+<img width="583" alt="Image" src="https://github.com/user-attachments/assets/a2d362ca-4994-415c-a67c-59d45797045a" />
+<img width="785" alt="Image" src="https://github.com/user-attachments/assets/28089422-9155-4d36-a9d2-449c818eb985" />
+
 
 <p>비슷한 체형 게시글</p>
+<img width="994" alt="Image" src="https://github.com/user-attachments/assets/7e08d1a3-5ae5-4799-b740-17dc50ea40de" />
+<img width="486" alt="Image" src="https://github.com/user-attachments/assets/59560e91-9ef8-42b8-a057-28fbfa49ac03" />
+
 
 </div>
 
@@ -178,4 +183,12 @@ Github 협업 규칙은 아래와 같습니다.
 5. 오픈소스를 통해 개발하는 과정에 대한 이해 상승
 
 ## License
+Distributed under the MIT License. See `LICENSE.txt` for more information.
 
+## Contact
+
+* 박동규 : qkrehdrb0813@gmail.com
+* 김재헌 : king09044@naver.com
+* 서상효 : springssh0504@naver.com
+* 김성욱 : so3659@naver.com
+* 최윤서 : chldbstj021902@gmail.com
