@@ -1,99 +1,60 @@
 # Mody
 
 > "모드(Mode)"와 "버디(Buddy)"의 결합으로 만들어진 이 이름은, 당신의 **라이프스타일과 개성을 반영하는 최적의 '모드'를 발견하도록 돕는 친구**를 뜻합니다.
+> 고객의 체형, 취향, 라이프스타일 데이터를 기반으로 맞춤형 스타일링 경험을 제공합니다.
+> 단순한 추천을 넘어, 고객 스스로 스타일링 능력을 기를 수 있도록 돕는 서비스입니다.
 
-## 프로젝트 소개
+<div align=center>
+  
+![image](https://github.com/user-attachments/assets/204a8c0c-c56a-4951-8410-0b70339c4002)
+![image](https://github.com/user-attachments/assets/94fb80c4-65ce-4733-976d-5bf9146641be)
 
-- 고객의 체형, 취향, 라이프스타일 데이터를 기반으로 맞춤형 스타일링 경험을 제공합니다.
-- 단순한 추천을 넘어, 고객 스스로 스타일링 능력을 기를 수 있도록 돕는 서비스입니다.
+</div>
+
+## 프로젝트 기능
+1. 종합 패션 스타일 컨설팅
+   * 체형 분석
+   * 스타일 추천
+   * 패션 아이템 추천
+   * 브랜드 추천
+2. 데일리 패션 추천
+   * 날씨 기반 추천
+   * 일정 및 라이프스타일 반영 추천
+3. 부가 기능
+   * 스타일링 팁 제공
+   * 쇼핑 연계 기능
+   * 저장 및 비교 기능
+   * 스타일 커뮤니티
+4. 기능 기대 효과
+   * 시간 절약: 고객이 스타일 고민에 소모하던 시간을 획기적으로 단축
+   * 개성 표현: 획일적인 스타일에서 벗어나, 개인의 개성과 매력을 돋보이게 함
+   * 편리한 쇼핑: 추천과 쇼핑을 한 번에 해결하여 구매 실패율을 낮춤
+   * 지속적인 성장: 고객 스스로 스타일링 실력을 키워 패션 근육을 강화
 
 ## Member
 
-<div align=center>
-
-| Backend                                   | Backend                                          |
-|:-----------------------------------------:|:-----------------------------------------------:|
-[박동규](https://github.com) | <img width="173" alt="image" src="https://github.com/user-attachments/assets/488fec06-d15c-444b-a7ac-9b6f0c633839" />
-[김재헌](https://github.com/jher235) | <img width="172" alt="image" src="https://github.com/user-attachments/assets/021ca13c-4e3c-4db8-aebb-5f920c3a6338" />
-[서상효](https://github.com/seoshinehyo) | <img width="164" alt="image" src="https://github.com/user-attachments/assets/6422ab4d-c39f-43e0-bb8c-e065dd2f4635" />
-[김성욱](https://github.com/) | <img width="164" alt="image" src="https://github.com/user-attachments/assets/180c4941-1370-482e-a626-21324fcf1ef9" />
-[최윤서](https://github.com/yunseo02) | <img width="213" alt="image" src="https://github.com/user-attachments/assets/6ae5daf0-5ca5-4581-82c4-1cbc3eb78336" />
-
-
-</div>
-
-## 개발 기간
-
-
-
-## How to use
-
-```sh
-curl -X POST http://localhost/api/v1/user/signup \
--H "Content-Type: application/json" \
--d '{"user_code":"admin","password":"admin","user_name":"admin","user_email":"admin","department":"admin","semester":1,"major":"admin","phone_number":"010-1234-5678"}'
-```
-
-터미널 혹은 CMD 창에 다음 명령어를 통해서 admin 계정에 대해 회원가입을 진행합니다.
-
-### client
-
-```bash
-yarn install
-yarn start
-```
-
-클라이언트 디렉토리에서 위와 같은 명령어를 통해 실행합니다.
-
-## 개발 환경
-
-- OS: MacOS, Ubuntu
-- Code Editor: Visual Studio Code, IntelliJ, PyCharm
-- Language: Html, CSS, JavaScript, TypeScript, Python
-- Collaboration Tool: Notion, Github, Slack
-  <br>
+|                 박동규                   |                   김재헌                   |                  서상효                   |                   김성욱                     |                    최윤서                   |                                                                                     
+|:---------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|
+| <img width="173" alt="image" src="https://github.com/user-attachments/assets/488fec06-d15c-444b-a7ac-9b6f0c633839" /> | <img width="172" alt="image" src="https://github.com/user-attachments/assets/021ca13c-4e3c-4db8-aebb-5f920c3a6338" /> | <img width="164" alt="image" src="https://github.com/user-attachments/assets/6422ab4d-c39f-43e0-bb8c-e065dd2f4635" /> | <img width="164" alt="image" src="https://github.com/user-attachments/assets/180c4941-1370-482e-a626-21324fcf1ef9" /> | <img width="213" alt="image" src="https://github.com/user-attachments/assets/6ae5daf0-5ca5-4581-82c4-1cbc3eb78336" /> |
+|                       [dong99u](https://github.com/dong99u)                        |                  [jher235](https://github.com/jher235)                   |                     [seoshinehyo](https://github.com/seoshinehyo)                     |                     [so3659](https://github.com/so3659)                     |                     [yunseo02](https://github.com/yunseo02)                     |
 
 ## Tech Stack
-
 <div align=center>
-
-### ✔️Back-end
+  
+|                                                         기술 스택                                                         |   버전   |
+|:---------------------------------------------------------------------------------------------------------------------:|:------:|
+|        <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white">          |   21   |
+| ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white) | 3.3.5  |
+|          ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)           | 8.0.39 |
 
 <img src="https://img.shields.io/badge/ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white">
-<img src="https://img.shields.io/badge/python-3776AB?style=for-the-badge&logo=python&logoColor=white">
-<img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=OpenJDK&logoColor=white">
 <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=Spring&logoColor=white">
-<img src="https://img.shields.io/badge/spring%20boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
 <img src="https://img.shields.io/badge/spring%20security-6DB33F?style=for-the-badge&logo=SPRING%20SECURITY&logoColor=white">
-<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
 <img src="https://img.shields.io/badge/amazon%20aws-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white">
-<img src="https://img.shields.io/badge/terraform-844FBA?style=for-the-badge&logo=terraform&logoColor=white">
 <img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=for-the-badge&logo=GitHub Actions&logoColor=white">
 <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
 
-### ✔️Frond-end
-
-  <img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
-  <img src="https://img.shields.io/badge/css3-1572B6?style=for-the-badge&logo=css3&logoColor=white">
-     <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
- <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white">
-  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=Next.js&logoColor=white">
-
 </div>
-
-## 인프라 아키텍쳐
-
-- 3 Tier Architecture로 AWS 인프라 환경구성을 설정했습니다.
-- 소프트웨어 시스템을 사용자의 인터페이스를 처리하고 클라이언트와 상호작용하는 계층, 비즈니스 로직을 처리하고 애플리케이션의 핵심 기능을 실행하는 계층, 데이터베이스 및 데이터 저장소와 상호 작용하여 데이터를 저장하고 검색하는 세 가지 주요 계층으로 나눴습니다.
-- 이를 통해 각 계층을 독립적으로 개발 및 유지보수할 수 있으므로 코드의 모듈화가 쉽고, 비즈니스 로직은 비즈니스 계층 중점적으로 구현되므로, 해당 로직을 다른 클라이언트나 애플리케이션에서 재사용할 수 있었습니다.
-
-![infra](./document/image/infra.png)
-
-## 시스템 구성도
-
-- Github의 actions 기능을 활용하여 개발자가 release 브랜치로 feature 프로젝트를 merge하는 순간 트리거가 발동되어 프로젝트의 버전을 업데이트 할 수 있도록 구성했습니다.
-- Github actions에서 build한 docker image들은 docker hub로 push 됩니다. 이후 actions에서 서버 측으로 진입을 하게 되고, 해당 서버에서 docker hub에 있는 이미지들을 pull 받아 현재 실행중인 어플리케이션을 다운하고 새로 pull 받은 이미지들을 어플리케이션으로 up 합니다.
-  ![systme](./document/image/system.png)
 
 ## 협업 규칙
 
@@ -111,22 +72,25 @@ Github 협업 규칙은 아래와 같습니다.
 
    | 커밋 타입 | 설명                                                           |
       | --------- | -------------------------------------------------------------- |
-   | Feat      | 새로운 기능 추가                                               |
-   | Fix       | 버그 수정                                                      |
-   | Docs      | 문서 수정                                                      |
-   | Style     | 코드 formatting, 세미콜론 누락 등 코드 자체의 변경이 없는 경우 |
-   | Chore     | 패키지 매니저 수정 및 기타 수정                                |
-   | Design    | CSS 등 사용자 UI 변경                                          |
+   | feature   | 새로운 기능 구현                                               |
+   | fix       | 수정                                                          |
+   | refactor  | 리팩토링                                                       |
+   | docs      | 문서 수정                                                      |
+   | style     | 코드 포맷팅, 세미콜론 누락, 코드 변경이 없는 경우                 |
+   | chore     | 패키지 구조 수정, code와 무관한 부분들 (.gitignore, build.gradle 같은) 수정   |
+   | hotfix    | hotfix                                                        |
+   | remove    | 패키지나 클래스 삭제                                            |
+   | test      | 테스트 코드, 리펙토링 테스트 코드 추가                           |
+   | rename    | 패키지나 클래스명 수정                                          |
+   | comment   | 주석 추가                                                      |
 
 ### Issue 활용
-
-![issue](./document/image/issue.png)
+![image](https://github.com/user-attachments/assets/3c16e50a-9c5c-4457-8f0d-13b0f9e73788)
 
 - Github 레포지토리의 Issue탭에 Todo인 상황 혹은 In progress에 대한 상황을 작성하고 공유했습니다. 해당 Issue 번호로 각자의 로컬 레포지토리에 브랜치를 생성하여 Pull Request 시에 해당 Issue를 언급하여 공유했습니다. 해당 전략을 사용하여 Merge Conflict의 발생 가능성을 줄였습니다.
 
 ### PR 활용
-
-![issue](./document/image/PR.png)
+![image](https://github.com/user-attachments/assets/02656e24-d5d9-4e5b-a16b-925fd674cc53)
 
 - 다음과 같이 개발 이후 특정 프로젝트에 대한 변경사항을 제안하고, 팀원과 이를 검토 및 논의한 후, 최종적으로 해당 변경사항을 반영할 수 있도록 했습니다.
 - 다른 개발자들은 해당 Pull Request를 검토하고, 필요한 경우 피드백을 제공할 수 있었습니다.
@@ -136,54 +100,39 @@ Github 협업 규칙은 아래와 같습니다.
 
 <div align=center>
 
-<p>로그인 / 회원가입</p>
+<h3>로그인 / 회원가입</h3>
 
 ![image](https://github.com/user-attachments/assets/867c85a4-761c-4ef6-842c-23b4d066fce7)
 ![image](https://github.com/user-attachments/assets/b1d49b5a-6e70-4a71-98b1-16f041456048)
 ![image](https://github.com/user-attachments/assets/2aee9521-a4ed-4e05-b8f4-5f2e5c437f09)
 ![image](https://github.com/user-attachments/assets/3b477bcb-c034-4107-b66a-eea815e6a21b)
-![image](https://github.com/user-attachments/assets/7d9ff516-602d-45b1-8971-19a290172c46)
+![image](https://github.com/user-attachments/assets/cb493564-0c7b-4f1b-bc95-8c39e280b2a7)
 
 
+<h3>체형 분석</h3>
 
+![image](https://github.com/user-attachments/assets/6c206542-aafc-4856-a67e-e041c97a6d84)
+![image](https://github.com/user-attachments/assets/e4c5b166-cbc3-4bf9-b148-91c62c2422b8)
 
-<p>체형 분석</p>
+<h3>스타일 추천</h3>
 
-![image](https://github.com/user-attachments/assets/ffa20ee2-ddd3-4ffb-9acd-a2e0ffcd30f7)
-![image](https://github.com/user-attachments/assets/4f1f11a4-9e6a-4350-8b5e-0da8d1b231af)
-<p>스타일 추천</p>
-
-![image](https://github.com/user-attachments/assets/077a21e5-a9d5-4b3c-aa63-3f4a5d227d79)
+![image](https://github.com/user-attachments/assets/0e743011-7340-43a0-b272-7f9f280ea888)
 <p>패션 아이템 추천</p>
 
-![image](https://github.com/user-attachments/assets/9a072370-c9b2-4c8e-bfa2-77b7a0bac644)
+![image](https://github.com/user-attachments/assets/7043c532-cf06-4031-9391-63b359b2790f)
 
-<p>마이페이지</p>
+<h3>마이페이지</h3>
 <img width="986" alt="Image" src="https://github.com/user-attachments/assets/bdd28c2d-bd05-4e38-b8fd-c1b25a443d2e" />
 <img width="1192" alt="Image" src="https://github.com/user-attachments/assets/e248157a-cee7-4d5f-8bde-ccf882a2a3e6" />
 <img width="583" alt="Image" src="https://github.com/user-attachments/assets/a2d362ca-4994-415c-a67c-59d45797045a" />
 <img width="785" alt="Image" src="https://github.com/user-attachments/assets/28089422-9155-4d36-a9d2-449c818eb985" />
 
-
-<p>비슷한 체형 게시글</p>
+<h3>비슷한 체형 게시글</h3>
 <img width="994" alt="Image" src="https://github.com/user-attachments/assets/7e08d1a3-5ae5-4799-b740-17dc50ea40de" />
 <img width="486" alt="Image" src="https://github.com/user-attachments/assets/59560e91-9ef8-42b8-a057-28fbfa49ac03" />
 
 
 </div>
-
-## 기대효과
-
-기대효과는 아래와 같습니다.
-
-1. 페이지 하나에 학생들이 사용하는 대부분의 기능이 통합 되어있어 사용자의 편의성 증진
-2. PC, 모바일 환경을 모두 고려한 개선을 통해 사용자의 편의성 증진
-3. 프로젝트 수행을 통한 팀원들의 웹 시스템 구조 이해 상승
-4. 협업 툴 (Github, Notion, Slack)을 활용하여 팀원들의 커뮤니케이션 능력 향상
-5. 오픈소스를 통해 개발하는 과정에 대한 이해 상승
-
-## License
-Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Contact
 
