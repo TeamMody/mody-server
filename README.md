@@ -1,19 +1,28 @@
 # Mody
 
-> 패션 추천 ~~ “Mody“
+> "모드(Mode)"와 "버디(Buddy)"의 결합으로 만들어진 이 이름은, 당신의 **라이프스타일과 개성을 반영하는 최적의 '모드'를 발견하도록 돕는 친구**를 뜻합니다.
 
 ## 프로젝트 소개
 
-- 
-- 
+- 고객의 체형, 취향, 라이프스타일 데이터를 기반으로 맞춤형 스타일링 경험을 제공합니다.
+- 단순한 추천을 넘어, 고객 스스로 스타일링 능력을 기를 수 있도록 돕는 서비스입니다.
 
 ## Member
 
 <div align=center>
 
-|                                   Backend                                   |                                Backend                                |
-| :--------------------------------------------------------------------------: |:---------------------------------------------------------------------:|
-|                     [](https://github.com)                     |                        [](https://github.com/)                        |
+| Backend                                   | Backend                                          |
+|:-----------------------------------------:|:-----------------------------------------------:|
+| <img width="173" alt="image" src="https://github.com/user-attachments/assets/488fec06-d15c-444b-a7ac-9b6f0c633839" />
+[박동규](https://github.com) | <img width="172" alt="image" src="https://github.com/user-attachments/assets/021ca13c-4e3c-4db8-aebb-5f920c3a6338" />
+ [김재헌](https://github.com/jher235) |
+
+| Backend                                   | Backend                                          | Backend                    |
+|:-----------------------------------------:|:-----------------------------------------------:|---------------------------|
+| <img width="164" alt="image" src="https://github.com/user-attachments/assets/6422ab4d-c39f-43e0-bb8c-e065dd2f4635" />
+[서상효](https://github.com/seoshinehyo) | <img width="164" alt="image" src="https://github.com/user-attachments/assets/180c4941-1370-482e-a626-21324fcf1ef9" />
+ [김성욱](https://github.com/) | <img width="213" alt="image" src="https://github.com/user-attachments/assets/6ae5daf0-5ca5-4581-82c4-1cbc3eb78336" />
+[최윤서](https://github.com/yunseo02) |
 
 </div>
 
