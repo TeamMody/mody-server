@@ -130,20 +130,32 @@ Github 협업 규칙은 아래와 같습니다.
 ## 구현결과
 
 <div align=center>
-<img src="./document/image/login.png">
-<p>로그인 페이지</p>
-<img src="./document/image/main.png">
-<p>메인 페이지</p>
-<img src="./document/image/info.png">
-<p>학적 조회 페이지</p>
-<img src="./document/image/grade.png">
-<p>성적 조회 페이지</p>
-<img src="./document/image/enroll.png">
-<p>수강 신청 페이지</p>
-<img src="./document/image/confirm.png">
-<p>수강 조회 페이지</p>
-<img src="./document/image/course.png">
-<p>학습 관리 페이지</p>
+
+<p>로그인 / 회원가입</p>
+
+![image](https://github.com/user-attachments/assets/867c85a4-761c-4ef6-842c-23b4d066fce7)
+![image](https://github.com/user-attachments/assets/b1d49b5a-6e70-4a71-98b1-16f041456048)
+![image](https://github.com/user-attachments/assets/2aee9521-a4ed-4e05-b8f4-5f2e5c437f09)
+![image](https://github.com/user-attachments/assets/3b477bcb-c034-4107-b66a-eea815e6a21b)
+![image](https://github.com/user-attachments/assets/7d9ff516-602d-45b1-8971-19a290172c46)
+
+
+
+
+<p>체형 분석</p>
+
+![image](https://github.com/user-attachments/assets/ffa20ee2-ddd3-4ffb-9acd-a2e0ffcd30f7)
+![image](https://github.com/user-attachments/assets/4f1f11a4-9e6a-4350-8b5e-0da8d1b231af)
+<p>스타일 추천</p>
+
+![image](https://github.com/user-attachments/assets/077a21e5-a9d5-4b3c-aa63-3f4a5d227d79)
+<p>패션 아이템 추천</p>
+
+![image](https://github.com/user-attachments/assets/9a072370-c9b2-4c8e-bfa2-77b7a0bac644)
+<p>마이페이지</p>
+
+<p>비슷한 체형 게시글</p>
+
 </div>
 
 ## 기대효과
