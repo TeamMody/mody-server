@@ -71,7 +71,6 @@ public class CrawlerService {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // 백그라운드 실행 (UI 렌더링 생략)
         options.addArguments("--disable-gpu"); // GPU 사용 X
-        options.addArguments("--window-size=1920,1080"); // 브라우저 창 크기 설정
         options.addArguments("--no-sandbox"); // 샌드박스 모드 비활성화(Docker 환경에서 크롬 드라이버 실행에 필요)
         options.addArguments("--disable-dev-shm-usage"); // /dev/shm 사용 비활성화(Docker 환경에서 크롬 크래시 문제 해결)
         options.addArguments("--ignore-ssl-errors=yes");
