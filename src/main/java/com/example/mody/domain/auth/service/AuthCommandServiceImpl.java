@@ -51,7 +51,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 			.httpOnly(true)
 			.secure(true)
 			.sameSite("None")
-			.maxAge(10) // 7일
+			.maxAge(7 * 24 * 60 * 60) // 7일
 			.path("/")
 			.build();
 
@@ -100,7 +100,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 			.httpOnly(true)
 			.secure(true)
 			.sameSite("None")
-			.maxAge(10) // 7일(7 * 24 * 60 * 60)
+			.maxAge(7 * 24 * 60 * 60) // 7일(7 * 24 * 60 * 60)
 			.path("/")
 			.build();
 
