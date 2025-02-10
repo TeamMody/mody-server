@@ -9,7 +9,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
@@ -21,9 +20,6 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class CrawlerService {
-
-    @Value("${webdriver.driver.chrome}")  // yml에서 크롬 드라이버 경로 주입
-    private String chromeDriverPath;
 
     public String getRandomImageUrl(String keyword) {
 
@@ -71,8 +67,6 @@ public class CrawlerService {
     }
 
     private WebDriver getWebDriver() {
-        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
-
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // 백그라운드 실행 (UI 렌더링 생략)
         options.addArguments("--disable-gpu"); // GPU 사용 X
