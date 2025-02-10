@@ -72,7 +72,7 @@ public class CrawlerService {
         options.addArguments("--headless"); // 백그라운드 실행 (UI 렌더링 생략)
         options.addArguments("--disable-gpu"); // GPU 사용 X
         options.addArguments("--no-sandbox"); // 샌드박스 모드 비활성화(Docker 환경에서 크롬 드라이버 실행에 필요)
-        options.addArguments("--disable-dev-shm-usage"); // /dev/shm 사용 비활성화(Docker 환경에서 크롬 크래시 문제 해결)
+        // options.addArguments("--disable-dev-shm-usage"); // /dev/shm 사용 비활성화(Docker 환경에서 크롬 크래시 문제 해결)
         options.addArguments("--ignore-ssl-errors=yes");
         options.addArguments("--ignore-certificate-errors"); // SSL 차단 대비
 //        options.addArguments("--remote-allow-origins=*"); // CORS 대비
