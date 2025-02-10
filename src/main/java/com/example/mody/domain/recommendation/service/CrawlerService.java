@@ -2,7 +2,6 @@ package com.example.mody.domain.recommendation.service;
 
 import com.example.mody.global.common.exception.RestApiException;
 import com.example.mody.global.common.exception.code.status.CrawlerErrorStatus;
-//import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.*;
@@ -10,6 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
@@ -21,6 +21,9 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class CrawlerService {
+
+    @Value("${webdriver.driver.chrome}")  // yml에서 크롬 드라이버 경로 주입
+    private String chromeDriverPath;
 
     public String getRandomImageUrl(String keyword) {
 
@@ -67,32 +70,17 @@ public class CrawlerService {
         }
     }
 
-    private static WebDriver getWebDriver() {
+    private WebDriver getWebDriver() {
+        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless"); // 백그라운드 실행 (UI 렌더링 생략)
         options.addArguments("--disable-gpu"); // GPU 사용 X
         options.addArguments("--no-sandbox"); // 샌드박스 모드 비활성화(Docker 환경에서 크롬 드라이버 실행에 필요)
-        // options.addArguments("--disable-dev-shm-usage"); // /dev/shm 사용 비활성화(Docker 환경에서 크롬 크래시 문제 해결)
+        options.addArguments("--disable-dev-shm-usage"); // /dev/shm 사용 비활성화(Docker 환경에서 크롬 크래시 문제 해결)
         options.addArguments("--ignore-ssl-errors=yes");
         options.addArguments("--ignore-certificate-errors"); // SSL 차단 대비
-//        options.addArguments("--remote-allow-origins=*"); // CORS 대비
 
-        WebDriver driver = new ChromeDriver(options);
-        return driver;
+        return new ChromeDriver(options);
     }
-
-//    // WebDriver 재사용으로 속도 개선
-//    private static final ThreadLocal<WebDriver> threadLocalDriver = ThreadLocal.withInitial(() -> {
-////        WebDriverManager.chromedriver().setup();
-//        ChromeOptions options = new ChromeOptions();
-//        options.addArguments("--headless"); // 백그라운드 실행 (UI 렌더링 생략)
-//        options.addArguments("--disable-gpu"); // GPU 사용 X
-//        options.addArguments("--window-size=1920,1080"); // 브라우저 창 크기 설정
-//        options.addArguments("--no-sandbox"); // 샌드박스 모드 비활성화(Docker 환경에서 크롬 드라이버 실행에 필요)
-//        options.addArguments("--disable-dev-shm-usage"); // /dev/shm 사용 비활성화(Docker 환경에서 크롬 크래시 문제 해결)
-//        options.addArguments("--ignore-ssl-errors=yes");
-//        options.addArguments("--ignore-certificate-errors"); // SSL 차단 대비
-////        options.addArguments("--remote-allow-origins=*"); // CORS 대비
-//        return new ChromeDriver(options);
-//    });
 }
