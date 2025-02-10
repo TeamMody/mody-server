@@ -1,4 +1,4 @@
-# Mody
+# mody
 
 > "모드(Mode)"와 "버디(Buddy)"의 결합으로 만들어진 이 이름은, 당신의 **라이프스타일과 개성을 반영하는 최적의 '모드'를 발견하도록 돕는 친구**를 뜻합니다.
 > 고객의 체형, 취향, 라이프스타일 데이터를 기반으로 맞춤형 스타일링 경험을 제공합니다.
@@ -6,9 +6,7 @@
 
 <div align=center>
   
-![image](https://github.com/user-attachments/assets/204a8c0c-c56a-4951-8410-0b70339c4002)
-![image](https://github.com/user-attachments/assets/94fb80c4-65ce-4733-976d-5bf9146641be)
-
+![image](https://github.com/user-attachments/assets/3863789b-de5a-45e5-8a63-a72f58d02cdf)
 </div>
 
 ## 프로젝트 기능
