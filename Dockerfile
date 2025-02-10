@@ -1,12 +1,11 @@
 FROM openjdk:21
 
 # 크롬 설치
-RUN apt-get update && apt-get install -y wget curl unzip \
-    && wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-    && apt-get install -y ./google-chrome-stable_current_amd64.deb \
-    && rm ./google-chrome-stable_current_amd64.deb \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN dnf install -y wget curl unzip \
+    && wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm \
+    && dnf install -y ./google-chrome-stable_current_x86_64.rpm \
+    && rm ./google-chrome-stable_current_x86_64.rpm \
+    && dnf clean all
 
 # JAR 파일 복사 및 실행
 ARG JAR_FILE=build/libs/*.jar
