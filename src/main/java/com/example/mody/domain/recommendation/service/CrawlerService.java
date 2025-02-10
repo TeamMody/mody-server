@@ -24,7 +24,7 @@ public class CrawlerService {
     public String getRandomImageUrl(String keyword) {
 
         WebDriver driver = getWebDriver();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
 
         try {
             String searchUrl = "https://kr.pinterest.com/search/pins/?q=" + URLEncoder.encode(keyword, StandardCharsets.UTF_8);
