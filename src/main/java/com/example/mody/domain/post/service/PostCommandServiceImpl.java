@@ -166,6 +166,16 @@ public class PostCommandServiceImpl implements PostCommandService {
 		post.updatePost(request.getContent(), request.getIsPublic());
 	}
 
+	@Override
+	public void togglePostPublic(Member member, Long postId) {
+
+		Post post = postRepository.findById(postId)
+				.orElseThrow(() -> new PostException(POST_NOT_FOUND));
+		checkAuthorization(member, post);
+		post.toggleIsPublic();
+	}
+
+
 	@Transactional
 	protected void delete(Post post) {
 		List<String> postImageUrls = postImageRepository.findPostImageUrlByPostId(post.getId());
