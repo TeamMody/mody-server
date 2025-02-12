@@ -102,7 +102,7 @@ public class SecurityConfig {
 		));
 
 		// 허용할 HTTP 메서드 설정
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 
 		// 허용할 헤더 설정
 		configuration.setAllowedHeaders(Arrays.asList(
@@ -112,7 +112,8 @@ public class SecurityConfig {
 			"Accept",
 			"Origin",
 			"Access-Control-Request-Method",
-			"Access-Control-Request-Headers"
+			"Access-Control-Request-Headers",
+			"Access-Control-Allow-Origin"
 		));
 
 		// 인증 정보 포함 설정
