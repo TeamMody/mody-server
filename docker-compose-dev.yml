@@ -1,0 +1,52 @@
+services: # 컨테이너 설정
+  backend:
+    container_name: mody-server-dev
+    image: mody-server:dev #ecr에 올린 이미지로 수정 필요
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - 8000:8000
+    depends_on:
+      - redis
+    networks:
+      - mody-network
+
+  nginx: # Nginx 컨테이너 설정 (certbot은 인증서 발급 시에만 포트를 사용하게 설정)
+    image: nginx
+    container_name: nginx
+    restart: unless-stopped # 컨테이너가 비정상적으로 종료되었을 때 재시작
+    ports:
+      - "880:80"
+      - "8443:443"
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt # 파일 설정을 nginx에 마운트 시킴
+      - ./certbot/www:/var/www/certbot
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf/portainer.mody.server.kkoalla.app.conf:/etc/nginx/conf.d/portainer.mody.server.kkoalla.app.conf
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    networks:
+      - mody-network
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; certbot certonly --manual --preferred-challenges dns --email shimseawon1510@gmail.com -d kkoalla.app -d *.kkoalla.app --agree-tos --no-eff-email; exit;'"
+
+  redis:
+    image: redis
+    container_name: redis
+    restart: unless-stopped # 컨테이너가 비정상적으로 종료되었을 때 재시작
+    ports:
+      - "6379:6379"
+    networks:
+      - mody-network
+    command: redis-server --appendonly yes # redis 서버가 비정상적으로 종료되었을 때 데이터를 보존하기 위해 설정
+  
+networks:
+  mody-network:
+    driver: bridge

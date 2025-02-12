@@ -1,7 +1,7 @@
 ---
-name: 이슈 템플릿
-about: "\b해당 이슈 생성 템플릿을 사용하여 이슈 생성"
-title: ''
+name: "✅ Issue Template"
+about: 기본 Issue Template
+title: 예시) ✨ Feature 이슈 제목
 labels: ''
 assignees: ''
 

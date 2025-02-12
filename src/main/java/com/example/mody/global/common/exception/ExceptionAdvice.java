@@ -3,11 +3,14 @@ package com.example.mody.global.common.exception;
 import com.example.mody.global.common.base.BaseResponse;
 import com.example.mody.global.common.exception.code.BaseCodeDto;
 import com.example.mody.global.common.exception.code.status.GlobalErrorStatus;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +25,11 @@ import java.util.Optional;
 
 @Slf4j
 @RestControllerAdvice(annotations = {RestController.class})
+@RequiredArgsConstructor
 public class ExceptionAdvice extends ResponseEntityExceptionHandler {
+
+    private final ErrorSender errorSender;
+
     /*
      * 직접 정의한 RestApiException 에러 클래스에 대한 예외 처리
      */
@@ -30,6 +37,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = RestApiException.class)
     public ResponseEntity<BaseResponse<String>> handleRestApiException(RestApiException e) {
         BaseCodeDto errorCode = e.getErrorCode();
+        log.error("An error occurred: {}", e.getMessage(), e);
         return handleExceptionInternal(errorCode);
     }
 
@@ -38,8 +46,8 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler
     public ResponseEntity<BaseResponse<String>> handleException(Exception e) {
-        e.printStackTrace(); //예외 정보 출력
-
+        log.error("An error occurred: {}", e.getMessage(), e);
+        errorSender.sendError(e);
         return handleExceptionInternalFalse(GlobalErrorStatus._INTERNAL_SERVER_ERROR.getCode(), e.getMessage());
     }
 
@@ -49,6 +57,8 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler
     public ResponseEntity<BaseResponse<String>> handleConstraintViolationException(ConstraintViolationException e) {
+        errorSender.sendError(e);
+        log.error("An error occurred: {}", e.getMessage(), e);
         return handleExceptionInternal(GlobalErrorStatus._VALIDATION_ERROR.getCode());
     }
 
@@ -59,6 +69,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<BaseResponse<String>> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException e) {
         // 예외 처리 로직
+        log.error("An error occurred: {}", e.getMessage(), e);
         return handleExceptionInternal(GlobalErrorStatus._METHOD_ARGUMENT_ERROR.getCode());
     }
 
@@ -78,9 +89,24 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
                     errors.merge(fieldName, errorMessage, (existingErrorMessage, newErrorMessage) -> existingErrorMessage + ", " + newErrorMessage);
                 });
 
+        log.error("An error occurred: {}", e.getMessage(), e);
+
         return handleExceptionInternalArgs(GlobalErrorStatus._VALIDATION_ERROR.getCode(), errors);
 
     }
+
+    // 인증되지 않은 사용자에 대한 처리
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<BaseResponse<String>> handleAuthenticationException(AuthenticationException e) {
+        return handleExceptionInternal(GlobalErrorStatus._UNAUTHORIZED.getCode());
+    }
+
+    // 권한이 없는 사용자에 대한 처리
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<BaseResponse<String>> handleAccessDeniedException(AccessDeniedException e) {
+        return handleExceptionInternal(GlobalErrorStatus._ACCESS_DENIED.getCode());
+    }
+
 
     private ResponseEntity<BaseResponse<String>> handleExceptionInternal(BaseCodeDto errorCode) {
         return ResponseEntity

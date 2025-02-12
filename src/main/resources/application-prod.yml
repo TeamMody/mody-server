@@ -6,9 +6,8 @@ spring:
     name: mody-server-prod
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-
-    config:
-      import: classpath:application.yml
+  config:
+    import: classpath:application.yml
 
   jpa:
     show-sql: false
@@ -19,7 +18,13 @@ spring:
         format_sql: true
         jdbc:
           time_zone: Asia/Seoul
+        dialect: org.hibernate.dialect.MySQLDialect
 
 logging:
   level:
-    org.springframework.web: ERROR
+    root: INFO
+    org.springframework: INFO
+  config: classpath:logback-spring-mody.xml
+
+sentry:
+  enabled: true

@@ -6,9 +6,8 @@ spring:
     name: mody-server-local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-
-    config:
-      import: classpath:application.yml
+  config:
+    import: classpath:application.yml
 
   jpa:
     show-sql: false
@@ -20,6 +19,5 @@ spring:
         jdbc:
           time_zone: Asia/Seoul
 
-logging:
-  level:
-    org.springframework.web: ERROR
+sentry:
+  enabled: false
