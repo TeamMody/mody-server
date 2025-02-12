@@ -14,8 +14,10 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 @Configuration
 @OpenAPIDefinition(
 		servers = {
-				@Server(url = "https://kkoalla.app:8443", description = "모디 https 개발 서버입니다."),
+				@Server(url = "https://kkoalla.app:8443/dev", description = "모디 https 개발 서버입니다."),
+				@Server(url = "https://kkoalla.app:8443/prod", description = "모디 https 배포 서버입니다."),
 				@Server(url = "http://3.37.4.11:8000", description = "모디 http 개발 서버입니다."),
+				@Server(url = "http://3.37.4.11:8080", description = "모디 http 배포 서버입니다."),
 				@Server(url = "http://localhost:8080", description = "모디 local 서버입니다.")
 		}
 )
