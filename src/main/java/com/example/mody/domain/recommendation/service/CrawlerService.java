@@ -27,7 +27,7 @@ public class CrawlerService {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
 
         try {
-            String searchUrl = "https://kr.pinterest.com/search/pins/?q=" + URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+            String searchUrl = "https://kr.pinterest.com/search/pins/?q=" + URLEncoder.encode(keyword + " 스타일", StandardCharsets.UTF_8);
             driver.navigate().to(searchUrl);
             log.info("Pinterest 검색 URL 접속 완료: {}", searchUrl);
 
@@ -74,7 +74,7 @@ public class CrawlerService {
         options.addArguments("--disable-dev-shm-usage"); // /dev/shm 사용 비활성화(Docker 환경에서 크롬 크래시 문제 해결)
         options.addArguments("--ignore-ssl-errors=yes");
         options.addArguments("--ignore-certificate-errors"); // SSL 차단 대비
-
+        options.addArguments("--window-size=1920,1080"); // 해상도 설정(가로 1920px, 세로 1080px)
         return new ChromeDriver(options);
     }
 }
