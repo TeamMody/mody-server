@@ -11,12 +11,13 @@ public class CorsMvcConfig implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry corsRegistry) {
 		corsRegistry.addMapping("/**")
 				.exposedHeaders("Set-Cookie")
-				.allowedOrigins("*"
+				.allowedOriginPatterns("*")
+//				.allowedOrigins(
 //						"http://localhost:5173",   // 현재 요청 URL
 //						"https://kkoalla.app",
 //						"https://kkoalla.app:5173",
 //						"https://kkoalla.app:8443"
-				)
+//				)
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
 				.allowedHeaders("*")
 				.allowCredentials(true);
