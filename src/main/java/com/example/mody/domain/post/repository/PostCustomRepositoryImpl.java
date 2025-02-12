@@ -85,7 +85,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .from(qPost)
                 .leftJoin(qPost.member, qMember)
                 .leftJoin(qPost.images, qPostImage)
-                .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost))
+                .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost).and(qMemberPostLike.member.eq(member)))
                 .where(qPost.id.in(postIds))
                 .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
                 .transform(GroupBy.groupBy(qPost.id).as(
@@ -96,7 +96,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                                 qPost.content,
                                 qPost.isPublic,
                                 qPost.likeCount,
-                                isLiked,
+                                qMemberPostLike.isNotNull(),
                                 qPost.bodyType.name,
                                 GroupBy.list(qPostImage)
                         )));
@@ -184,7 +184,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                 .from(qPost)
                 .leftJoin(qPost.member, qMember)
                 .leftJoin(qPost.images, qPostImage)
-                .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost))
+                .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost).and(qMemberPostLike.member.eq(member)))
                 .where(qPost.id.in(postIds))
                 .orderBy( qPost.createdAt.desc())
                 .transform(GroupBy.groupBy(qPost.id).as(
@@ -195,7 +195,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                                 qPost.content,
                                 qPost.isPublic,
                                 qPost.likeCount,
-                                isLikedResult(member),
+                                qMemberPostLike.isNotNull(),
                                 qPost.bodyType.name,
                                 GroupBy.list(qPostImage)
                         )));

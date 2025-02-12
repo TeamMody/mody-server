@@ -15,4 +15,6 @@ public interface PostCommandService {
 
 	public void reportPost(Member member, Long postId);
 	public void updatePost(PostUpdateRequest request, Long postId, Member member);
+
+	void togglePostPublic(Member member, Long postId);
 }
