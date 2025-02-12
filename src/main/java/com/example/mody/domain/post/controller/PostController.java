@@ -477,4 +477,70 @@ public class PostController {
 
 		return BaseResponse.onSuccess(null);
 	}
+
+	@PatchMapping("/{postId}/public")
+	@Operation(summary = "게시글 나만 보기 수정 API", description = "인증된 유저의 게시글 나만 보기 수정 API.")
+	@ApiResponses({
+			@ApiResponse(responseCode = "COMMON200", description = "게시글 수정 성공"),
+			@ApiResponse(
+					responseCode = "COMMON401",
+					description = "로그인을 하지 않았을 경우",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+					{
+					  "timestamp": "2025-01-26T21:23:51.4515304",
+					  "code": "COMMON401",
+					  "message": "인증이 필요합니다."
+					}
+					"""
+							)
+					)
+			),
+			@ApiResponse(
+					responseCode = "POST403",
+					description = "작성자가 아닌 유저의 요청으로 권한이 없는 경우",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+          					{
+            					"timestamp": "2025-01-27T20:56:55.7942672",
+            					"code": "POST403",
+            					"message": "해당 게시글에 대한 권한이 없습니다."
+          					}
+					"""
+							)
+					)
+			),
+			@ApiResponse(
+					responseCode = "POST404",
+					description = "해당 게시물을 찾을 수 없습니다.",
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(
+									value = """
+						{
+						    "timestamp": "2024-01-13T10:00:00",
+						    "isSuccess": "false",
+						    "code": "POST404",
+						    "message": "해당 게시물을 찾을 수 없습니다."
+						}
+						"""
+							)
+					)
+			)
+	})
+	@Parameters({
+			@Parameter(name = "postId", description = "게시글 아이디, path variable 입니다")
+	})
+	public BaseResponse<Void> updatePostIsPublic(
+			@PathVariable(name = "postId") Long postId,
+			@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+		postCommandService.togglePostPublic(customUserDetails.getMember(), postId);
+		return BaseResponse.onSuccess(null);
+	}
+
 }
