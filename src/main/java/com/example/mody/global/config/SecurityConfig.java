@@ -94,12 +94,13 @@ public class SecurityConfig {
 		CorsConfiguration configuration = new CorsConfiguration();
 
 		// 허용할 Origin 설정
-		configuration.setAllowedOrigins(Arrays.asList(
-			"https://kkoalla.app",        // 프론트엔드 도메인
-			"https://kkoalla.app:5173",   // 개발 서버
-			"http://localhost:5173",       // 로컬 개발
-			"https://kkoalla.app:8443"
-		));
+//		configuration.setAllowedOrigins(Arrays.asList(
+//			"https://kkoalla.app",        // 프론트엔드 도메인
+//			"https://kkoalla.app:5173",   // 개발 서버
+//			"http://localhost:5173",       // 로컬 개발
+//			"https://kkoalla.app:8443"
+//		));
+		configuration.addAllowedOriginPattern("*");
 
 		// 허용할 HTTP 메서드 설정
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));

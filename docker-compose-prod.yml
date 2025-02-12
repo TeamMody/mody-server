@@ -4,8 +4,8 @@ services: # 컨테이너 설정
     image: mody-server #ecr에 올린 이미지로 수정 필요 #ecr에 올린 이미지로 수정 필요
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_HOST=redis-prod
+      - REDIS_PORT=6479
     ports:
       - 8080:8080
     depends_on:
@@ -18,11 +18,11 @@ services: # 컨테이너 설정
     container_name: redis-prod
     restart: unless-stopped # 컨테이너가 비정상적으로 종료되었을 때 재시작
     ports:
-      - "66379:66379"
+      - 6479:6479
     networks:
-      - mody-prod-network
+      - mody-network
     command: redis-server --appendonly yes # redis 서버가 비정상적으로 종료되었을 때 데이터를 보존하기 위해 설정
 
 networks:
-  mody-prod-network:
+  mody-network:
     driver: bridge
