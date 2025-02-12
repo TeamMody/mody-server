@@ -57,13 +57,13 @@ jobs:
       # 4. Docker 이미지 빌드
       - name: Build Docker Image
         run: |
-          docker build -t ${{ secrets.AWS_ECR_REPO }}:latest .
-          docker tag ${{ secrets.AWS_ECR_REPO }}:latest ${{ secrets.AWS_ECR_REPO }}:latest
+          docker build -t ${{ secrets.AWS_ECR_REPO }}:prod .
+          docker tag ${{ secrets.AWS_ECR_REPO }}:prod ${{ secrets.AWS_ECR_REPO }}:prod
 
       # 5. Docker 이미지 푸시
       - name: Push to Amazon ECR
         run: |
-          docker push ${{ secrets.AWS_ECR_REPO }}:latest
+          docker push ${{ secrets.AWS_ECR_REPO }}:prod
 
       # 6. CodeDeploy 트리거
       - name: Trigger CodeDeploy Deployment
