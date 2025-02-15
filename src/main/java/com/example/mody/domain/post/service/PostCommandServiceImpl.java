@@ -16,6 +16,7 @@ import com.example.mody.domain.post.repository.PostReportRepository;
 import com.example.mody.global.common.exception.RestApiException;
 import com.example.mody.global.common.exception.code.status.S3ErrorStatus;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,10 +67,12 @@ public class PostCommandServiceImpl implements PostCommandService {
 
 		BodyType bodyType = optionalBodyType.orElseThrow(() -> new BodyTypeException(MEMBER_BODY_TYPE_NOT_FOUND));
 
-		Post post = new Post(member,
-			bodyType,
-			postCreateRequest.getContent(),
-			postCreateRequest.getIsPublic());
+		Post post = Post.builder()
+				.member(member)
+				.bodyType(bodyType)
+				.content(postCreateRequest.getContent())
+				.isPublic(postCreateRequest.getIsPublic())
+				.build();
 
 		postCreateRequest.getS3Urls().forEach(s3Url -> {
 			validateS3Url(s3Url); // 유효한 S3 url인지 검증
