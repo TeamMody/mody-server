@@ -5,6 +5,7 @@ import static com.example.mody.domain.post.constant.PostConstant.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.example.mody.domain.bodytype.entity.BodyType;
@@ -23,9 +24,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity(name = "post")
 @Getter
@@ -62,14 +60,15 @@ public class Post extends BaseEntity {
 	private String content;
 
 	@Column(nullable = false)
-	private Integer likeCount;
+	private Integer likeCount = 0;
 
 	@Column(nullable = false)
 	private Boolean isPublic;
 
 	@Column(nullable = false)
-	private Integer reportCount;
+	private Integer reportCount = 0;
 
+	@Builder
 	public Post(Member member, BodyType bodyType, String content, Boolean isPublic) {
 		this.member = member;
 		this.bodyType = bodyType;
@@ -78,6 +77,7 @@ public class Post extends BaseEntity {
 		this.likeCount = 0;
 		this.reportCount = 0;
 		this.images = new ArrayList<>();
+		this.likes = new ArrayList<>();
 	}
 
 	public void decreaseLikeCount() {

@@ -96,7 +96,7 @@ public class PostQueryServiceImpl implements PostQueryService {
 
         Optional<MemberPostLike> existingLike = postLikeRepository.findByPostAndMember(post, member);
 
-        PostResponse postResponse = new PostResponse(post.getId(), post.getMember().getId(),post.getMember().getNickname(), post.getContent(), post.getIsPublic(), post.getLikeCount(), existingLike.isPresent() ,post.getBodyType().getName(), post.getImages());
+        PostResponse postResponse = new PostResponse(post.getId(), post.getMember().getId(),post.getMember().getNickname(),post.getMember().equals(member), post.getContent(), post.getIsPublic(), post.getLikeCount(), existingLike.isPresent() ,post.getBodyType().getName(), post.getImages());
 
         return postResponse;
     }
