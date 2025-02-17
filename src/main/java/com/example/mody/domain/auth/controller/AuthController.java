@@ -1,16 +1,9 @@
 package com.example.mody.domain.auth.controller;
 
-import com.example.mody.domain.exception.MemberException;
-import com.example.mody.domain.member.entity.Member;
-import com.example.mody.global.common.exception.code.status.GlobalErrorStatus;
-import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
