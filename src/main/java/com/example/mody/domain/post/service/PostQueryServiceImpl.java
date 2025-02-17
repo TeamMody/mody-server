@@ -34,19 +34,19 @@ public class PostQueryServiceImpl implements PostQueryService {
     @Override
     @Transactional(readOnly = true)
     public PostListResponse getPosts(Member member, Integer size, Long cursor) {
-
         if(size<=0){
             throw new RestApiException(GlobalErrorStatus.NEGATIVE_PAGE_SIZE_REQUEST);
         }
 
+        Optional<BodyType> bodyTypeOptional = bodyTypeService.findLastBodyType(member);
+        if(bodyTypeOptional.isEmpty()){
+            return getRecentPostResponses(member, size, cursor);
+        }
+        BodyType userBodyType = bodyTypeOptional.get();
+
         Optional<Post> cursorPost = getCursorPost(cursor);
 
-        if(member != null){
-            Optional<BodyType> bodyTypeOptional = bodyTypeService.findLastBodyType(member);
-            return postRepository.getPostList(cursorPost, size, member, bodyTypeOptional);
-        }
-
-        return postRepository.getPostList(cursorPost, size, member, Optional.empty());
+        return getPostsByBodyType(member, size, cursorPost, userBodyType);
     }
 
     @Override
@@ -99,6 +99,38 @@ public class PostQueryServiceImpl implements PostQueryService {
         PostResponse postResponse = new PostResponse(post.getId(), post.getMember().getId(),post.getMember().getNickname(),post.getMember().equals(member), post.getContent(), post.getIsPublic(), post.getLikeCount(), existingLike.isPresent() ,post.getBodyType().getName(), post.getImages());
 
         return postResponse;
+    }
+
+    private PostListResponse getRecentPostResponses(Member member, Integer size, Long cursor){
+        return postRepository.getRecentPosts(cursor, size, member);
+    }
+
+    private PostListResponse getPostsByBodyType(
+            Member member, Integer size, Optional<Post> cursorPost, BodyType userBodyType){
+        // 커서가 존재하지 않거나(== 최초 조회) 커서 post의 바디타입이 유저의 바디타입과 일치하는 경우
+        if(cursorPost.isEmpty() ||
+                cursorPost.get().getBodyType().equals(userBodyType)){
+            return getBodyTypePosts(member, size, cursorPost, userBodyType);
+        }
+        return getOtherBodyTypePosts(member, size,Optional.empty(), userBodyType);
+    }
+
+    private PostListResponse getBodyTypePosts(
+            Member member, Integer size, Optional<Post> cursorPost, BodyType userBodyType){
+        PostListResponse bodyTypePosts = postRepository.getBodyTypePosts(cursorPost, size, member, userBodyType);
+
+        int insufficientCount = size - bodyTypePosts.getPostResponses().size();
+        if (insufficientCount > 0){
+            PostListResponse otherBodyTypePosts = getOtherBodyTypePosts(
+                    member, insufficientCount,Optional.empty(), userBodyType);
+            return PostListResponse.of(bodyTypePosts, otherBodyTypePosts);
+        }
+        return bodyTypePosts;
+    }
+
+    private PostListResponse getOtherBodyTypePosts(
+            Member member, Integer size, Optional<Post> cursorPost, BodyType userBodyType){
+        return postRepository.getOtherBodyTypePosts(cursorPost, size, member, userBodyType);
     }
 
 
