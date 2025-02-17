@@ -40,7 +40,7 @@ public class RecommendationController implements RecommendationControllerInterfa
         return BaseResponse.onSuccess(categoryResponse);
     }
 
-    // 스타일 추천 좋아요
+    // 추천 좋아요
     @PostMapping("/{recommendationId}/like")
     public BaseResponse<RecommendLikeResponse> toggleStyleLike(
             @PathVariable(name = "recommendationId") Long recommendationId,

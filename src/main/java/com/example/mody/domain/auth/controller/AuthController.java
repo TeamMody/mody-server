@@ -249,18 +249,17 @@ public class AuthController {
 			)
 		),
 		@ApiResponse(
-			responseCode = "AUTH401",
+			responseCode = "COMMON401",
 			description = "인증되지 않은 사용자",
 			content = @Content(
 				mediaType = "application/json",
 				examples = @ExampleObject(
 					value = """
 						{
-						    "timestamp": "2024-01-13T10:00:00",
-						    "code": "AUTH001",
-						    "message": "JWT가 없습니다.",
-						    "result": null
-						}
+								  "timestamp": "2025-02-17T22:23:22.7640118",
+								  "code": "COMMON401",
+								  "message": "인증이 필요합니다."
+								}
 						"""
 				)
 			)

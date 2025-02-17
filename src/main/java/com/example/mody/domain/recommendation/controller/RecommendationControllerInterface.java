@@ -30,11 +30,11 @@ public interface RecommendationControllerInterface {
     BaseResponse<CategoryResponse> getStyleCategories();
 
 
-    @Operation(summary = "스타일 추천 좋아요 API", description = "스타일 추천에 대한 좋아요 기능")
+    @Operation(summary = "추천 좋아요 API", description = "추천에 대한 좋아요 기능")
     @PostMapping("/{recommendationId}/like")
     @ApiResponses({
-            @ApiResponse(responseCode = "COMMON200", description = "스타일 추천에 좋아요 성공"),
-            @ApiResponse(responseCode = "RECOMMENDATION404", description = "요청한 스타일 추천 결과물이 존재하지 않는 경우")
+            @ApiResponse(responseCode = "COMMON200", description = "추천에 좋아요 성공"),
+            @ApiResponse(responseCode = "RECOMMENDATION404", description = "요청한 추천 결과물이 존재하지 않는 경우")
     })
     BaseResponse<RecommendLikeResponse> toggleStyleLike(Long recommendationId,CustomUserDetails customUserDetails);
 

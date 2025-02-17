@@ -40,7 +40,7 @@ public class QRecommendation extends EntityPathBase<Recommendation> {
 
     public final com.example.mody.domain.member.entity.QMember member;
 
-    public final ListPath<com.example.mody.domain.recommendation.entity.mapping.MemberRecommendationLike, com.example.mody.domain.recommendation.entity.mapping.QMemberRecommendationLike> RecommendLikes = this.<com.example.mody.domain.recommendation.entity.mapping.MemberRecommendationLike, com.example.mody.domain.recommendation.entity.mapping.QMemberRecommendationLike>createList("RecommendLikes", com.example.mody.domain.recommendation.entity.mapping.MemberRecommendationLike.class, com.example.mody.domain.recommendation.entity.mapping.QMemberRecommendationLike.class, PathInits.DIRECT2);
+    public final ListPath<com.example.mody.domain.recommendation.entity.mapping.MemberRecommendationLike, com.example.mody.domain.recommendation.entity.mapping.QMemberRecommendationLike> recommendationLikes = this.<com.example.mody.domain.recommendation.entity.mapping.MemberRecommendationLike, com.example.mody.domain.recommendation.entity.mapping.QMemberRecommendationLike>createList("recommendationLikes", com.example.mody.domain.recommendation.entity.mapping.MemberRecommendationLike.class, com.example.mody.domain.recommendation.entity.mapping.QMemberRecommendationLike.class, PathInits.DIRECT2);
 
     public final EnumPath<com.example.mody.domain.recommendation.enums.RecommendType> recommendType = createEnum("recommendType", com.example.mody.domain.recommendation.enums.RecommendType.class);
 
