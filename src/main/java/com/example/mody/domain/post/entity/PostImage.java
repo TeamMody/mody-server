@@ -23,6 +23,11 @@ public class PostImage extends BaseEntity {
     @Column(nullable = false)
     private String url;
 
+    /**
+     * 필드 개수가 적고, 필드들이 필수값이므로 빌더 패턴을 사용하지 않고 생성자를 사용함
+     * @param post
+     * @param s3Url
+     */
     public PostImage(Post post, String s3Url){
         this.post = post;
         this.url = s3Url;
