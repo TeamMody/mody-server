@@ -37,7 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtProvider jwtProvider;
 	private final MemberRepository memberRepository;
 	private final ObjectMapper objectMapper;
-	private final MemberQueryService memberQueryService;
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {

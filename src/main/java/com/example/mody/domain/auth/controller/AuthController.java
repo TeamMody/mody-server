@@ -1,9 +1,16 @@
 package com.example.mody.domain.auth.controller;
 
+import com.example.mody.domain.exception.MemberException;
+import com.example.mody.domain.member.entity.Member;
+import com.example.mody.global.common.exception.code.status.GlobalErrorStatus;
+import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -96,26 +103,25 @@ public class AuthController {
 			)
 		),
 		@ApiResponse(
-			responseCode = "404",
-			description = "사용자를 찾을 수 없음",
+			responseCode = "COMMON401",
+			description = "로그인하지 않은 경우에 발생합니다.(엑세스 토큰을 넣지 않았을 때)",
 			content = @Content(
 				mediaType = "application/json",
 				examples = @ExampleObject(
 					value = """
-						{
-						    "timestamp": "2024-01-13T10:00:00",
-						    "code": "MEMBER404",
-						    "message": "해당 회원을 찾을 수 없습니다.",
-						    "result": null
-						}
-						"""
+								{
+								  "timestamp": "2025-02-17T22:23:22.7640118",
+								  "code": "COMMON401",
+								  "message": "인증이 필요합니다."
+								}
+							"""
 				)
 			)
 		)
 	})
 	@PostMapping("/signup/complete")
 	public BaseResponse<Void> completeRegistration(
-		@AuthenticationPrincipal CustomUserDetails userDetails,
+		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@Valid @RequestBody
 		@Parameter(
 			description = "회원가입 완료 요청 정보",
@@ -137,7 +143,7 @@ public class AuthController {
 			)
 		) MemberRegistrationRequest request
 	) {
-		memberCommandService.completeRegistration(userDetails.getMember().getId(), request);
+		memberCommandService.completeRegistration(customUserDetails.getMember(), request);
 		return BaseResponse.onSuccess(null);
 	}
 
