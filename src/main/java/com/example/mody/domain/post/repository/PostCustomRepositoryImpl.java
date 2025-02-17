@@ -4,7 +4,7 @@ import com.example.mody.domain.bodytype.entity.BodyType;
 import com.example.mody.domain.bodytype.entity.QBodyType;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.entity.QMember;
-import com.example.mody.domain.post.dto.response.PostListResponse;
+import com.example.mody.domain.post.dto.response.PostResponses;
 import com.example.mody.domain.post.dto.response.PostResponse;
 import com.example.mody.domain.post.dto.response.recode.LikedPostsResponse;
 import com.example.mody.domain.post.entity.Post;
@@ -13,21 +13,15 @@ import com.example.mody.domain.post.entity.QPostImage;
 import com.example.mody.domain.post.entity.mapping.QMemberPostLike;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
-import com.querydsl.core.types.dsl.StringTemplate;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import jakarta.persistence.QueryHint;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.QueryHints;
 import org.springframework.stereotype.Repository;
 
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.BiFunction;
 
@@ -54,7 +48,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
      * @return
      */
     @Override
-    public PostListResponse getBodyTypePosts(Optional<Post> cursorPost, Integer size, Member member, BodyType bodyType) {
+    public PostResponses getBodyTypePosts(Optional<Post> cursorPost, Integer size, Member member, BodyType bodyType) {
         BooleanBuilder predicate = new BooleanBuilder();
 
         predicate.and(qPost.isPublic.eq(true)); // 공개여부 == true
@@ -72,12 +66,12 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
         List<PostResponse> postResponses = getPostResponsesByIds(postIds, member, orderSpecifiers);
 
         // 여기서는 목록 개수가 size 개수와 동일한 경우도 hasNext가 true임.
-        return PostListResponse.of(hasNext.apply(postResponses, size-1),
+        return PostResponses.of(hasNext.apply(postResponses, size-1),
                 postResponses.subList(0, Math.min(size, postResponses.size())));
     }
 
     @Override
-    public PostListResponse getOtherBodyTypePosts(Optional<Post> cursorPost, Integer size, Member member, BodyType bodyType) {
+    public PostResponses getOtherBodyTypePosts(Optional<Post> cursorPost, Integer size, Member member, BodyType bodyType) {
         BooleanBuilder predicate = new BooleanBuilder();
 
         predicate.and(qPost.isPublic.eq(true)); // 공개여부 == true
@@ -94,7 +88,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
         List<Long> postIds = getPostIds(predicate, size+1, orderSpecifiers); //하나 더 가져와서 다음 요소가 존재하는지 확인
         List<PostResponse> postResponses = getPostResponsesByIds(postIds, member, orderSpecifiers);
 
-        return PostListResponse.of(hasNext.apply(postResponses, size),
+        return PostResponses.of(hasNext.apply(postResponses, size),
                 postResponses.subList(0, Math.min(size, postResponses.size())));
     }
 
@@ -125,7 +119,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     }
 
     @Override
-    public PostListResponse getMyPosts(Long cursor, Integer size, Member member) {
+    public PostResponses getMyPosts(Long cursor, Integer size, Member member) {
         BooleanBuilder predicate = new BooleanBuilder();
 
         predicate.and(qPost.member.eq(member));
@@ -140,12 +134,12 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
         List<Long> postIds = getPostIds(predicate, size+1, orderSpecifiers);
         List<PostResponse> postResponses = getPostResponsesByIds(postIds, member, orderSpecifiers);
 
-        return PostListResponse.of(hasNext.apply(postResponses, size),
+        return PostResponses.of(hasNext.apply(postResponses, size),
                 postResponses.subList(0, Math.min(size, postResponses.size())));
     }
 
     @Override
-    public PostListResponse getRecentPosts(Long cursor, Integer size, Member member) {
+    public PostResponses getRecentPosts(Long cursor, Integer size, Member member) {
         BooleanBuilder predicate = new BooleanBuilder();
 
         predicate.and(qPost.isPublic.eq(true));
@@ -160,7 +154,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
         List<Long> postIds = getPostIds(predicate, size+1, orderSpecifiers);
         List<PostResponse> postResponses = getPostResponsesByIds(postIds, member, orderSpecifiers);
 
-        return PostListResponse.of(hasNext.apply(postResponses, size),
+        return PostResponses.of(hasNext.apply(postResponses, size),
                 postResponses.subList(0, Math.min(size, postResponses.size())));
     }
 

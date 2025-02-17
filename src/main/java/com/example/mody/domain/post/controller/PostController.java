@@ -1,11 +1,9 @@
 package com.example.mody.domain.post.controller;
 
 
-import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.domain.post.dto.request.PostUpdateRequest;
 import com.example.mody.domain.post.dto.response.PostResponse;
-import com.example.mody.domain.post.entity.Post;
 import io.swagger.v3.oas.annotations.Parameters;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,9 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.mody.domain.auth.security.CustomUserDetails;
-import com.example.mody.domain.member.repository.MemberRepository;
 import com.example.mody.domain.post.dto.request.PostCreateRequest;
-import com.example.mody.domain.post.dto.response.PostListResponse;
+import com.example.mody.domain.post.dto.response.PostResponses;
 import com.example.mody.domain.post.exception.annotation.ExistsPost;
 import com.example.mody.domain.post.service.PostCommandService;
 import com.example.mody.domain.post.service.PostQueryService;
@@ -30,7 +27,6 @@ import com.example.mody.global.common.base.BaseResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -61,12 +57,12 @@ public class PostController {
 			description = "게시글 목록 조회 성공"
 		)
 	})
-	public BaseResponse<PostListResponse> getAllPosts(
+	public BaseResponse<PostResponses> getAllPosts(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@RequestParam(name = "cursor", required = false) Long cursor,
 		@RequestParam(name = "size", defaultValue = "15") Integer size) {
-		PostListResponse postListResponse = postQueryService.getPosts(customUserDetails.getMember(), size, cursor);
-		return BaseResponse.onSuccess(postListResponse);
+		PostResponses postResponses = postQueryService.getPosts(customUserDetails.getMember(), size, cursor);
+		return BaseResponse.onSuccess(postResponses);
 	}
 
 	/**
@@ -272,12 +268,12 @@ public class PostController {
 			description = "게시글 목록 조회 성공"
 		)
 	})
-	public BaseResponse<PostListResponse> getLikedPosts(
+	public BaseResponse<PostResponses> getLikedPosts(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@RequestParam(name = "cursor", required = false) Long cursor,
 		@RequestParam(name = "size", defaultValue = "15") Integer size) {
-		PostListResponse postListResponse = postQueryService.getLikedPosts(customUserDetails.getMember(), size, cursor);
-		return BaseResponse.onSuccess(postListResponse);
+		PostResponses postResponses = postQueryService.getLikedPosts(customUserDetails.getMember(), size, cursor);
+		return BaseResponse.onSuccess(postResponses);
 	}
 
 	@GetMapping("/me")
@@ -288,12 +284,12 @@ public class PostController {
 			description = "게시글 목록 조회 성공"
 		)
 	})
-	public BaseResponse<PostListResponse> getMyPosts(
+	public BaseResponse<PostResponses> getMyPosts(
 		@AuthenticationPrincipal CustomUserDetails customUserDetails,
 		@RequestParam(name = "cursor", required = false) Long cursor,
 		@RequestParam(name = "size", defaultValue = "15") Integer size) {
-		PostListResponse postListResponse = postQueryService.getMyPosts(customUserDetails.getMember(), size, cursor);
-		return BaseResponse.onSuccess(postListResponse);
+		PostResponses postResponses = postQueryService.getMyPosts(customUserDetails.getMember(), size, cursor);
+		return BaseResponse.onSuccess(postResponses);
 	}
 
 	@PostMapping("/{postId}/reports")
