@@ -27,6 +27,14 @@ public class PostListResponse {
      */
     public static PostListResponse of(Boolean hasNext, List<PostResponse> postResponses, Long cursor){
         Long newCursor = hasNext ? cursor : null;
-        return new PostListResponse(postResponses, new CursorPagination(hasNext, newCursor));
+        return new PostResponses(postResponses, new CursorPagination(hasNext, newCursor));
+    }
+
+    public static PostResponses of(PostResponses firstPosts, PostResponses secondPosts){
+        List<PostResponse> newPostResponses = new ArrayList<>(
+                firstPosts.getPostResponses().size() + secondPosts.getPostResponses().size());
+        newPostResponses.addAll(firstPosts.getPostResponses());
+        newPostResponses.addAll(secondPosts.getPostResponses());
+        return new PostResponses(newPostResponses, secondPosts.cursorPagination);
     }
 }
