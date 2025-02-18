@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
-	private final MemberRepository memberRepository;
+	private final MemberQueryService memberQueryService;
 	private final ObjectMapper objectMapper;
 
 	@Override
@@ -71,8 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			// 만약 토큰이 있다면
 			if (token != null) {
 				String memberId = jwtProvider.validateTokenAndGetSubject(token);
-				Member member = memberRepository.findById(Long.parseLong(memberId))
-					.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ACCESS_TOKEN));
+				Member member = memberQueryService.findMemberById(Long.parseLong(memberId));
 
 				CustomUserDetails customUserDetails = new CustomUserDetails(member);
 
