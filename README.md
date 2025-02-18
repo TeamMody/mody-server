@@ -54,6 +54,10 @@
 
 </div>
 
+## 아키텍처 다이어그램
+![image](https://github.com/user-attachments/assets/25a84d99-a57e-42c9-afcf-1f9cb9adc9da)
+
+
 ## 협업 규칙
 
 ### Github 협업 규칙
