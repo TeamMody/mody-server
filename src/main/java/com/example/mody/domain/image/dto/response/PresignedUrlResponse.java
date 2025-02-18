@@ -7,9 +7,8 @@ import lombok.*;
  * S3 presigned url 응답 DTO
  */
 @Getter
-@Setter
-@NoArgsConstructor
-@EqualsAndHashCode
+@Builder
+@AllArgsConstructor
 @Schema(description = "S3 presigned url 응답 DTO")
 public class PresignedUrlResponse {
 
@@ -18,10 +17,10 @@ public class PresignedUrlResponse {
     @Schema(description = "S3 key 값", example = "{folder}/{memberId}/{uuid}/{filename}")
     private String key;
 
-    public static PresignedUrlResponse of(String preSignedUrl, String key){
-        PresignedUrlResponse response = new PresignedUrlResponse();
-        response.setPresignedUrl(preSignedUrl);
-        response.setKey(key);
-        return response;
+    public static PresignedUrlResponse of(String preSignedUrl, String key) {
+        return PresignedUrlResponse.builder()
+                .presignedUrl(preSignedUrl)
+                .key(key)
+                .build();
     }
 }
