@@ -8,7 +8,6 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.mody.domain.image.dto.response.PresignedUrlResponse;
-import com.example.mody.domain.image.dto.response.S3UrlResponse;
 import com.example.mody.global.common.exception.RestApiException;
 import com.example.mody.global.common.exception.code.status.S3ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -114,11 +113,4 @@ public class S3Service {
     private String extractKey(String imageUrl) {
         return imageUrl.substring(imageUrl.indexOf(".com/") + 5); // 해당 index + 5 값이 key 값의 시작 인덱스 값
     }
-
-//    // 프론트에서 전달받은 key를 이용해 S3 URL 생성 및 반환(테스트용)
-//    public S3UrlResponse getS3Url(String key) {
-//        String s3Url = String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, key);
-//        log.info("s3Url: {}", s3Url);
-//        return S3UrlResponse.from(s3Url);
-//    }
 }
