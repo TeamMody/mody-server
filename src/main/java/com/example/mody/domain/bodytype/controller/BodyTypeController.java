@@ -9,7 +9,6 @@ import com.example.mody.global.common.base.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -86,16 +85,6 @@ public class BodyTypeController {
     ) {
         return BaseResponse.onSuccess(memberBodyTypeCommandService.analyzeBodyType(customUserDetails.getMember(), request.getAnswer()));
     }
-
-//    @GetMapping()
-//    @Operation(summary = "체형 질문 문항 조회 API - 프론트와 협의 필요(API 연동 안 해도 됨)",
-//            description = "체형 분석을 하기 위해 질문 문항을 받아 오는 API입니다. 이 부분은 서버에서 바로 프롬프트로 넣는 방법도 있기 때문에 프론트와 협의 후 진행하겠습니다.")
-//    @ApiResponses({
-//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공")
-//    })
-//    public BaseResponse<Void> getQuestion() {
-//        return BaseResponse.onSuccess(null);
-//    }
 
     @GetMapping("/result")
     @Operation(summary = "체형 분석 결과 조회 API", description = "사용자의 체형 분석 결과를 받아 오는 API입니다.")
