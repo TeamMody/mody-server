@@ -8,7 +8,6 @@ import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.mody.domain.image.dto.response.PresignedUrlResponse;
-import com.example.mody.domain.image.dto.response.S3UrlResponse;
 import com.example.mody.global.common.exception.RestApiException;
 import com.example.mody.global.common.exception.code.status.S3ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -22,28 +21,28 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class S3Service {
     private final AmazonS3 amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${cloud.aws.region.static}")
-    private String region;
+    private static final Pattern FILENAME_SANITIZE_PATTERN = Pattern.compile("[^/]+://[^/]+/");
 
+    @Transactional(readOnly = true)
     public List<PresignedUrlResponse> getPostPresignedUrls(Long memberId, List<String> filenames) {
         // 게시물당 하나의 UUID를 생성
         String uuid = UUID.randomUUID().toString();
 
         List<PresignedUrlResponse> presignedUrls = new ArrayList<>();
         for (String filename : filenames) {
-            String sanitizedFilename = filename.replaceAll("[^/]+://[^/]+/", "");
-            String key = String.format("post/%d/%s/%s", memberId, uuid, sanitizedFilename);
+            String sanitizedFilename = FILENAME_SANITIZE_PATTERN.matcher(filename).replaceAll("");
+            String key = String.format("post/%d/%s/%s", memberId, uuid, sanitizedFilename); // key값 설정(post 디렉터리 + 멤버ID + 랜덤 값 + filename)
             Date expiration = getExpiration(); // 유효 기간
             GeneratePresignedUrlRequest generatePresignedUrlRequest = generatePresignedUrl(key, expiration);
 
@@ -53,10 +52,11 @@ public class S3Service {
         return presignedUrls;
     }
 
+    @Transactional(readOnly = true)
     public PresignedUrlResponse getProfilePresignedUrl(Long memberId, String filename) {
-        // key값 설정(profile 경로 + 멤버ID + 랜덤 값 + filename)
-        String sanitizedFilename = filename.replaceAll("[^/]+://[^/]+/", "");
-        String key = String.format("profile/%d/%s/%s", memberId, UUID.randomUUID(), sanitizedFilename);
+
+        String sanitizedFilename = FILENAME_SANITIZE_PATTERN.matcher(filename).replaceAll("");
+        String key = String.format("profile/%d/%s/%s", memberId, UUID.randomUUID(), sanitizedFilename); // key값 설정(profile 경로 + 멤버ID + 랜덤 값 + filename)
 
         // 유효 기간
         Date expiration = getExpiration();
@@ -73,7 +73,6 @@ public class S3Service {
         try {
             GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucket, key)
                     .withMethod(HttpMethod.PUT)
-                    .withKey(key)
                     .withExpiration(expiration);
             generatePresignedUrlRequest.addRequestParameter(
                     Headers.S3_CANNED_ACL,
@@ -88,12 +87,9 @@ public class S3Service {
 
     // 유효 기간 설정
     private static Date getExpiration() {
-        Date expiration = new Date();
-        long expTimeMillis = expiration.getTime();
-        expTimeMillis += 2 * 1000 * 60 * 60; // 2시간 설정
-        expiration.setTime(expTimeMillis);
-        return expiration;
+        return new Date(System.currentTimeMillis() + 2 * 60 * 60 * 1000); // 유효 기간 2시간
     }
+
 
     // S3 이미지 삭제
     public void deleteFile(List<String> postImageUrls) { // 파일 삭제 실패해도 다음 파일 삭제를 수행하도록 예외를 터뜨리는 것이 아닌 로그만 찍음
@@ -114,11 +110,4 @@ public class S3Service {
     private String extractKey(String imageUrl) {
         return imageUrl.substring(imageUrl.indexOf(".com/") + 5); // 해당 index + 5 값이 key 값의 시작 인덱스 값
     }
-
-//    // 프론트에서 전달받은 key를 이용해 S3 URL 생성 및 반환(테스트용)
-//    public S3UrlResponse getS3Url(String key) {
-//        String s3Url = String.format("https://%s.s3.%s.amazonaws.com/%s", bucket, region, key);
-//        log.info("s3Url: {}", s3Url);
-//        return S3UrlResponse.from(s3Url);
-//    }
 }

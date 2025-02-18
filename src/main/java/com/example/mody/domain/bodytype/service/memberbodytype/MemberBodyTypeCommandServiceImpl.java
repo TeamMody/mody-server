@@ -23,12 +23,9 @@ public class MemberBodyTypeCommandServiceImpl implements MemberBodyTypeCommandSe
 
     @Override
     public BodyTypeAnalysisResponse analyzeBodyType(Member member, String answers) {
-        // 사용자 정보(닉네임, 성별) 조회
-        String nickname = member.getNickname();
-        Gender gender = member.getGender();
 
         // OpenAi API를 통한 체형 분석
-        String content = chatGptService.getContent(nickname, gender, answers);
+        String content = chatGptService.getContent(member.getNickname(), member.getGender(), answers);
         BodyTypeAnalysisResponse bodyTypeAnalysisResponse = chatGptService.analyzeBodyType(content);
 
         // MemberBodyType을 DB에 저장

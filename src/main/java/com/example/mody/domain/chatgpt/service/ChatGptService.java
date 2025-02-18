@@ -33,8 +33,8 @@ public final class ChatGptService {
 
     private final OpenAiApiClient openAiApiClient; // ChatGPT API와의 통신을 담당
     private final PromptManager promptManager; // 프롬프트 생성
-    private final ObjectMapper objectMapper = new ObjectMapper(); // JSON 응답 변환
-    private final CrawlerService crawlerService;
+    private final ObjectMapper objectMapper; // JSON 응답 변환
+    private final CrawlerService crawlerService; // 크롤링 서비스
 
     @Value("${openai.model}")
     private String model; // OpenAI 모델
@@ -71,7 +71,7 @@ public final class ChatGptService {
         String prompt = promptManager.createBodyTypeAnalysisPrompt(nickName, gender, answers);
 
         // OpenAI API 호출
-        ChatGPTResponse response = openAiApiClient.sendRequestToModel(
+        return openAiApiClient.sendRequestToModel(
                 model,
                 List.of(
                         new Message(systemRole, prompt)
@@ -79,7 +79,6 @@ public final class ChatGptService {
                 maxTokens,
                 temperature
         );
-        return response;
     }
 
     // 체형 분석 메서드
