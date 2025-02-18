@@ -4,5 +4,5 @@ import com.example.mody.domain.bodytype.dto.response.BodyTypeAnalysisResponse;
 import com.example.mody.domain.member.entity.Member;
 
 public interface MemberBodyTypeCommandService {
-    public BodyTypeAnalysisResponse analyzeBodyType(Member member, String answers);
+    BodyTypeAnalysisResponse analyzeBodyType(Member member, String answers);
 }
