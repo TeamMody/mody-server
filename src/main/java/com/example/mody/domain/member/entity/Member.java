@@ -66,7 +66,7 @@ public class Member extends BaseEntity {
 			cascade = CascadeType.ALL,
 			orphanRemoval = true,
 			fetch = FetchType.LAZY)
-	private List<MemberRecommendationLike> RecommendLikes = new ArrayList<>();
+	private List<MemberRecommendationLike> recommendationLikes = new ArrayList<>();
 
 	/**
 	 * 회원이 작성한 게시글 목록

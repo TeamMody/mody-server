@@ -29,9 +29,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 	private final AuthCommandService authCommandService;
 
 	@Override
-	public void completeRegistration(Long memberId, MemberRegistrationRequest request) {
-		Member member = memberRepository.findById(memberId)
-			.orElseThrow(() -> new MemberException(MemberErrorStatus.MEMBER_NOT_FOUND));
+	public void completeRegistration(Member member, MemberRegistrationRequest request) {
 
 		member.completeRegistration(
 			request.getNickname(),

@@ -9,12 +9,6 @@ import com.example.mody.domain.recommendation.dto.response.RecommendResponses;
 import com.example.mody.domain.recommendation.service.RecommendationCommendService;
 import com.example.mody.domain.recommendation.service.RecommendationQueryService;
 import com.example.mody.global.common.base.BaseResponse;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +34,7 @@ public class RecommendationController implements RecommendationControllerInterfa
         return BaseResponse.onSuccess(categoryResponse);
     }
 
-    // 스타일 추천 좋아요
+    // 추천 좋아요
     @PostMapping("/{recommendationId}/like")
     public BaseResponse<RecommendLikeResponse> toggleStyleLike(
             @PathVariable(name = "recommendationId") Long recommendationId,
