@@ -57,7 +57,6 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 		Member member = Member.builder()
 			.providerId(oAuth2Response.getProviderId())
 			.provider(oAuth2Response.getProvider())
-			.nickname(oAuth2Response.getName())
 			.status(Status.ACTIVE)
 			.role(Role.ROLE_USER)
 			.loginType(LoginType.KAKAO)

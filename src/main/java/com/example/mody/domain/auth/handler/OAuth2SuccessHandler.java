@@ -58,13 +58,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		Member member = memberRepository.findByProviderId(oAuth2User.getOAuth2Response().getProviderId())
 			.orElseGet(() -> saveMember(oAuth2User));
 
-		// 새로 가입한 멤버인지 아닌지 확인
-		boolean isNewMember = member.getCreatedAt().equals(member.getUpdatedAt());
+//		// 새로 가입한 멤버인지 아닌지 확인
+//		boolean isNewMember = member.getCreatedAt().equals(member.getUpdatedAt());
 
 		// Access Token, Refresh Token 발급
 		String newAccessToken = authCommandService.processLoginSuccess(member, response);
 
-		String tempUrl = (isNewMember || !member.isRegistrationCompleted()) ? FRONT_SIGNUP_URL : FRONT_HOME_URL;
+		String tempUrl = (!member.isRegistrationCompleted()) ? FRONT_SIGNUP_URL : FRONT_HOME_URL;
 
 		String targetUrl = UriComponentsBuilder.fromUriString(tempUrl)
 				.build().toUriString();

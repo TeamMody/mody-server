@@ -21,24 +21,29 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CrawlerService {
 
-    public String getRandomImageUrl(String keyword) {
+    private static final String PINTEREST_SEARCH_URL_TEMPLATE = "https://kr.pinterest.com/search/pins/?q=";
+    private static final String IMAGE_XPATH = "//img[contains(@src, 'https')]";
+    private static final int MAX_IMAGES = 10;
 
+
+    public String getRandomImageUrl(String keyword) {
         WebDriver driver = getWebDriver();
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
 
         try {
-            String searchUrl = "https://kr.pinterest.com/search/pins/?q=" + URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+            // 페이지 접속
+            String searchUrl = PINTEREST_SEARCH_URL_TEMPLATE + URLEncoder.encode(keyword + " 스타일", StandardCharsets.UTF_8);
             driver.navigate().to(searchUrl);
             log.info("Pinterest 검색 URL 접속 완료: {}", searchUrl);
 
             // 이미지 태그 검색 결과 로드
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//img[contains(@src, 'https')]")));
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(IMAGE_XPATH)));
             log.info("이미지 태그 검색 결과 로드 완료");
 
             Set<String> imageUrls = new HashSet<>();
-            List<WebElement> images = driver.findElements(By.xpath("//img[contains(@src, 'https')]"));
+            List<WebElement> images = driver.findElements(By.xpath(IMAGE_XPATH));
 
-            int maxImages = Math.min(images.size(), 7); // 최대 이미지 7개(핀터레스트 첫 줄 사진이 7개)
+            int maxImages = Math.min(images.size(), MAX_IMAGES);
             for (int i = 0; i < maxImages; i++) {
                 String url = images.get(i).getAttribute("src");
                 if (url != null && !url.isEmpty()) {
@@ -61,8 +66,6 @@ public class CrawlerService {
         } catch (Exception e) {
             log.error("크롤링 실패 (키워드: {}):", keyword);
             throw new RestApiException(CrawlerErrorStatus.CRAWLING_FAILED);
-        } finally {
-            driver.quit();
         }
     }
 
@@ -74,7 +77,7 @@ public class CrawlerService {
         options.addArguments("--disable-dev-shm-usage"); // /dev/shm 사용 비활성화(Docker 환경에서 크롬 크래시 문제 해결)
         options.addArguments("--ignore-ssl-errors=yes");
         options.addArguments("--ignore-certificate-errors"); // SSL 차단 대비
-
+        options.addArguments("--window-size=1920,1080"); // 해상도 설정(가로 1920px, 세로 1080px)
         return new ChromeDriver(options);
     }
 }

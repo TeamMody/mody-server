@@ -13,6 +13,7 @@ public class PostResponse {
     private Long postId;
     private Long writerId;
     private String writerNickName;
+    private Boolean isMine;
     private String content;
     private Boolean isPublic;
     private Integer likeCount;
@@ -23,6 +24,7 @@ public class PostResponse {
     public PostResponse(Long postId,
                         Long writerId,
                         String nickName,
+                        Boolean isMine,
                         String content,
                         Boolean isPublic,
                         Integer likeCount,
@@ -32,13 +34,14 @@ public class PostResponse {
         this.postId = postId;
         this.writerId = writerId;
         this.writerNickName = nickName;
+        this.isMine = isMine;
         this.content = content;
         this.isPublic = isPublic;
         this.likeCount = likeCount;
         this.isLiked = isLiked;
         this.bodyType = bodyType;
         this.files = files.stream()
-                .map(PostImageResponse::of)
+                .map(PostImageResponse::from)
                 .toList();
     }
 }

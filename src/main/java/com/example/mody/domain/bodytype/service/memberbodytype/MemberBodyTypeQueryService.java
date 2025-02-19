@@ -5,7 +5,7 @@ import com.example.mody.domain.bodytype.entity.mapping.MemberBodyType;
 import com.example.mody.domain.member.entity.Member;
 
 public interface MemberBodyTypeQueryService {
-    public BodyTypeAnalysisResponse getBodyTypeAnalysis(Member member);
+    BodyTypeAnalysisResponse getBodyTypeAnalysis(Member member);
 
-    public MemberBodyType getMemberBodyType(Member member);
+    MemberBodyType getMemberBodyType(Member member);
 }

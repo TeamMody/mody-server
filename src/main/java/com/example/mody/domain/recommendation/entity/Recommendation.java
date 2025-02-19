@@ -52,7 +52,7 @@ public class Recommendation extends BaseEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<MemberRecommendationLike> RecommendLikes = new ArrayList<>();
+    private List<MemberRecommendationLike> recommendationLikes = new ArrayList<>();
 
     public void increaseLikeCount() {
         this.likeCount++;

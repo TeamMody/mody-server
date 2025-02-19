@@ -4,7 +4,7 @@ import com.example.mody.domain.bodytype.entity.BodyType;
 import com.example.mody.domain.bodytype.service.BodyTypeService;
 import com.example.mody.domain.exception.PostException;
 import com.example.mody.domain.member.entity.Member;
-import com.example.mody.domain.post.dto.response.PostListResponse;
+import com.example.mody.domain.post.dto.response.PostResponses;
 import com.example.mody.domain.post.dto.response.PostResponse;
 import com.example.mody.domain.post.dto.response.recode.LikedPostsResponse;
 import com.example.mody.domain.post.entity.Post;
@@ -33,25 +33,25 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     @Override
     @Transactional(readOnly = true)
-    public PostListResponse getPosts(Member member, Integer size, Long cursor) {
-
+    public PostResponses getPosts(Member member, Integer size, Long cursor) {
         if(size<=0){
             throw new RestApiException(GlobalErrorStatus.NEGATIVE_PAGE_SIZE_REQUEST);
         }
 
+        Optional<BodyType> bodyTypeOptional = bodyTypeService.findLastBodyType(member);
+        if(bodyTypeOptional.isEmpty()){
+            return getRecentPostResponses(member, size, cursor);
+        }
+        BodyType userBodyType = bodyTypeOptional.get();
+
         Optional<Post> cursorPost = getCursorPost(cursor);
 
-        if(member != null){
-            Optional<BodyType> bodyTypeOptional = bodyTypeService.findLastBodyType(member);
-            return postRepository.getPostList(cursorPost, size, member, bodyTypeOptional);
-        }
-
-        return postRepository.getPostList(cursorPost, size, member, Optional.empty());
+        return getPostsByBodyType(member, size, cursorPost, userBodyType);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public PostListResponse getLikedPosts(Member member, Integer size, Long cursor) {
+    public PostResponses getLikedPosts(Member member, Integer size, Long cursor) {
         if(size<=0){
             throw new RestApiException(GlobalErrorStatus.NEGATIVE_PAGE_SIZE_REQUEST);
         }
@@ -63,12 +63,12 @@ public class PostQueryServiceImpl implements PostQueryService {
             nextLike = Optional.ofNullable(findByMemberAndPostId(member, postResponse.getPostId()).getId());
         }
 
-        return PostListResponse.of(likedPostsResponse.hasNext(), likedPostsResponse.postResponses(), nextLike.orElse(null));
+        return PostResponses.of(likedPostsResponse.hasNext(), likedPostsResponse.postResponses(), nextLike.orElse(null));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public PostListResponse getMyPosts(Member member, Integer size, Long cursor) {
+    public PostResponses getMyPosts(Member member, Integer size, Long cursor) {
         if(size<=0){
             throw new RestApiException(GlobalErrorStatus.NEGATIVE_PAGE_SIZE_REQUEST);
         }
@@ -96,9 +96,41 @@ public class PostQueryServiceImpl implements PostQueryService {
 
         Optional<MemberPostLike> existingLike = postLikeRepository.findByPostAndMember(post, member);
 
-        PostResponse postResponse = new PostResponse(post.getId(), post.getMember().getId(),post.getMember().getNickname(), post.getContent(), post.getIsPublic(), post.getLikeCount(), existingLike.isPresent() ,post.getBodyType().getName(), post.getImages());
+        PostResponse postResponse = new PostResponse(post.getId(), post.getMember().getId(),post.getMember().getNickname(),post.getMember().equals(member), post.getContent(), post.getIsPublic(), post.getLikeCount(), existingLike.isPresent() ,post.getBodyType().getName(), post.getImages());
 
         return postResponse;
+    }
+
+    private PostResponses getRecentPostResponses(Member member, Integer size, Long cursor){
+        return postRepository.getRecentPosts(cursor, size, member);
+    }
+
+    private PostResponses getPostsByBodyType(
+            Member member, Integer size, Optional<Post> cursorPost, BodyType userBodyType){
+        // 커서가 존재하지 않거나(== 최초 조회) 커서 post의 바디타입이 유저의 바디타입과 일치하는 경우
+        if(cursorPost.isEmpty() ||
+                cursorPost.get().getBodyType().equals(userBodyType)){
+            return getBodyTypePosts(member, size, cursorPost, userBodyType);
+        }
+        return getOtherBodyTypePosts(member, size,Optional.empty(), userBodyType);
+    }
+
+    private PostResponses getBodyTypePosts(
+            Member member, Integer size, Optional<Post> cursorPost, BodyType userBodyType){
+        PostResponses bodyTypePosts = postRepository.getBodyTypePosts(cursorPost, size, member, userBodyType);
+
+        int insufficientCount = size - bodyTypePosts.getPostResponses().size();
+        if (insufficientCount > 0){
+            PostResponses otherBodyTypePosts = getOtherBodyTypePosts(
+                    member, insufficientCount,Optional.empty(), userBodyType);
+            return PostResponses.of(bodyTypePosts, otherBodyTypePosts);
+        }
+        return bodyTypePosts;
+    }
+
+    private PostResponses getOtherBodyTypePosts(
+            Member member, Integer size, Optional<Post> cursorPost, BodyType userBodyType){
+        return postRepository.getOtherBodyTypePosts(cursorPost, size, member, userBodyType);
     }
 
 

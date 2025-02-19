@@ -5,6 +5,8 @@ import static com.example.mody.domain.post.constant.PostConstant.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.*;
+import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.example.mody.domain.bodytype.entity.BodyType;
@@ -12,25 +14,15 @@ import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.post.entity.mapping.MemberPostLike;
 import com.example.mody.global.common.base.BaseEntity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 @Entity(name = "post")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "post")
+@Table(name = "post", indexes = {
+		@Index(name = "idx_bodytype_post",
+				columnList = "body_type_id, post_id"),
+		@Index(name = "idx_member_post",
+				columnList = "member_id, post_id")
+})
 @DynamicUpdate
 public class Post extends BaseEntity {
 
@@ -62,14 +54,15 @@ public class Post extends BaseEntity {
 	private String content;
 
 	@Column(nullable = false)
-	private Integer likeCount;
+	private Integer likeCount = 0;
 
 	@Column(nullable = false)
 	private Boolean isPublic;
 
 	@Column(nullable = false)
-	private Integer reportCount;
+	private Integer reportCount = 0;
 
+	@Builder
 	public Post(Member member, BodyType bodyType, String content, Boolean isPublic) {
 		this.member = member;
 		this.bodyType = bodyType;
@@ -78,6 +71,7 @@ public class Post extends BaseEntity {
 		this.likeCount = 0;
 		this.reportCount = 0;
 		this.images = new ArrayList<>();
+		this.likes = new ArrayList<>();
 	}
 
 	public void decreaseLikeCount() {

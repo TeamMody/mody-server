@@ -35,9 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtProvider jwtProvider;
-	private final MemberRepository memberRepository;
-	private final ObjectMapper objectMapper;
 	private final MemberQueryService memberQueryService;
+	private final ObjectMapper objectMapper;
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -47,7 +46,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			uri = uri.substring(contextPath.length());
 		}
 		log.info("JwtAuthenticationFilter - Request URI after context removal: {}", uri);
-		boolean skip = uri.startsWith("/auth/") && !uri.startsWith("/auth/signup/complete") ||
+		boolean skip = uri.startsWith("/auth/")
+				&& !uri.startsWith("/auth/signup/complete")
+				&& !uri.startsWith("/auth/logout")||
 			uri.startsWith("/oauth2/") ||
 			uri.startsWith("/email/") ||
 			uri.startsWith("/swagger-ui/") ||
@@ -70,8 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			// 만약 토큰이 있다면
 			if (token != null) {
 				String memberId = jwtProvider.validateTokenAndGetSubject(token);
-				Member member = memberRepository.findById(Long.parseLong(memberId))
-					.orElseThrow(() -> new RestApiException(AuthErrorStatus.INVALID_ACCESS_TOKEN));
+				Member member = memberQueryService.findMemberById(Long.parseLong(memberId));
 
 				CustomUserDetails customUserDetails = new CustomUserDetails(member);
 

@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PostImageResponse {
     private String s3Url;
-    public static PostImageResponse of(PostImage postImage){
+    public static PostImageResponse from(PostImage postImage){
         return new PostImageResponse(postImage.getUrl());
     }
 }

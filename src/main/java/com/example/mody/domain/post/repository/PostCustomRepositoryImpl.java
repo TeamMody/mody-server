@@ -1,9 +1,10 @@
 package com.example.mody.domain.post.repository;
 
 import com.example.mody.domain.bodytype.entity.BodyType;
+import com.example.mody.domain.bodytype.entity.QBodyType;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.member.entity.QMember;
-import com.example.mody.domain.post.dto.response.PostListResponse;
+import com.example.mody.domain.post.dto.response.PostResponses;
 import com.example.mody.domain.post.dto.response.PostResponse;
 import com.example.mody.domain.post.dto.response.recode.LikedPostsResponse;
 import com.example.mody.domain.post.entity.Post;
@@ -12,19 +13,15 @@ import com.example.mody.domain.post.entity.QPostImage;
 import com.example.mody.domain.post.entity.mapping.QMemberPostLike;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
-import com.querydsl.core.types.dsl.StringTemplate;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.BiFunction;
 
@@ -39,6 +36,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     private final QMember qMember = QMember.member;
     private final QMemberPostLike qMemberPostLike = QMemberPostLike.memberPostLike;
     private final QPostImage qPostImage = QPostImage.postImage;
+    private final QBodyType qBodyType = QBodyType.bodyType;
 
 
     /**
@@ -50,60 +48,47 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
      * @return
      */
     @Override
-    public PostListResponse getPostList(Optional<Post> cursorPost, Integer size, Member member, Optional<BodyType> bodyType) {
+    public PostResponses getBodyTypePosts(Optional<Post> cursorPost, Integer size, Member member, BodyType bodyType) {
         BooleanBuilder predicate = new BooleanBuilder();
 
         predicate.and(qPost.isPublic.eq(true)); // 공개여부 == true
+        predicate.and(qPost.bodyType.eq(bodyType));
 
         if(cursorPost.isPresent()){
-            String customCursor = createCustomCursor(cursorPost.get(), bodyType);
-            log.info(customCursor);
-            predicate.and(applyCustomCursor(customCursor, bodyType));
-        }
-
-        BooleanExpression isLiked = Expressions.asBoolean(false);
-        if (member != null){
-            isLiked = isLikedResult(member);
+            predicate.and(qPost.id.lt(cursorPost.get().getId()));
         }
 
         //동적 정렬
         List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
-        if (bodyType.isPresent()) {
-            orderSpecifiers.add(matchedBodyTypeAsInteger(bodyType).desc()); // bodyType이 존재할 때만 정렬 조건 추가
+        orderSpecifiers.add(qPost.id.desc()); // id를 auto_increment 를 사용하므로 created_at을 대신하여 id로 최신순 정렬을 함
+
+        List<Long> postIds = getPostIds(predicate, size, orderSpecifiers);
+        List<PostResponse> postResponses = getPostResponsesByIds(postIds, member, orderSpecifiers);
+
+        // 여기서는 목록 개수가 size 개수와 동일한 경우도 hasNext가 true임.
+        return PostResponses.of(hasNext.apply(postResponses, size-1),
+                postResponses.subList(0, Math.min(size, postResponses.size())));
+    }
+
+    @Override
+    public PostResponses getOtherBodyTypePosts(Optional<Post> cursorPost, Integer size, Member member, BodyType bodyType) {
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        predicate.and(qPost.isPublic.eq(true)); // 공개여부 == true
+        predicate.and(qPost.bodyType.ne(bodyType));
+
+        if(cursorPost.isPresent()){
+            predicate.and(qPost.id.lt(cursorPost.get().getId()));
         }
-        orderSpecifiers.add(qPost.createdAt.desc()); // 항상 createdAt으로 정렬
 
-        List<Long> postIds = jpaQueryFactory
-                .select(qPost.id)
-                .from(qPost)
-                .where(predicate)
-                .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
-                .limit(size+1) //하나 더 가져와서 다음 요소가 존재하는지 확인
-                .fetch();
+        //동적 정렬
+        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
+        orderSpecifiers.add(qPost.id.desc());
 
-        Map<Long, PostResponse> postResponseMap = jpaQueryFactory
-                .from(qPost)
-                .leftJoin(qPost.member, qMember)
-                .leftJoin(qPost.images, qPostImage)
-                .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost).and(qMemberPostLike.member.eq(member)))
-                .where(qPost.id.in(postIds))
-                .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
-                .transform(GroupBy.groupBy(qPost.id).as(
-                        Projections.constructor(PostResponse.class,
-                                qPost.id,
-                                qMember.id,
-                                qMember.nickname,
-                                qPost.content,
-                                qPost.isPublic,
-                                qPost.likeCount,
-                                qMemberPostLike.isNotNull(),
-                                qPost.bodyType.name,
-                                GroupBy.list(qPostImage)
-                        )));
+        List<Long> postIds = getPostIds(predicate, size+1, orderSpecifiers); //하나 더 가져와서 다음 요소가 존재하는지 확인
+        List<PostResponse> postResponses = getPostResponsesByIds(postIds, member, orderSpecifiers);
 
-        List<PostResponse> postResponses = new ArrayList<>(postResponseMap.values());
-
-        return PostListResponse.of(hasNext.apply(postResponses, size),
+        return PostResponses.of(hasNext.apply(postResponses, size),
                 postResponses.subList(0, Math.min(size, postResponses.size())));
     }
 
@@ -121,39 +106,12 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
             predicate.and(qMemberPostLike.id.lt(cursor));
         }
 
-        predicate.and(qMemberPostLike.member.eq(member));
+        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
+        orderSpecifiers.add(qMemberPostLike.id.desc()); // 최근에 누른 좋아요 순으로 정렬
 
-        List<Long> postIds = jpaQueryFactory
-                .select(qPost.id)
-                .from(qPost)
-                .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost).and(qMemberPostLike.member.eq(member)))
-                .where(predicate)
-                .orderBy(qMemberPostLike.createdAt.desc())
-                .limit(size+1) //하나 더 가져와서 다음 요소가 존재하는지 확인
-                .fetch();
-
-        Map<Long, PostResponse> postResponseMap = jpaQueryFactory
-                .from(qPost)
-                .leftJoin(qPost.member, qMember)
-                .leftJoin(qPost.images, qPostImage)
-                .where(qPost.id.in(postIds))
-                .transform(GroupBy.groupBy(qPost.id).as(
-                        Projections.constructor(PostResponse.class,
-                                qPost.id,
-                                qMember.id,
-                                qMember.nickname,
-                                qPost.content,
-                                qPost.isPublic,
-                                qPost.likeCount,
-                                Expressions.asBoolean(Expressions.TRUE),
-                                qPost.bodyType.name,
-                                GroupBy.list(qPostImage)
-                        )));
-
-        List<PostResponse> postResponses = postIds.stream()
-                .map(postResponseMap::get)
-                .filter(Objects::nonNull)
-                .toList();
+        List<Long> postIds = getMemberLikedPostIds(
+                predicate, size+1, member, orderSpecifiers);
+        List<PostResponse> postResponses = getLikedPostResponsesByIds(postIds, member);
 
         return new LikedPostsResponse(
                 hasNext.apply(postResponses, size),
@@ -161,7 +119,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
     }
 
     @Override
-    public PostListResponse getMyPosts(Long cursor, Integer size, Member member) {
+    public PostResponses getMyPosts(Long cursor, Integer size, Member member) {
         BooleanBuilder predicate = new BooleanBuilder();
 
         predicate.and(qPost.member.eq(member));
@@ -170,28 +128,74 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
             predicate.and(qPost.id.lt(cursor));
         }
 
-        log.info(predicate.toString());
+        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
+        orderSpecifiers.add(qPost.id.desc());
 
-        List<Long> postIds = jpaQueryFactory
+        List<Long> postIds = getPostIds(predicate, size+1, orderSpecifiers);
+        List<PostResponse> postResponses = getPostResponsesByIds(postIds, member, orderSpecifiers);
+
+        return PostResponses.of(hasNext.apply(postResponses, size),
+                postResponses.subList(0, Math.min(size, postResponses.size())));
+    }
+
+    @Override
+    public PostResponses getRecentPosts(Long cursor, Integer size, Member member) {
+        BooleanBuilder predicate = new BooleanBuilder();
+
+        predicate.and(qPost.isPublic.eq(true));
+
+        if(cursor != null){
+            predicate.and(qPost.id.lt(cursor));
+        }
+
+        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
+        orderSpecifiers.add(qPost.id.desc());
+
+        List<Long> postIds = getPostIds(predicate, size+1, orderSpecifiers);
+        List<PostResponse> postResponses = getPostResponsesByIds(postIds, member, orderSpecifiers);
+
+        return PostResponses.of(hasNext.apply(postResponses, size),
+                postResponses.subList(0, Math.min(size, postResponses.size())));
+    }
+
+    private List<Long> getPostIds(BooleanBuilder predicate, Integer size,
+                                  List<OrderSpecifier<?>> orderSpecifiers){
+        return jpaQueryFactory
                 .select(qPost.id)
                 .from(qPost)
                 .where(predicate)
-                .orderBy(qPost.createdAt.desc())
-                .limit(size+1) //하나 더 가져와서 다음 요소가 존재하는지 확인
+                .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
+                .limit(size)
                 .fetch();
+    }
 
+    private List<Long> getMemberLikedPostIds(BooleanBuilder predicate, Integer size, Member member,
+                                       List<OrderSpecifier<?>> orderSpecifiers){
+        return jpaQueryFactory
+                .select(qPost.id)
+                .from(qPost)
+                .innerJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost).and(qMemberPostLike.member.eq(member)))
+                .where(predicate)
+                .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
+                .limit(size)
+                .fetch();
+    }
+    private List<PostResponse> getPostResponsesByIds (List<Long> postIds, Member member,
+                                                List<OrderSpecifier<?>> orderSpecifiers){
         Map<Long, PostResponse> postResponseMap = jpaQueryFactory
                 .from(qPost)
-                .leftJoin(qPost.member, qMember)
+                .innerJoin(qPost.member, qMember)
                 .leftJoin(qPost.images, qPostImage)
                 .leftJoin(qMemberPostLike).on(qMemberPostLike.post.eq(qPost).and(qMemberPostLike.member.eq(member)))
+                .innerJoin(qPost.bodyType, qBodyType)
                 .where(qPost.id.in(postIds))
-                .orderBy( qPost.createdAt.desc())
+                .orderBy(orderSpecifiers.toArray(new OrderSpecifier[0]))
                 .transform(GroupBy.groupBy(qPost.id).as(
                         Projections.constructor(PostResponse.class,
                                 qPost.id,
                                 qMember.id,
                                 qMember.nickname,
+                                qMember.eq(member),
                                 qPost.content,
                                 qPost.isPublic,
                                 qPost.likeCount,
@@ -201,87 +205,40 @@ public class PostCustomRepositoryImpl implements PostCustomRepository{
                         )));
 
         List<PostResponse> postResponses = new ArrayList<>(postResponseMap.values());
+        return postResponses;
+    }
 
-        return PostListResponse.of(hasNext.apply(postResponses, size),
-                postResponses.subList(0, Math.min(size, postResponses.size())));
+    private List<PostResponse> getLikedPostResponsesByIds (List<Long> postIds, Member member){
+        Map<Long, PostResponse> postResponseMap = jpaQueryFactory
+                .from(qPost)
+                .innerJoin(qPost.member, qMember)
+                .leftJoin(qPost.images, qPostImage)
+                .innerJoin(qPost.bodyType, qBodyType)
+                .where(qPost.id.in(postIds))
+                .transform(GroupBy.groupBy(qPost.id).as(
+                        Projections.constructor(PostResponse.class,
+                                qPost.id,
+                                qMember.id,
+                                qMember.nickname,
+                                qMember.eq(member),
+                                qPost.content,
+                                qPost.isPublic,
+                                qPost.likeCount,
+                                Expressions.asBoolean(Expressions.TRUE),
+                                qPost.bodyType.name,
+                                GroupBy.list(qPostImage)
+                        )));
+
+        return orderByPostIds(postIds, postResponseMap);
+    }
+
+    private List<PostResponse> orderByPostIds(List<Long> postIds, Map<Long, PostResponse> postResponseMap){
+        return postIds.stream()
+                .map(postResponseMap::get)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     private BiFunction<List<PostResponse> , Integer, Boolean> hasNext = (list, size) -> list.size() > size;
-
-    /**
-     * // 정렬 기준. 특정 바디 타입이 요구되지 않으면 전부 1
-     * @param bodyType
-     * @return
-     */
-    private NumberExpression<Integer> matchedBodyTypeAsInteger(Optional<BodyType> bodyType){
-        if(bodyType.isPresent()){
-            return new CaseBuilder()
-                    .when(qPost.bodyType.eq(bodyType.get())).then(1)
-                    .otherwise(0);
-        }
-        return  Expressions.asNumber(0);
-    }
-
-    private StringExpression matchedBodyTypeAsString(Optional<BodyType> bodyType){
-        if(bodyType.isPresent()){
-            return new CaseBuilder()
-                    .when(qPost.bodyType.eq(bodyType.get())).then("1")
-                    .otherwise("0");
-        }
-        return  Expressions.asString("0");
-    }
-
-    private BooleanExpression isLikedResult(Member member){
-        return JPAExpressions
-                .selectFrom(qMemberPostLike)
-                .where(qMemberPostLike.member.eq(member).and(qMemberPostLike.post.eq(qPost)))
-                .exists();
-    }
-
-    private String createCustomCursor(Post cursor, Optional<BodyType> bodyType){
-        if (cursor == null || bodyType == null) {
-            return null;
-        }
-
-        String isMatchedBodyType = "0";
-        if(bodyType.isPresent()){
-            if(cursor.getBodyType().getId().equals(bodyType.get().getId())){
-                isMatchedBodyType = "1";
-            }
-        }
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        return isMatchedBodyType + String.format("%19s", formatter.format(cursor.getCreatedAt())).replaceAll(" ","0");
-    }
-
-    /**
-     * createdAt을 'YYYYMMDDHHmmss' 로 변환
-     * @return
-     */
-    private StringTemplate mySqlDateFormat(){
-        return Expressions.stringTemplate(
-                "CAST(DATE_FORMAT({0}, {1}) AS STRING)",
-                qPost.createdAt,
-                ConstantImpl.create("%Y%m%d%H%i%s")
-        );
-    }
-
-    private StringExpression formatCreatedAt(StringTemplate stringTemplate){
-        return StringExpressions.lpad(stringTemplate, 19, '0');
-    }
-
-    private BooleanExpression applyCustomCursor(String customCursor, Optional<BodyType> bodyType) {
-        if (customCursor == null) { // 커서가 없으면 조건 없음
-            return null;
-        }
-
-        // bodyType 순서 계산
-        StringExpression isMatchedBodyType = matchedBodyTypeAsString(bodyType); // bodyType 일치 여부
-        StringTemplate postCreatedAtTemplate = mySqlDateFormat(); //DATE_FORMAT으로 날짜 형태 변경
-        StringExpression formattedCreatedAt = formatCreatedAt(postCreatedAtTemplate); // 날짜 형태 변경을 포맷
-
-        return isMatchedBodyType.concat(formattedCreatedAt)
-                .lt(customCursor);
-    }
 
 }

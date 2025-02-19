@@ -1,5 +1,6 @@
 package com.example.mody.domain.post.entity.mapping;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -7,15 +8,6 @@ import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.post.entity.Post;
 import com.example.mody.global.common.base.BaseEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,7 +21,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @DynamicInsert
 @DynamicUpdate
-@Table(name = "member_post_like")
+@Table(name = "member_post_like", indexes = {
+		@Index(name = "idx_member_post",
+				columnList = "member_id, post_id")
+})
 public class MemberPostLike extends BaseEntity {
 
 	@Id

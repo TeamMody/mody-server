@@ -18,8 +18,7 @@ public class BodyTypeQueryServiceImpl implements BodyTypeQueryService {
     // 체형 이름으로 BodyType 클래스 조회
     @Override
     public BodyType findByBodyTypeName(String bodyTypeName) {
-        Optional<BodyType> optionalBodyType = bodyTypeRepository.findByName(bodyTypeName);
-        BodyType bodyType = optionalBodyType.orElseThrow(()-> new BodyTypeException(BodyTypeErrorStatus.BODY_TYPE_NOT_FOUND));
-        return bodyType;
+        return bodyTypeRepository.findByName(bodyTypeName)
+                .orElseThrow(() -> new BodyTypeException(BodyTypeErrorStatus.BODY_TYPE_NOT_FOUND));
     }
 }
