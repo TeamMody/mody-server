@@ -113,8 +113,8 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private LoginType loginType;
 
-	@Builder.Default
-	private boolean isRegistrationCompleted = false;  // 회원가입 완료 여부
+	@Column(columnDefinition = "boolean default false")
+	private boolean isRegistrationCompleted;  // 회원가입 완료 여부
 
 	public void completeRegistration(String nickname, LocalDate birthDate, Gender gender, Integer height
 		, String profileImageUrl) {

@@ -108,4 +108,17 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
 		return newAccessToken;
 	}
+
+	// 카카오 전용, 리프레시 토큰 발급
+	@Override
+	public String processLoginKakaoSuccess(Member member, HttpServletResponse response) {
+		// Access Token, Refresh Token 발급
+		String newAccessToken = jwtProvider.createAccessToken(member.getId().toString());
+		String newRefreshToken = jwtProvider.createRefreshToken(member.getId().toString());
+
+		// Refresh Token 저장
+		saveRefreshToken(member, newRefreshToken);
+
+		return newRefreshToken;
+	}
 }
