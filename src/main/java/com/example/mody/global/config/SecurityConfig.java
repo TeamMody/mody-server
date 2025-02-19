@@ -56,6 +56,7 @@ public class SecurityConfig {
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.httpBasic(httpBasic -> httpBasic.disable())
 			.authorizeHttpRequests(authz -> authz
+				.requestMatchers("/auth/signup/complete", "/auth/logout").authenticated()
 				.requestMatchers("/auth/**", "/oauth2/**").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 				.requestMatchers("/email/**").permitAll()
@@ -130,7 +131,7 @@ public class SecurityConfig {
 
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
-		return new JwtAuthenticationFilter(jwtProvider, memberRepository, objectMapper, memberQueryService);
+		return new JwtAuthenticationFilter(jwtProvider, memberQueryService, objectMapper);
 	}
 
 	@Bean

@@ -12,15 +12,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MemberBodyTypeQueryServiceImpl implements MemberBodyTypeQueryService {
 
     private final MemberBodyTypeRepository memberBodyTypeRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     @Override
     public BodyTypeAnalysisResponse getBodyTypeAnalysis(Member member) {
@@ -37,7 +35,7 @@ public class MemberBodyTypeQueryServiceImpl implements MemberBodyTypeQueryServic
     // Member로 MemberBodyType 조회
     @Override
     public MemberBodyType getMemberBodyType(Member member) {
-        Optional<MemberBodyType> optionalMemberBodyType =  memberBodyTypeRepository.findTopByMemberOrderByCreatedAtDesc(member);
-        return optionalMemberBodyType.orElseThrow(() -> new BodyTypeException(BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND));
+        return memberBodyTypeRepository.findTopByMemberOrderByCreatedAtDesc(member)
+                .orElseThrow(() -> new BodyTypeException(BodyTypeErrorStatus.MEMBER_BODY_TYPE_NOT_FOUND));
     }
 }
