@@ -1,14 +1,11 @@
 package com.example.mody.domain.auth.controller;
 
+import com.example.mody.domain.auth.dto.response.TokenResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.mody.domain.auth.dto.request.EmailRequest;
 import com.example.mody.domain.auth.dto.request.EmailVerificationRequest;
@@ -204,6 +201,16 @@ public class AuthController {
 	) {
 		log.info("refreshToken: {}", refreshToken);
 		return BaseResponse.onSuccess(authCommandService.reissueToken(refreshToken, response));
+	}
+
+	@Operation(summary = "native용 리이슈 API", description = "네이티브에서 사용하는 리이슈 API")
+	@PostMapping("native/reissue")
+	public BaseResponse<TokenResponse> webReissueToken(
+			@RequestHeader(value = "refreshToken") String refreshToken,
+			HttpServletResponse response
+	) {
+		log.info("refreshToken: {}", refreshToken);
+		return BaseResponse.onSuccess(authCommandService.nativeReissueToken(refreshToken));
 	}
 
 	@Operation(

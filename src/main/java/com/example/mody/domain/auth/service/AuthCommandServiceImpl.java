@@ -1,5 +1,6 @@
 package com.example.mody.domain.auth.service;
 
+import com.example.mody.domain.auth.dto.response.TokenResponse;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +63,31 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 		return AccessTokenResponse.builder()
 			.accessToken(newAccessToken)
 			.build();
+	}
+
+	// 네이티브 전용 리이슈
+	public TokenResponse nativeReissueToken(String oldRefreshToken) {
+		log.info("Client refresh token: {}", oldRefreshToken);
+		RefreshToken refreshTokenEntity = refreshTokenRepository.findByToken(oldRefreshToken)
+				.orElseThrow(() -> {
+					log.warn("DB에 저장된 refresh token과 일치하는 값이 없습니다.");
+					return new RefreshTokenException(AuthErrorStatus.INVALID_REFRESH_TOKEN);
+				});
+		log.info("DB refresh token for member {}: {}", refreshTokenEntity.getMember().getId(),
+				refreshTokenEntity.getToken());
+
+		// Refresh Token에 해당하는 회원 조회
+		Member member = refreshTokenEntity.getMember();
+
+		// 새로운 토큰 발급
+		String newAccessToken = jwtProvider.createAccessToken(member.getId().toString());
+		String newRefreshToken = jwtProvider.createRefreshToken(member.getId().toString());
+
+		// Refresh Token 교체 (Rotation)
+		refreshTokenEntity.updateToken(newRefreshToken);
+
+		// Refresh Token과 Access Token 반환
+		return new TokenResponse(newAccessToken, newRefreshToken);
 	}
 
 	public void saveRefreshToken(Member member, String refreshToken) {

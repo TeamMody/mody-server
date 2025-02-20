@@ -53,7 +53,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			uri.startsWith("/v3/api-docs/");
 
 		skip = (!uri.startsWith("/auth/signup/complete")
-				&& !uri.startsWith("/auth/logout")) && skip;
+				&& !uri.startsWith("/auth/logout"))
+				&& skip
+				&& !uri.startsWith("/auth/native/logout");
 
 
 		log.info("JwtAuthenticationFilter - shouldNotFilter returns: {}", skip);

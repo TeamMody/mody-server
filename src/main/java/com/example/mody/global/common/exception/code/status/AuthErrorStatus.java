@@ -28,6 +28,10 @@ public enum AuthErrorStatus implements BaseCodeInterface {
 
 	// Email Error
 	INVALID_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "AUTH011", "유효하지 않은 인증 코드입니다."),
+
+	// 로그인 실패
+	AUTHENTICATION_FAILED(HttpStatus.BAD_REQUEST, "LOGIN001", "아이디로 유저를 찾을 수 없습니다."),
+	PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "LOGIN002", "비밀번호가 다름니다.")
 	;
 
 	private final HttpStatus httpStatus;
