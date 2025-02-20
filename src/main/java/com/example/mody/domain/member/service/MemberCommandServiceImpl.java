@@ -1,5 +1,7 @@
 package com.example.mody.domain.member.service;
 
+import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +29,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final AuthCommandService authCommandService;
+	private final MemberQueryService memberQueryService;
 
 	@Override
 	public void completeRegistration(Member member, MemberRegistrationRequest request) {
-
-		member.completeRegistration(
+		Member unregisteredMember = memberQueryService.findMemberById(member.getId()); // 영속성 컨텍스트가 관리하도록
+		unregisteredMember.completeRegistration(
 			request.getNickname(),
 			request.getBirthDate(),
 			request.getGender(),

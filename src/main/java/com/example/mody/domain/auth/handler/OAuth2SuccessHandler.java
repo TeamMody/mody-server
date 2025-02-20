@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -62,7 +63,19 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 //		boolean isNewMember = member.getCreatedAt().equals(member.getUpdatedAt());
 
 		// Access Token, Refresh Token 발급
-		String newAccessToken = authCommandService.processLoginSuccess(member, response);
+		String newRefreshToken = authCommandService.processLoginKakaoSuccess(member, response);
+
+		// 쿠키에 저장
+		// Refresh Token을 HTTP-Only, Secure 쿠키로 설정
+		Cookie refreshTokenCookie = new Cookie("refresh_token", newRefreshToken);
+		refreshTokenCookie.setHttpOnly(true);  // JavaScript 접근 차단
+		refreshTokenCookie.setSecure(true);    // HTTPS에서만 전송 (로컬 개발 시 false 가능)
+		refreshTokenCookie.setPath("/");       // 모든 경로에서 사용 가능
+		refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7일 유효기간 설정
+
+		// SameSite 설정을 위한 헤더 추가
+		response.setHeader("Set-Cookie", "refresh_token=" + newRefreshToken +
+				"; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=" + (7 * 24 * 60 * 60));
 
 		String tempUrl = (!member.isRegistrationCompleted()) ? FRONT_SIGNUP_URL : FRONT_HOME_URL;
 

@@ -22,7 +22,7 @@ public class BodyTypeService {
      * @return 마지막 체형 분석이 존재하지 않을 경우 empty Optional을 반환함.
      */
     public Optional<BodyType> findLastBodyType(Member member){
-        Optional<MemberBodyType> optionalMemberBodyType =  memberBodyTypeRepository.findTopByMemberOrderByCreatedAt(member);
+        Optional<MemberBodyType> optionalMemberBodyType =  memberBodyTypeRepository.findTopByMemberOrderByCreatedAtDesc(member);
         return optionalMemberBodyType.map(MemberBodyType::getBodyType);
     }
 }

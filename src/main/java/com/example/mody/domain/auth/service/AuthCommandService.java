@@ -14,4 +14,6 @@ public interface AuthCommandService {
 	void logout(String refreshToken);
 
 	String processLoginSuccess(Member member, HttpServletResponse response);
+
+	String processLoginKakaoSuccess(Member member, HttpServletResponse response);
 }

@@ -46,13 +46,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			uri = uri.substring(contextPath.length());
 		}
 		log.info("JwtAuthenticationFilter - Request URI after context removal: {}", uri);
-		boolean skip = uri.startsWith("/auth/")
-				&& !uri.startsWith("/auth/signup/complete")
-				&& !uri.startsWith("/auth/logout")||
+		boolean skip = uri.startsWith("/auth/reissue") ||
 			uri.startsWith("/oauth2/") ||
 			uri.startsWith("/email/") ||
 			uri.startsWith("/swagger-ui/") ||
 			uri.startsWith("/v3/api-docs/");
+
+		skip = (!uri.startsWith("/auth/signup/complete")
+				&& !uri.startsWith("/auth/logout")) && skip;
+
+
 		log.info("JwtAuthenticationFilter - shouldNotFilter returns: {}", skip);
 		return skip;
 
