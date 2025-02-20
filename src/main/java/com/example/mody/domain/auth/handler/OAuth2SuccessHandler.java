@@ -80,6 +80,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 		String tempUrl = (!member.isRegistrationCompleted()) ? FRONT_SIGNUP_URL : FRONT_HOME_URL;
 
 		String targetUrl = UriComponentsBuilder.fromUriString(tempUrl)
+				.queryParam("refresh-token", newRefreshToken)
 				.build().toUriString();
 
 		// 리다이렉션 수행

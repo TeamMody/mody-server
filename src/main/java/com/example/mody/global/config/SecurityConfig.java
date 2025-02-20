@@ -109,6 +109,7 @@ public class SecurityConfig {
 		// 허용할 헤더 설정
 		configuration.setAllowedHeaders(Arrays.asList(
 			"Authorization",
+			"refreshToken",
 			"Content-Type",
 			"X-Requested-With",
 			"Accept",
