@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Auth API", description = "인증 관련 API - 회원가입, 로그인, 토큰 재발급, 로그아웃 등의 기능을 제공합니다.")
+@Tag(name = "네이티브 Auth API", description = "인증 관련 API - 회원가입, 로그인, 토큰 재발급, 로그아웃 등의 기능을 제공합니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth/native")
