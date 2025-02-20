@@ -203,16 +203,6 @@ public class AuthController {
 		return BaseResponse.onSuccess(authCommandService.reissueToken(refreshToken, response));
 	}
 
-	@Operation(summary = "native용 리이슈 API", description = "네이티브에서 사용하는 리이슈 API")
-	@PostMapping("native/reissue")
-	public BaseResponse<TokenResponse> webReissueToken(
-			@RequestHeader(value = "refreshToken") String refreshToken,
-			HttpServletResponse response
-	) {
-		log.info("refreshToken: {}", refreshToken);
-		return BaseResponse.onSuccess(authCommandService.nativeReissueToken(refreshToken));
-	}
-
 	@Operation(
 		summary = "로그아웃",
 		description = """
