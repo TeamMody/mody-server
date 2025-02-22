@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 
-import com.example.mody.domain.file.repository.BackupFileRepository;
-import com.example.mody.domain.file.service.FileService;
+import com.example.mody.domain.bodytype.service.memberbodytype.MemberBodyTypeQueryService;
+import com.example.mody.domain.file.service.FileCommandService;
 import com.example.mody.domain.image.service.S3Service;
 import com.example.mody.domain.post.dto.request.PostUpdateRequest;
 import com.example.mody.domain.post.entity.mapping.PostReport;
@@ -16,12 +16,10 @@ import com.example.mody.domain.post.repository.PostReportRepository;
 import com.example.mody.global.common.exception.RestApiException;
 import com.example.mody.global.common.exception.code.status.S3ErrorStatus;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.mody.domain.bodytype.entity.BodyType;
-import com.example.mody.domain.bodytype.service.BodyTypeService;
 import com.example.mody.domain.exception.BodyTypeException;
 import com.example.mody.domain.exception.MemberException;
 import com.example.mody.domain.exception.PostException;
@@ -49,10 +47,9 @@ public class PostCommandServiceImpl implements PostCommandService {
 	private final MemberRepository memberRepository;
 	private final MemberPostLikeRepository postLikeRepository;
 	private final PostImageRepository postImageRepository;
-	private final BackupFileRepository backupFileRepository;
 	private final PostReportRepository postReportRepository;
-	private final BodyTypeService bodyTypeService;
-	private final FileService fileService;
+	private final MemberBodyTypeQueryService memberBodyTypeQueryService;
+	private final FileCommandService fileCommandService;
 	private final RestTemplate restTemplate;
 	private final S3Service s3Service;
 
@@ -63,7 +60,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 	 */
 	@Override
 	public void createPost(PostCreateRequest postCreateRequest, Member member) {
-		Optional<BodyType> optionalBodyType = bodyTypeService.findLastBodyType(member);
+		Optional<BodyType> optionalBodyType = memberBodyTypeQueryService.findLastBodyType(member);
 
 		BodyType bodyType = optionalBodyType.orElseThrow(() -> new BodyTypeException(MEMBER_BODY_TYPE_NOT_FOUND));
 
@@ -187,7 +184,7 @@ public class PostCommandServiceImpl implements PostCommandService {
 		s3Service.deleteFile(postImageUrls);
 
 		// DB에서 Post 관련 데이터 삭제
-		fileService.deleteByS3Urls(postImageUrls);
+		fileCommandService.deleteByS3Urls(postImageUrls);
 		decreaseLikeCount(post);
 		postRepository.deleteById(post.getId()); // (cascade = CascadeType.ALL, orphanRemoval = true) -> postId에 해당하는 PostImage 전부 삭제됨
 	}
