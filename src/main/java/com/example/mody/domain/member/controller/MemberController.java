@@ -40,6 +40,10 @@ public class MemberController {
 	 * 회원탈퇴 API (soft delete)
 	 */
 	@PostMapping("/withdraw")
+	@Operation(summary = "회원 탈퇴 API", description = "회원 탈퇴하는 API")
+	@ApiResponses({
+			@ApiResponse(responseCode = "COMMON200", description = "회원 탈퇴 성공"),
+	})
 	public BaseResponse<Void> withdraw(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		// 현재 로그인된 회원의 id로 탈퇴 처리
 		memberCommandService.withdrawMember(userDetails.getMember().getId());
