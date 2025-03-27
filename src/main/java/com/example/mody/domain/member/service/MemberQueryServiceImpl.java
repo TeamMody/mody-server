@@ -2,7 +2,7 @@ package com.example.mody.domain.member.service;
 
 import com.example.mody.domain.bodytype.entity.BodyType;
 import com.example.mody.domain.bodytype.repository.MemberBodyTypeRepository;
-import com.example.mody.domain.bodytype.service.BodyTypeService;
+import com.example.mody.domain.bodytype.service.memberbodytype.MemberBodyTypeQueryService;
 import com.example.mody.domain.exception.MemberException;
 import com.example.mody.domain.member.dto.response.MemberProfileResponse;
 import com.example.mody.domain.member.entity.Member;
@@ -16,7 +16,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MemberQueryServiceImpl implements MemberQueryService{
-    private final BodyTypeService bodyTypeService;
+    private final MemberBodyTypeQueryService memberBodyTypeQueryService;
 
     private final MemberRepository memberRepository;
     private final MemberBodyTypeRepository memberBodyTypeRepository;
@@ -29,7 +29,7 @@ public class MemberQueryServiceImpl implements MemberQueryService{
 
     @Override
     public MemberProfileResponse getMyProfile(Member member) {
-        Optional<BodyType> bodyType = bodyTypeService.findLastBodyType(member);
+        Optional<BodyType> bodyType = memberBodyTypeQueryService.findLastBodyType(member);
         Long bodyTypeCount = memberBodyTypeRepository.countAllByMember(member);
         return MemberProfileResponse.of(member, bodyType, bodyTypeCount);
     }

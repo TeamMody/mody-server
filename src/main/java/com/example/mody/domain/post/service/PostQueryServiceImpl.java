@@ -1,7 +1,7 @@
 package com.example.mody.domain.post.service;
 
 import com.example.mody.domain.bodytype.entity.BodyType;
-import com.example.mody.domain.bodytype.service.BodyTypeService;
+import com.example.mody.domain.bodytype.service.memberbodytype.MemberBodyTypeQueryService;
 import com.example.mody.domain.exception.PostException;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.post.dto.response.PostResponses;
@@ -26,7 +26,7 @@ import static com.example.mody.global.common.exception.code.status.PostErrorStat
 @Service
 @RequiredArgsConstructor
 public class PostQueryServiceImpl implements PostQueryService {
-    private final BodyTypeService bodyTypeService;
+    private final MemberBodyTypeQueryService memberBodyTypeQueryService;
     private final PostRepository postRepository;
     private final MemberPostLikeRepository memberPostLikeRepository;
     private final MemberPostLikeRepository postLikeRepository;
@@ -38,7 +38,7 @@ public class PostQueryServiceImpl implements PostQueryService {
             throw new RestApiException(GlobalErrorStatus.NEGATIVE_PAGE_SIZE_REQUEST);
         }
 
-        Optional<BodyType> bodyTypeOptional = bodyTypeService.findLastBodyType(member);
+        Optional<BodyType> bodyTypeOptional = memberBodyTypeQueryService.findLastBodyType(member);
         if(bodyTypeOptional.isEmpty()){
             return getRecentPostResponses(member, size, cursor);
         }
