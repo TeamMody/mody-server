@@ -1,10 +1,9 @@
 package com.example.mody.domain.member.controller;
 
+import com.example.mody.domain.member.dto.request.MemberEditRequest;
+import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.mody.domain.auth.security.CustomUserDetails;
 import com.example.mody.domain.member.dto.response.MemberProfileResponse;
@@ -47,6 +46,17 @@ public class MemberController {
 	public BaseResponse<Void> withdraw(@AuthenticationPrincipal CustomUserDetails userDetails) {
 		// 현재 로그인된 회원의 id로 탈퇴 처리
 		memberCommandService.withdrawMember(userDetails.getMember().getId());
+		return BaseResponse.onSuccess(null);
+	}
+
+	@PatchMapping("/edit")
+	@Operation(summary = "회원정보 수정 API", description = "회원 정보를 수정하는 API")
+	@ApiResponses({
+			@ApiResponse(responseCode = "COMMON200", description = "회원 탈퇴 성공"),
+	})
+	public BaseResponse<Void> edit(
+			@AuthenticationPrincipal CustomUserDetails userDetails,
+			@Valid @RequestBody MemberEditRequest request) {
 		return BaseResponse.onSuccess(null);
 	}
 }
