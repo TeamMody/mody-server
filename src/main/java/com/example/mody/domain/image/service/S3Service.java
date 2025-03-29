@@ -106,6 +106,19 @@ public class S3Service {
         }
     }
 
+    // S3 프로필 사진 삭제
+    public void deleteProfileImage(String profileImageUrl) {
+        try {
+            String key = extractKey(profileImageUrl);
+            amazonS3Client.deleteObject(bucket, key);
+            log.info("S3 파일 삭제 성공: {}", key);
+        } catch (AmazonServiceException e) {
+            log.error("S3 파일 삭제 실패 - AWS 서비스 오류: {}, Key: {}", e.getErrorMessage(), profileImageUrl, e);
+        } catch (Exception e) {
+            log.error("S3 파일 삭제 중 알 수 없는 오류 발생: {}, Key: {}", profileImageUrl, e.getMessage(), e);
+        }
+    }
+
     // S3 url에서 key 값 추출
     private String extractKey(String imageUrl) {
         return imageUrl.substring(imageUrl.indexOf(".com/") + 5); // 해당 index + 5 값이 key 값의 시작 인덱스 값
