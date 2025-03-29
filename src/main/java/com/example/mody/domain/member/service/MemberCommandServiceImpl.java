@@ -1,7 +1,10 @@
 package com.example.mody.domain.member.service;
 
-import jakarta.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
+import com.example.mody.domain.image.service.S3Service;
+import com.example.mody.domain.member.dto.request.MemberEditRequest;
+import com.example.mody.global.common.exception.RestApiException;
+import com.example.mody.global.common.exception.code.status.S3ErrorStatus;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,8 @@ import com.example.mody.global.common.exception.code.status.MemberErrorStatus;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +35,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 	private final PasswordEncoder passwordEncoder;
 	private final AuthCommandService authCommandService;
 	private final MemberQueryService memberQueryService;
+	private final S3Service s3Service;
+	private final RestTemplate restTemplate;
 
 	@Override
 	public void completeRegistration(Member member, MemberRegistrationRequest request) {
@@ -86,5 +93,41 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 		// 회원의 상태를 '삭제'로 변경 (soft delete)
 		member.softDelete();
 		// 별도의 memberRepository.save(member) 호출은 @Transactional 및 변경 감지로 반영됩니다.
+	}
+
+	// 회원정보 수정
+	@Override
+	public void editProfile(MemberEditRequest request, Member member) {
+		// 1. request에서 넘어온 프로필 사진과 기존 프로필 사진을 비교해서 다르면 기존 사진을 삭제
+		String originProfileImageUrl = member.getProfileImageUrl();
+		String newProfileImageUrl = request.getProfileImageUrl();
+
+		if (originProfileImageUrl != null && isProfileImageUpdated(newProfileImageUrl, originProfileImageUrl)) {
+			s3Service.deleteProfileImage(originProfileImageUrl);
+		}
+
+		validateS3Url(newProfileImageUrl);
+
+		// 2. 프로필 업데이트
+		memberQueryService.findMemberById(member.getId()).completeRegistration(
+				request.getNickname(),
+				request.getBirthDate(),
+				request.getGender(),
+				request.getHeight(),
+				request.getProfileImageUrl()
+		);
+	}
+
+	private static boolean isProfileImageUpdated(String newProfileImageUrl, String originProfileImageUrl) {
+		return !newProfileImageUrl.equals(originProfileImageUrl);
+	}
+
+	private void validateS3Url(String s3Url) {
+		try {
+			// S3 url에 GET 요청을 보내서 유효한지 확인
+			restTemplate.exchange(s3Url, HttpMethod.GET, null, Void.class);
+		} catch (HttpClientErrorException e) {
+			throw new RestApiException(S3ErrorStatus.OBJECT_NOT_FOUND);
+		}
 	}
 }
