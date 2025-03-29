@@ -1,7 +1,7 @@
 package com.example.mody.domain.member.service;
 
-import jakarta.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
+import com.example.mody.domain.image.service.S3Service;
+import com.example.mody.domain.member.dto.request.MemberEditRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 	private final PasswordEncoder passwordEncoder;
 	private final AuthCommandService authCommandService;
 	private final MemberQueryService memberQueryService;
+	private final S3Service s3Service;
 
 	@Override
 	public void completeRegistration(Member member, MemberRegistrationRequest request) {
@@ -86,5 +87,30 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 		// 회원의 상태를 '삭제'로 변경 (soft delete)
 		member.softDelete();
 		// 별도의 memberRepository.save(member) 호출은 @Transactional 및 변경 감지로 반영됩니다.
+	}
+
+	// 회원정보 수정
+	@Override
+	public void editProfile(MemberEditRequest request, Member member) {
+		// 1. request에서 넘어온 프로필 사진과 기존 프로필 사진을 비교해서 다르면 기존 사진을 삭제
+		String originProfileImageUrl = member.getProfileImageUrl();
+		String newProfileImageUrl = request.getProfileImageUrl();
+
+		if (originProfileImageUrl != null && isProfileImageUpdated(newProfileImageUrl, originProfileImageUrl)) {
+			s3Service.deleteProfileImage(originProfileImageUrl);
+		}
+
+		// 2. 프로필 업데이트
+		memberQueryService.findMemberById(member.getId()).completeRegistration(
+				request.getNickname(),
+				request.getBirthDate(),
+				request.getGender(),
+				request.getHeight(),
+				request.getProfileImageUrl()
+		);
+	}
+
+	private static boolean isProfileImageUpdated(String newProfileImageUrl, String originProfileImageUrl) {
+		return !newProfileImageUrl.equals(originProfileImageUrl);
 	}
 }

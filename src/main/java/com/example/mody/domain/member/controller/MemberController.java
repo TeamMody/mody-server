@@ -55,8 +55,9 @@ public class MemberController {
 			@ApiResponse(responseCode = "COMMON200", description = "회원 탈퇴 성공"),
 	})
 	public BaseResponse<Void> edit(
-			@AuthenticationPrincipal CustomUserDetails userDetails,
+			@AuthenticationPrincipal CustomUserDetails customUserDetails,
 			@Valid @RequestBody MemberEditRequest request) {
+		memberCommandService.editProfile(request, customUserDetails.getMember());
 		return BaseResponse.onSuccess(null);
 	}
 }
