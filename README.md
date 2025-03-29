@@ -31,10 +31,26 @@
 
 ## Member
 
+<details>
+<summary>V1</summary>
+
 |                 박동규                   |                   김재헌                   |                  서상효                   |                   김성욱                     |                    최윤서                   |                                                                                     
 |:---------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------:|
 | <img width="173" alt="image" src="https://github.com/user-attachments/assets/488fec06-d15c-444b-a7ac-9b6f0c633839" /> | <img width="172" alt="image" src="https://github.com/user-attachments/assets/021ca13c-4e3c-4db8-aebb-5f920c3a6338" /> | <img width="164" alt="image" src="https://github.com/user-attachments/assets/6422ab4d-c39f-43e0-bb8c-e065dd2f4635" /> | <img width="164" alt="image" src="https://github.com/user-attachments/assets/180c4941-1370-482e-a626-21324fcf1ef9" /> | <img width="213" alt="image" src="https://github.com/user-attachments/assets/6ae5daf0-5ca5-4581-82c4-1cbc3eb78336" /> |
 |                       [dong99u](https://github.com/dong99u)                        |                  [jher235](https://github.com/jher235)                   |                     [seoshinehyo](https://github.com/seoshinehyo)                     |                     [so3659](https://github.com/so3659)                     |                     [yunseo02](https://github.com/yunseo02)                     |
+
+</details>
+
+### V2
+
+|                                                       서상효                                                       |                                        심세원                                         |
+|:------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------:|  
+| <img src="https://github.com/user-attachments/assets/6422ab4d-c39f-43e0-bb8c-e065dd2f4635" width=150px alt="서상효"/> | <img src="https://github.com/user-attachments/assets/194ed6e0-7d6f-4bef-a903-470df86f405f" width=150px alt="심세원"/>  |
+|        [seoshinehyo](https://github.com/seoshinehyo)                                                               |                          [ShimFFF](https://github.com/ShimFFF)                          |
+
+
+
+
 
 ## Tech Stack
 <div align=center>
