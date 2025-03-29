@@ -1,5 +1,6 @@
 package com.example.mody.domain.member.dto.request;
 
+import com.example.mody.domain.member.enums.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -40,7 +41,7 @@ public class MemberEditRequest {
 		allowableValues = {"MALE", "FEMALE"}
 	)
 	@NotNull(message = "성별은 필수입니다")
-	private String gender;
+	private Gender gender;
 
 	@Schema(
 		description = "키(cm)",
