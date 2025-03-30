@@ -2,6 +2,7 @@ package com.example.mody.domain.recommendation.controller;
 
 import com.example.mody.domain.auth.security.CustomUserDetails;
 import com.example.mody.domain.recommendation.dto.request.RecommendRequest;
+import com.example.mody.domain.recommendation.dto.request.WeatherRecommendRequest;
 import com.example.mody.domain.recommendation.dto.response.CategoryResponse;
 import com.example.mody.domain.recommendation.dto.response.RecommendLikeResponse;
 import com.example.mody.domain.recommendation.dto.response.RecommendResponse;
@@ -13,6 +14,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 public interface RecommendationControllerInterface {
@@ -195,4 +198,68 @@ public interface RecommendationControllerInterface {
     BaseResponse<RecommendResponse> recommendFashionItem(
             RecommendRequest request,
             CustomUserDetails customUserDetails);
+
+    @Operation(summary = "오늘 날씨에 어울리는 패션 추천 API", description = "오늘 날씨를 키워드로 입력해 사용자 맞춤 패션을 추천받는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "오늘 날씨에 어울리는 패션 추천 성공",
+                    content = @Content(schema = @Schema(implementation = RecommendResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "MEMBER_BODY_TYPE404",
+                    description = "사용자의 체형 정보를 찾을 수 없음",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+						{
+						  "timestamp": "2025-01-17T00:48:53.9237864",
+						  "code": "MEMBER_BODY_TYPE404",
+						  "message": "체형 분석 결과를 찾을 수 없습니다."
+						}
+						"""
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "COMMON402",
+                    description = "카테고리 리스트가 비어있을 때 발생합니다. " +
+                            "선호하는 스타일/ 선호하지 않는 스타일/ 보여주고 싶은 이미지 목록으로 표시됩니다.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+							{
+								"timestamp": "2025-01-25T15:57:08.7901651",
+								"code": "COMMON402",
+								"message": "Validation Error입니다.",
+								"result": {
+									"preferredStyles": "선호하는 스타일 목록은 비어 있을 수 없습니다."
+								}
+							}
+							"""
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "ANALYSIS108",
+                    description = "GPT 응답 형식이 적절하지 않을 때 발생합니다.",
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    value = """
+						{
+							"timestamp": "2025-01-25T16:02:42.4014717",
+							"code": "ANALYSIS108",
+							"message": "GPT가 올바르지 않은 답변을 했습니다. 관리자에게 문의하세요."
+						}
+						"""
+                            )
+                    )
+            )
+    })
+    BaseResponse<RecommendResponse> recommendWeatherStyle(
+            @Valid @RequestBody WeatherRecommendRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails);
 }
