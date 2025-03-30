@@ -14,7 +14,7 @@ import java.util.List;
 public class OccasionRecommendRequest {
 
     @Schema(description = "특정 상황", example = "결혼식")
-    String occasion;
+    private String occasion;
 
     @Schema(
             description = "선호하는 스타일",
