@@ -2,10 +2,12 @@ package com.example.mody.domain.chatgpt.service;
 
 import com.example.mody.domain.bodytype.dto.response.BodyTypeAnalysisResponse;
 import com.example.mody.domain.recommendation.dto.request.MemberInfoRequest;
+import com.example.mody.domain.recommendation.dto.request.WeatherRecommendRequest;
 import com.example.mody.domain.recommendation.dto.response.analysis.ItemAnalysisResponse;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.recommendation.dto.request.RecommendRequest;
 import com.example.mody.domain.recommendation.dto.response.analysis.StyleAnalysisResponse;
+import com.example.mody.domain.recommendation.dto.response.analysis.WeatherStyleAnalysisResponse;
 import com.example.mody.domain.recommendation.service.CrawlerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -120,17 +122,6 @@ public final class ChatGptService {
         }
     }
 
-    private String searchImageFromPinterest(Gender gender, String recommendedStyle) {
-        String strGender = (gender == Gender.MALE) ? "남성 " : "여성 ";
-        String keyword = strGender + recommendedStyle;
-        log.info("keyword: {}", keyword);
-
-        String imageUrl = crawlerService.getRandomImageUrl(keyword);
-        log.info("Pinterest 이미지 URL: {}", imageUrl);
-
-        return imageUrl;
-    }
-
     // 패션 아이템 추천 메서드
     public ItemAnalysisResponse recommendGptItem(MemberInfoRequest memberInfoRequest, RecommendRequest recommendRequest){
 
@@ -155,5 +146,45 @@ public final class ChatGptService {
         } catch (JsonProcessingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         }
+    }
+
+    // 오늘 날씨에 어울리는 패션 추천
+    public WeatherStyleAnalysisResponse recommendWeatherStyle(
+            MemberInfoRequest memberInfoRequest,
+            WeatherRecommendRequest weatherRecommendRequest) {
+
+        // 프롬프트 생성
+        String prompt = promptManager.createWeatherStyleRecommendation(memberInfoRequest, weatherRecommendRequest);
+
+        // OpenAI 답변 생성
+        ChatGPTResponse response = openAiApiClient.sendRequestToModel(
+                model,
+                List.of(
+                        new Message(systemRole, prompt)
+                ),
+                maxTokens,
+                temperature);
+        String content = response.getChoices().get(0).getMessage().getContent().trim();
+
+        try{
+            WeatherStyleAnalysisResponse weatherStyleAnalysisResponse = objectMapper.readValue(content, WeatherStyleAnalysisResponse.class);
+            return weatherStyleAnalysisResponse.from(searchImageFromPinterest(memberInfoRequest.getGender(), weatherStyleAnalysisResponse.getConcept()));
+        } catch (JsonMappingException e) {
+            throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
+        } catch (JsonProcessingException e) {
+            throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
+        }
+    }
+
+    // 핀터레스트 사진 크롤링
+    private String searchImageFromPinterest(Gender gender, String recommendedStyle) {
+        String strGender = (gender == Gender.MALE) ? "남성 " : "여성 ";
+        String keyword = strGender + recommendedStyle;
+        log.info("keyword: {}", keyword);
+
+        String imageUrl = crawlerService.getRandomImageUrl(keyword);
+        log.info("Pinterest 이미지 URL: {}", imageUrl);
+
+        return imageUrl;
     }
 }

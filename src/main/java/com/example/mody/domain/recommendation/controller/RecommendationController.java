@@ -2,6 +2,7 @@ package com.example.mody.domain.recommendation.controller;
 
 import com.example.mody.domain.auth.security.CustomUserDetails;
 import com.example.mody.domain.recommendation.dto.request.RecommendRequest;
+import com.example.mody.domain.recommendation.dto.request.WeatherRecommendRequest;
 import com.example.mody.domain.recommendation.dto.response.CategoryResponse;
 import com.example.mody.domain.recommendation.dto.response.RecommendLikeResponse;
 import com.example.mody.domain.recommendation.dto.response.RecommendResponse;
@@ -72,6 +73,17 @@ public class RecommendationController implements RecommendationControllerInterfa
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         RecommendResponse response = recommendationCommendService.recommendFashionItem(
+                customUserDetails.getMember(), request);
+        return BaseResponse.onSuccess(response);
+    }
+
+    // 오늘의 날씨에 어울리는 패션 추천 API
+    @PostMapping("/weather")
+    public BaseResponse<RecommendResponse> recommendWeatherStyle(
+            @Valid @RequestBody WeatherRecommendRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        RecommendResponse response = recommendationCommendService.recommendWeatherStyle(
                 customUserDetails.getMember(), request);
         return BaseResponse.onSuccess(response);
     }
