@@ -2,10 +2,12 @@ package com.example.mody.domain.chatgpt.service;
 
 import com.example.mody.domain.bodytype.dto.response.BodyTypeAnalysisResponse;
 import com.example.mody.domain.recommendation.dto.request.MemberInfoRequest;
+import com.example.mody.domain.recommendation.dto.request.OccasionRecommendRequest;
 import com.example.mody.domain.recommendation.dto.request.WeatherRecommendRequest;
 import com.example.mody.domain.recommendation.dto.response.analysis.ItemAnalysisResponse;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.recommendation.dto.request.RecommendRequest;
+import com.example.mody.domain.recommendation.dto.response.analysis.OccasionStyleAnalysisResponse;
 import com.example.mody.domain.recommendation.dto.response.analysis.StyleAnalysisResponse;
 import com.example.mody.domain.recommendation.dto.response.analysis.WeatherStyleAnalysisResponse;
 import com.example.mody.domain.recommendation.service.CrawlerService;
@@ -169,6 +171,34 @@ public final class ChatGptService {
         try{
             WeatherStyleAnalysisResponse weatherStyleAnalysisResponse = objectMapper.readValue(content, WeatherStyleAnalysisResponse.class);
             return weatherStyleAnalysisResponse.from(searchImageFromPinterest(memberInfoRequest.getGender(), weatherStyleAnalysisResponse.getConcept()));
+        } catch (JsonMappingException e) {
+            throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
+        } catch (JsonProcessingException e) {
+            throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
+        }
+    }
+
+    // 특정 상황에 어울리는 패션 추천
+    public OccasionStyleAnalysisResponse recommendOccasionStyle(
+            MemberInfoRequest memberInfoRequest,
+            OccasionRecommendRequest occasionRecommendRequest) {
+
+        // 프롬프트 생성
+        String prompt = promptManager.createOccasionStyleRecommendation(memberInfoRequest, occasionRecommendRequest);
+
+        // OpenAI 답변 생성
+        ChatGPTResponse response = openAiApiClient.sendRequestToModel(
+                model,
+                List.of(
+                        new Message(systemRole, prompt)
+                ),
+                maxTokens,
+                temperature);
+        String content = response.getChoices().get(0).getMessage().getContent().trim();
+
+        try{
+            OccasionStyleAnalysisResponse occasionStyleAnalysisResponse = objectMapper.readValue(content, OccasionStyleAnalysisResponse.class);
+            return occasionStyleAnalysisResponse.from(searchImageFromPinterest(memberInfoRequest.getGender(), occasionStyleAnalysisResponse.getConcept()));
         } catch (JsonMappingException e) {
             throw new RestApiException(AnalysisErrorStatus._GPT_ERROR);
         } catch (JsonProcessingException e) {
