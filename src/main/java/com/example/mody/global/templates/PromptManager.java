@@ -3,6 +3,7 @@ package com.example.mody.global.templates;
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.recommendation.dto.request.MemberInfoRequest;
 import com.example.mody.domain.recommendation.dto.request.RecommendRequest;
+import com.example.mody.domain.recommendation.dto.request.WeatherRecommendRequest;
 import org.springframework.stereotype.Component;
 
 /**
@@ -44,6 +45,7 @@ public class PromptManager {
         );
     }
 
+    // 스타일 추천
     public String createRecommendStylePrompt(MemberInfoRequest memberInfoRequest, RecommendRequest recommendRequest) {
         PromptTemplate template = new PromptTemplate();
         String recommendRequestContent = createRecommendRequestContent("패션 스타일 추천해줘", memberInfoRequest, recommendRequest);
@@ -63,6 +65,7 @@ public class PromptManager {
         );
     }
 
+    // 패션 아이템 추천
     public String createRecommendItemPrompt(MemberInfoRequest memberInfoRequest, RecommendRequest recommendRequest) {
         PromptTemplate template = new PromptTemplate();
         String recommendRequestContent = createRecommendRequestContent("패션 아이템 추천해줘", memberInfoRequest, recommendRequest);
@@ -113,5 +116,66 @@ public class PromptManager {
                                 additionalText
                         );
     }
+
+    // 오늘 날씨에 어울리는 패션 추천
+    public String createWeatherStyleRecommendation(MemberInfoRequest memberInfoRequest,
+                                                   WeatherRecommendRequest weatherRecommendRequest) {
+        PromptTemplate template = new PromptTemplate();
+        return template.fillTemplate(
+                """
+                ## 명령
+                사용자의 체형 타입과 원하는 스타일, 선호하지 않는 스타일, 보여주고 싶은 이미지를 고려해 오늘 날씨에 어울리는 패션 추천해줘.
+                concept와 title에는 주어진 날씨도 같이 언급해줘.
+                
+                ## 사용자 정보
+                닉네임: %s
+                성별: %s
+                
+                ## 사용자 체형 타입
+                '%s'
+                ## 사용자 체형 정보
+                '%s'
+                
+                ## 오늘의 날씨
+                날씨: %s
+                
+                ## 사용자의 취향에 해당하는 스타일
+                '%s'
+                ## 사용자가 선호하지 않는 스타일
+                '%s'
+                ## 사용자가 보여주고 싶은 이미지
+                '%s'
+                """.formatted(
+                        memberInfoRequest.getNickName(),
+                        memberInfoRequest.getGender(),
+                        memberInfoRequest.getBodyTypeName(),
+                        memberInfoRequest.getBody(),
+                        weatherRecommendRequest.getWeather(),
+                        weatherRecommendRequest.getPreferredStyles(),
+                        weatherRecommendRequest.getDislikedStyles(),
+                        weatherRecommendRequest.getAppealedImage()
+                ),
+                """
+                {
+                  "concept": "string",
+                  "styleDirection": {
+                    "explanation": "string",
+                    "stylePreference": "string",
+                    "weatherAdaptation": "string"
+                  },
+                  "weatherTip": [
+                    "string"
+                  ],
+                  "recommendedStyling": {
+                    "title": "string",
+                    "styleDescription": "string",
+                    "reason": "string"
+                  }
+                }
+                """
+        );
+    }
+
+
 
 }
