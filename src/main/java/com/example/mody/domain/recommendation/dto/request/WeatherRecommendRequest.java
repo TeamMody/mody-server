@@ -8,13 +8,13 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Schema(description = "스타일 추천 요청 DTO")
+@Schema(description = "오늘 날씨에 어울리는 패션 추천 요청 DTO")
 @Data
 @Getter
 public class WeatherRecommendRequest {
 
     @Schema(description = "오늘의 날씨", example = "비")
-    String weather;
+    private String weather;
 
     @Schema(
             description = "선호하는 스타일",
