@@ -1,6 +1,7 @@
 package com.example.mody.domain.recommendation.controller;
 
 import com.example.mody.domain.auth.security.CustomUserDetails;
+import com.example.mody.domain.recommendation.dto.request.OccasionRecommendRequest;
 import com.example.mody.domain.recommendation.dto.request.RecommendRequest;
 import com.example.mody.domain.recommendation.dto.request.WeatherRecommendRequest;
 import com.example.mody.domain.recommendation.dto.response.CategoryResponse;
@@ -84,6 +85,17 @@ public class RecommendationController implements RecommendationControllerInterfa
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         RecommendResponse response = recommendationCommendService.recommendWeatherStyle(
+                customUserDetails.getMember(), request);
+        return BaseResponse.onSuccess(response);
+    }
+
+    // 특정 상황에 어울리는 패션 추천 API
+    @PostMapping("/occasion")
+    public BaseResponse<RecommendResponse> recommendOccasionStyle(
+            @Valid @RequestBody OccasionRecommendRequest request,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        RecommendResponse response = recommendationCommendService.recommendOccasionStyle(
                 customUserDetails.getMember(), request);
         return BaseResponse.onSuccess(response);
     }
