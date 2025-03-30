@@ -2,6 +2,7 @@ package com.example.mody.global.templates;
 
 import com.example.mody.domain.member.enums.Gender;
 import com.example.mody.domain.recommendation.dto.request.MemberInfoRequest;
+import com.example.mody.domain.recommendation.dto.request.OccasionRecommendRequest;
 import com.example.mody.domain.recommendation.dto.request.RecommendRequest;
 import com.example.mody.domain.recommendation.dto.request.WeatherRecommendRequest;
 import org.springframework.stereotype.Component;
@@ -176,6 +177,57 @@ public class PromptManager {
         );
     }
 
+    // 특정 상황에 어울리는 패션 추천
+    public String createOccasionStyleRecommendation(MemberInfoRequest memberInfoRequest,
+                                                    OccasionRecommendRequest occasionRecommendRequest) {
+        PromptTemplate template = new PromptTemplate();
+        return template.fillTemplate(
+                """
+                ## 명령
+                사용자의 체형 타입과 원하는 스타일, 선호하지 않는 스타일, 보여주고 싶은 이미지를 고려해 주어진 특정 상황에 어울리는 패션 추천해줘.
+                concept와 title에는 특정 상황도 같이 언급해줘.
+                
+                ## 사용자 정보
+                닉네임: %s
+                성별: %s
+                
+                ## 사용자 체형 타입
+                '%s'
+                ## 사용자 체형 정보
+                '%s'
+                
+                ## 특정 상황
+                날씨: %s
+                
+                ## 사용자의 취향에 해당하는 스타일
+                '%s'
+                ## 사용자가 선호하지 않는 스타일
+                '%s'
+                ## 사용자가 보여주고 싶은 이미지
+                '%s'
+                """.formatted(
+                        memberInfoRequest.getNickName(),
+                        memberInfoRequest.getGender(),
+                        memberInfoRequest.getBodyTypeName(),
+                        memberInfoRequest.getBody(),
+                        occasionRecommendRequest.getOccasion(),
+                        occasionRecommendRequest.getPreferredStyles(),
+                        occasionRecommendRequest.getDislikedStyles(),
+                        occasionRecommendRequest.getAppealedImage()
+                ),
+                """
+                {
+                  "concept": "string",
+                  "summary": "string",
+                  "recommendedStyling": {
+                    "title": "string",
+                    "comment": "string",
+                    "reason": "string"
+                  }
+                }
+                """
+        );
+    }
 
 
 }

@@ -7,11 +7,13 @@ import com.example.mody.domain.chatgpt.service.ChatGptService;
 import com.example.mody.domain.exception.BodyTypeException;
 import com.example.mody.domain.member.entity.Member;
 import com.example.mody.domain.recommendation.dto.request.MemberInfoRequest;
+import com.example.mody.domain.recommendation.dto.request.OccasionRecommendRequest;
 import com.example.mody.domain.recommendation.dto.request.RecommendRequest;
 import com.example.mody.domain.recommendation.dto.request.WeatherRecommendRequest;
 import com.example.mody.domain.recommendation.dto.response.RecommendResponse;
 import com.example.mody.domain.recommendation.dto.response.analysis.ItemAnalysisResponse;
 import com.example.mody.domain.recommendation.dto.response.RecommendLikeResponse;
+import com.example.mody.domain.recommendation.dto.response.analysis.OccasionStyleAnalysisResponse;
 import com.example.mody.domain.recommendation.dto.response.analysis.StyleAnalysisResponse;
 import com.example.mody.domain.recommendation.dto.response.analysis.WeatherStyleAnalysisResponse;
 import com.example.mody.domain.recommendation.entity.Recommendation;
@@ -157,6 +159,46 @@ public class RecommendationCommendServiceImpl implements RecommendationCommendSe
         );
     }
 
+    // 특정 상황에 어울리는 패션 추천
+    @Override
+    public RecommendResponse recommendOccasionStyle(Member member, OccasionRecommendRequest request) {
+
+        // 현재 유저의 bodyType 정보를 받아오기
+        MemberBodyType latestBodyType = memberBodyTypeQueryService.getMemberBodyType(member);
+
+        // gpt 추천 요청을 위한 사용자 정보 구성
+        MemberInfoRequest memberInfoRequest = MemberInfoRequest.of(
+                member.getNickname(),
+                member.getGender(),
+                latestBodyType.getBody(),
+                latestBodyType.getBodyType().getName());
+
+        // gpt 추천 결과 받아옴
+        OccasionStyleAnalysisResponse occasionStyleAnalysisResponse = chatGptService.recommendOccasionStyle(memberInfoRequest, request);
+        String contentJson = convertToJsonOccasion(occasionStyleAnalysisResponse);
+
+        Recommendation newRecommendation = Recommendation.of(
+                RecommendType.OCCASION,
+                occasionStyleAnalysisResponse.getConcept(),
+                contentJson,
+                occasionStyleAnalysisResponse.getImageUrl(),
+                member
+        );
+
+        // 추천 결과 저장
+        Recommendation recommendation = recommendationRepository.save(newRecommendation);
+
+        return RecommendResponse.of(
+                member.getId(),
+                member.getNickname(),
+                recommendation.getId(),
+                RecommendType.OCCASION,
+                occasionStyleAnalysisResponse.getConcept(),
+                contentJson,
+                occasionStyleAnalysisResponse.getImageUrl()
+        );
+    }
+
     @Override
     public RecommendLikeResponse toggleLike(Long recommendationId, Member member) {
         Recommendation recommendation = recommendationQueryService.findById(recommendationId);
@@ -249,6 +291,30 @@ public class RecommendationCommendServiceImpl implements RecommendationCommendSe
         public ContentJsonWeather(String styleDirection, String weatherTip, String recommendedStyling) {
             this.styleDirection = styleDirection;
             this.weatherTip = weatherTip;
+            this.recommendedStyling = recommendedStyling;
+        }
+    }
+
+    private String convertToJsonOccasion(OccasionStyleAnalysisResponse occasionStyleAnalysisResponse) {
+        try {
+            // 각 필드를 JSON 문자열로 변환
+            String summary = objectMapper.writeValueAsString(occasionStyleAnalysisResponse.getSummary());
+            String recommendedStyling = objectMapper.writeValueAsString(occasionStyleAnalysisResponse.getRecommendedStyling());
+
+            // 문자열 변환된 값을 ContentJson 생성자에 전달
+            ContentJsonOccasion contentJson = new ContentJsonOccasion(summary, recommendedStyling);
+            return objectMapper.writeValueAsString(contentJson);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("JSON 변환 오류", e);
+        }
+    }
+
+    private static class ContentJsonOccasion {
+        public String summary;
+        public String recommendedStyling;
+
+        public ContentJsonOccasion(String summary, String recommendedStyling) {
+            this.summary = summary;
             this.recommendedStyling = recommendedStyling;
         }
     }
