@@ -25,6 +25,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @Service
 @RequiredArgsConstructor
@@ -125,7 +128,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 	private void validateS3Url(String s3Url) {
 		try {
 			// S3 url에 GET 요청을 보내서 유효한지 확인
-			restTemplate.exchange(s3Url, HttpMethod.GET, null, Void.class);
+			// build(true) 사용 -> URL 인코딩된 부분을 그대로 유지
+			URI uri = UriComponentsBuilder.fromHttpUrl(s3Url).build(true).toUri();
+			restTemplate.exchange(uri, HttpMethod.GET, null, Void.class);
 		} catch (HttpClientErrorException e) {
 			throw new RestApiException(S3ErrorStatus.OBJECT_NOT_FOUND);
 		}
