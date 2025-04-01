@@ -44,6 +44,12 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 	@Override
 	public void completeRegistration(Member member, MemberRegistrationRequest request) {
 		Member unregisteredMember = memberQueryService.findMemberById(member.getId()); // 영속성 컨텍스트가 관리하도록
+
+		// 회원가입 시 프로필 사진이 넘어오면 유효한 S3 url인지 검증
+		if (request.getProfileImageUrl() != null) {
+			validateS3Url(request.getProfileImageUrl());
+		}
+
 		unregisteredMember.completeRegistration(
 			request.getNickname(),
 			request.getBirthDate(),
