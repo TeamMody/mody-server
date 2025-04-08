@@ -142,19 +142,13 @@ public class PromptManager {
                 
                 ## 사용자의 취향에 해당하는 스타일
                 '%s'
-                ## 사용자가 선호하지 않는 스타일
-                '%s'
-                ## 사용자가 보여주고 싶은 이미지
-                '%s'
                 """.formatted(
                         memberInfoRequest.getNickName(),
                         memberInfoRequest.getGender(),
                         memberInfoRequest.getBodyTypeName(),
                         memberInfoRequest.getBody(),
                         weatherRecommendRequest.getWeather(),
-                        weatherRecommendRequest.getPreferredStyles(),
-                        weatherRecommendRequest.getDislikedStyles(),
-                        weatherRecommendRequest.getAppealedImage()
+                        weatherRecommendRequest.getPreferredStyles()
                 ),
                 """
                 {
@@ -201,19 +195,13 @@ public class PromptManager {
                 
                 ## 사용자의 취향에 해당하는 스타일
                 '%s'
-                ## 사용자가 선호하지 않는 스타일
-                '%s'
-                ## 사용자가 보여주고 싶은 이미지
-                '%s'
                 """.formatted(
                         memberInfoRequest.getNickName(),
                         memberInfoRequest.getGender(),
                         memberInfoRequest.getBodyTypeName(),
                         memberInfoRequest.getBody(),
                         occasionRecommendRequest.getOccasion(),
-                        occasionRecommendRequest.getPreferredStyles(),
-                        occasionRecommendRequest.getDislikedStyles(),
-                        occasionRecommendRequest.getAppealedImage()
+                        occasionRecommendRequest.getPreferredStyles()
                 ),
                 """
                 {
@@ -228,6 +216,5 @@ public class PromptManager {
                 """
         );
     }
-
 
 }
